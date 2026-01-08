@@ -8,7 +8,7 @@ import SocialLoginButton from "../components/auth/SocialLoginButton";
 import Divider from "../components/auth/Divider";
 
 const Signup = () => {
-//   const navigate = useNavigate();
+  //   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
