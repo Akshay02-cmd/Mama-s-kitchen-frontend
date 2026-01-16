@@ -283,13 +283,110 @@ npm run build
 
 ---
 
-## 🤝 Contributing
+## 🤝 Contribution Workflow (Frontend Repository)
 
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/name`
-3. Commit changes: `git commit -m 'Add feature'`
-4. Push to branch: `git push origin feature/name`
-5. Open Pull Request
+This repository follows a **controlled, enterprise-style Git workflow** to ensure stability, accountability, and clean integration.
+
+### 🔐 Branch Structure
+
+* **main** → Production-ready code (protected)
+* **develop** → Integration branch (protected)
+* **feature/*** → Temporary branches for individual tasks
+
+Direct pushes to `main` or `develop` are **not allowed**.
+
+---
+
+### 👤 Roles & Responsibilities
+
+**Project Owner (Akshay Patil)**
+* Owns architecture and final integration
+* Reviews and merges all Pull Requests
+* Controls releases to `main`
+
+**Collaborators**
+* Work only on assigned frontend tasks
+* Create feature branches
+* Submit Pull Requests for review
+
+---
+
+### 🔁 Standard Workflow for Collaborators
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Akshay02-cmd/Mama-s-kitchen-frontend.git
+   cd Mama-s-kitchen-frontend
+   ```
+
+2. **Switch to develop branch:**
+   ```bash
+   git checkout develop
+   ```
+
+3. **Create a feature branch:**
+   ```bash
+   git checkout -b feature/<task-name>
+   ```
+   Example: `feature/meal-card-redesign`
+
+4. **Make changes and commit:**
+   ```bash
+   git add .
+   git commit -m "Add: Brief description of changes"
+   ```
+
+5. **Push your branch:**
+   ```bash
+   git push origin feature/<task-name>
+   ```
+
+6. **Open a Pull Request on GitHub:**
+   * **From:** `feature/<task-name>`
+   * **To:** `develop`
+   * Include clear description of changes
+   * Add screenshots for UI changes
+
+---
+
+### 📌 Important Rules
+
+* ✅ One task = one feature branch
+* ✅ Work only on assigned frontend tasks
+* ✅ Follow existing code style and component structure
+* ✅ Test changes locally before pushing
+* ❌ No backend or API logic changes
+* ❌ No direct push to `main` or `develop`
+* ❌ No modifications to build configurations without approval
+
+---
+
+### ✅ Review & Merge Process
+
+1. All Pull Requests are reviewed by the Project Owner
+2. Approved changes are merged into `develop`
+3. Stable features are promoted from `develop` to `main`
+4. PRs without clear descriptions or screenshots (for UI) may be rejected
+
+---
+
+### 💡 Commit Message Format
+
+Follow this format for clear commit history:
+
+```
+Add: New feature or component
+Fix: Bug fix
+Update: Modification to existing feature
+Refactor: Code restructuring
+Style: UI/CSS changes
+Docs: Documentation updates
+```
+
+**Examples:**
+* `Add: Meal card hover effect`
+* `Fix: Login form validation error`
+* `Update: Header navigation styling`
 
 ---
 
