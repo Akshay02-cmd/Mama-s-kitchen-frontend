@@ -40,6 +40,7 @@ const Signup = () => {
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
+      // Password minimum length set to 6 to match backend API requirements
       newErrors.password = "Password must be at least 6 characters";
     }
 
@@ -132,7 +133,7 @@ const Signup = () => {
             htmlFor="role"
             className="block text-sm font-medium text-gray-700 mb-2"
           >
-            I am a
+            Account Type
           </label>
           <select
             id="role"
@@ -140,6 +141,7 @@ const Signup = () => {
             value={formData.role}
             onChange={handleChange}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+            aria-label="Select your account type"
           >
             <option value="CUSTOMER">Customer</option>
             <option value="OWNER">Mess Owner</option>
