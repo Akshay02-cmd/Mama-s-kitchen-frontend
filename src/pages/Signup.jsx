@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, User, Phone } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import AuthLayout from "../components/auth/AuthLayout";
 import FormInput from "../components/auth/FormInput";
 import Button from "../components/auth/Button";
@@ -12,11 +12,11 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     email: "",
-    phone: "",
     password: "",
     confirmPassword: "",
+    role: "CUSTOMER",
     agreeToTerms: false,
   });
   const [errors, setErrors] = useState({});
@@ -25,10 +25,10 @@ const Signup = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required";
-    } else if (formData.fullName.trim().length < 2) {
-      newErrors.fullName = "Name must be at least 2 characters";
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
     }
 
     if (!formData.email.trim()) {
@@ -37,19 +37,11 @@ const Signup = () => {
       newErrors.email = "Email is invalid";
     }
 
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
-    } else if (!/^\+?[\d\s-()]{10,}$/.test(formData.phone)) {
-      newErrors.phone = "Phone number is invalid";
-    }
-
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password =
-        "Password must contain uppercase, lowercase, and number";
+    } else if (formData.password.length < 6) {
+      // Password minimum length set to 6 to match backend API requirements
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     if (!formData.confirmPassword) {
@@ -88,9 +80,17 @@ const Signup = () => {
 
     setIsLoading(true);
 
+    // Prepare data for API (exclude confirmPassword)
+    const apiData = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      role: formData.role,
+    };
+
     // Simulate API call
     setTimeout(() => {
-      console.log("Signup data:", formData);
+      console.log("Signup data:", apiData);
       setIsLoading(false);
       // navigate("/login"); // Uncomment to redirect after signup
     }, 1500);
@@ -103,14 +103,14 @@ const Signup = () => {
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <FormInput
-          id="fullName"
-          name="fullName"
+          id="name"
+          name="name"
           type="text"
-          value={formData.fullName}
+          value={formData.name}
           onChange={handleChange}
           label="Full Name"
           placeholder="John Doe"
-          error={errors.fullName}
+          error={errors.name}
           icon={User}
           required
         />
@@ -128,18 +128,25 @@ const Signup = () => {
           required
         />
 
-        <FormInput
-          id="phone"
-          name="phone"
-          type="tel"
-          value={formData.phone}
-          onChange={handleChange}
-          label="Phone Number"
-          placeholder="+1 (555) 123-4567"
-          error={errors.phone}
-          icon={Phone}
-          required
-        />
+        <div>
+          <label
+            htmlFor="role"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Account Type
+          </label>
+          <select
+            id="role"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+            aria-label="Select your account type"
+          >
+            <option value="CUSTOMER">Customer</option>
+            <option value="OWNER">Mess Owner</option>
+          </select>
+        </div>
 
         <FormInput
           id="password"

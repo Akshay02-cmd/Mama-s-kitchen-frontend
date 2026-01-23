@@ -12,6 +12,7 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    role: "CUSTOMER",
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -83,6 +84,26 @@ const Login = () => {
           icon={Mail}
           required
         />
+
+        <div>
+          <label
+            htmlFor="role"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Account Type
+          </label>
+          <select
+            id="role"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+            aria-label="Select your account type"
+          >
+            <option value="CUSTOMER">Customer</option>
+            <option value="OWNER">Mess Owner</option>
+          </select>
+        </div>
 
         <FormInput
           id="password"
