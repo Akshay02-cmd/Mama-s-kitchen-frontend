@@ -36,9 +36,9 @@ const Home = () => {
                 </a>
                 <a
                   className="inline-flex items-center px-8 py-4 bg-white text-amber-600 text-lg font-semibold rounded-lg border-2 border-amber-200 hover:bg-amber-50 transition-all duration-200"
-                  href="/about"
+                  href="/contact"
                 >
-                  Learn More
+                  Contact Us
                 </a>
               </div>
             </div>
