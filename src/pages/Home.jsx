@@ -2,8 +2,54 @@ import { useState } from "react";
 import { MealsHeader, MealFilters, MealCard } from "../components/meals";
 
 const Home = () => {
+<<<<<<< HEAD
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+=======
+  return (
+    <main className="flex-1">
+      <div className="bg-white">
+        {/* Hero Section */}
+        <section className="relative bg-linear-to-br from-amber-50 to-orange-100 overflow-hidden h-fit">
+          <div className="absolute inset-0">
+            <img
+              src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop"
+              alt="Delicious food spread"
+              className="w-full h-full object-cover opacity-10"
+            />
+          </div>
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-48">
+            <div className="text-center">
+              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                Fresh Meals
+                <span className="text-amber-600"> Delivered</span>
+                <br />
+                To Your Door
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Experience the convenience of restaurant-quality meals prepared
+                by local caterers and delivered fresh to your location anywhere
+                in<span className="font-bold text-amber-600"> Nashik</span>.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  className="inline-flex items-center px-8 py-4 bg-amber-500 text-white text-lg font-semibold rounded-lg hover:bg-amber-600 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  href="/meals"
+                >
+                  Explore Meals
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
+                <a
+                  className="inline-flex items-center px-8 py-4 bg-white text-amber-600 text-lg font-semibold rounded-lg border-2 border-amber-200 hover:bg-amber-50 transition-all duration-200"
+                  href="/contact"
+                >
+                  Contact Us
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+>>>>>>> 3f5f93507bfcb25cbe386d9eab372b5544f54ea5
 
   const categories = [
     { id: "all", name: "All Meals" },
