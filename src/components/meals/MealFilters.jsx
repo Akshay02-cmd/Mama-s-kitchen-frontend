@@ -1,50 +1,112 @@
-import { Search, SlidersHorizontal } from "lucide-react";
+const MealFilters = ({ filters, onFilterChange }) => {
+  const handleChange = (key, value) => {
+    onFilterChange({ ...filters, [key]: value });
+  };
 
-const MealFilters = ({ 
-  categories, 
-  selectedCategory, 
-  setSelectedCategory, 
-  searchQuery, 
-  setSearchQuery 
-}) => {
   return (
-    <section className="bg-white shadow-xl sticky top-20 z-10 py-6 px-6 border-b border-slate-200">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
-          {/* Search Bar */}
-          <div className="relative flex-1 max-w-md w-full">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search for your favorite meal..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-slate-700 placeholder:text-slate-400"
-            />
-          </div>
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--gray-900)' }}>
+        Filter Meals
+      </h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {/* Search */}
+        <div>
+          <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
+            Search
+          </label>
+          <input
+            type="text"
+            value={filters.search}
+            onChange={(e) => handleChange('search', e.target.value)}
+            placeholder="Search meals..."
+            className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+            style={{ 
+              borderColor: 'var(--gray-500)',
+              color: 'var(--gray-900)'
+            }}
+          />
+        </div>
 
-          {/* Category Filter */}
-          <div className="flex items-center gap-3">
-            <SlidersHorizontal className="w-5 h-5 text-slate-500 hidden md:block" />
-            <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={`px-6 py-2.5 rounded-full font-semibold whitespace-nowrap transition-all shadow-sm ${
-                    selectedCategory === category.id
-                      ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg shadow-amber-500/30"
-                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                  }`}
-                >
-                  {category.name}
-                </button>
-              ))}
-            </div>
-          </div>
+        {/* Category */}
+        <div>
+          <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
+            Category
+          </label>
+          <select
+            value={filters.category}
+            onChange={(e) => handleChange('category', e.target.value)}
+            className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+            style={{ 
+              borderColor: 'var(--gray-500)',
+              color: 'var(--gray-900)'
+            }}
+          >
+            <option value="all">All Categories</option>
+            <option value="Main Course">Main Course</option>
+            <option value="Dal">Dal</option>
+            <option value="Rice">Rice</option>
+            <option value="Bread">Bread</option>
+            <option value="Dessert">Dessert</option>
+          </select>
+        </div>
+
+        {/* Dietary Type */}
+        <div>
+          <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
+            Dietary Type
+          </label>
+          <select
+            value={filters.dietaryType}
+            onChange={(e) => handleChange('dietaryType', e.target.value)}
+            className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+            style={{ 
+              borderColor: 'var(--gray-500)',
+              color: 'var(--gray-900)'
+            }}
+          >
+            <option value="all">All Types</option>
+            <option value="Veg">Vegetarian</option>
+            <option value="Non-Veg">Non-Vegetarian</option>
+          </select>
+        </div>
+
+        {/* Price Range */}
+        <div>
+          <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
+            Price Range
+          </label>
+          <select
+            value={filters.priceRange}
+            onChange={(e) => handleChange('priceRange', e.target.value)}
+            className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+            style={{ 
+              borderColor: 'var(--gray-500)',
+              color: 'var(--gray-900)'
+            }}
+          >
+            <option value="all">All Prices</option>
+            <option value="low">Under ₹100</option>
+            <option value="medium">₹100 - ₹150</option>
+            <option value="high">Above ₹150</option>
+          </select>
         </div>
       </div>
-    </section>
+
+      {/* Clear Filters */}
+      {(filters.search || filters.category !== 'all' || filters.dietaryType !== 'all' || filters.priceRange !== 'all') && (
+        <button
+          onClick={() => onFilterChange({ search: '', category: 'all', dietaryType: 'all', priceRange: 'all' })}
+          className="mt-4 px-4 py-2 rounded-lg font-medium"
+          style={{ 
+            backgroundColor: 'var(--primary-500)', 
+            color: 'var(--white)' 
+          }}
+        >
+          Clear All Filters
+        </button>
+      )}
+    </div>
   );
 };
 

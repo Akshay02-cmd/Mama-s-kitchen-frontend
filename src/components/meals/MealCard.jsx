@@ -1,62 +1,99 @@
-import { Star, Clock, Flame, ShoppingCart, ChefHat } from "lucide-react";
+import { Link } from 'react-router-dom';
+import { memo } from 'react';
 
-const MealCard = ({ meal }) => {
+const MealCard = memo(({ meal }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 group border border-slate-100 hover:border-amber-200">
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
-        <img
-          src={meal.image}
-          alt={meal.name}
-          className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500"
-        />
-        <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-lg z-20">
-          <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
-          <span className="font-bold text-sm text-slate-900">{meal.rating}</span>
-        </div>
-        <div className="absolute top-4 left-4 bg-amber-500/95 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg z-20">
-          <ChefHat className="w-4 h-4 text-white" />
-        </div>
-      </div>
-
-      <div className="p-6">
-        <h3 className="text-xl font-serif font-bold text-slate-900 mb-2 group-hover:text-amber-600 transition-colors">
-          {meal.name}
-        </h3>
-        <p className="text-slate-600 text-sm mb-5 line-clamp-2 leading-relaxed">
-          {meal.description}
-        </p>
-
-        <div className="flex items-center gap-5 text-sm text-slate-500 mb-5 pb-5 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-              <Clock className="w-4 h-4 text-slate-600" />
+    <Link to={`/meals/${meal._id}`} className="block">
+      <div 
+        className="rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+        style={{ backgroundColor: 'var(--white)' }}
+      >
+        {/* Image */}
+        <div className="relative">
+          <img 
+            src={`https://via.placeholder.com/400x250/FF6B35/FFFFFF?text=${encodeURIComponent(meal.name)}`}
+            alt={meal.name}
+            className="w-full h-48 object-cover"
+          />
+          {!meal.isAvailable && (
+            <div 
+              className="absolute inset-0 flex items-center justify-center"
+              style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
+            >
+              <span className="text-white text-lg font-bold">Not Available</span>
             </div>
-            <span className="font-medium">{meal.prepTime}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-              <Flame className="w-4 h-4 text-orange-500" />
-            </div>
-            <span className="font-medium">{meal.calories}</span>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs text-slate-500 mb-1">Starting from</p>
-            <span className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">
-              ${meal.price.toFixed(2)}
+          )}
+          <div className="absolute top-3 right-3">
+            <span 
+              className="px-3 py-1 rounded-full text-xs font-medium"
+              style={{ 
+                backgroundColor: meal.dietaryType === 'Veg' ? 'var(--accent-500)' : 'var(--error)',
+                color: 'var(--white)'
+              }}
+            >
+              {meal.dietaryType}
             </span>
           </div>
-          <button className="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-amber-600 hover:to-amber-700 transition-all shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 inline-flex items-center gap-2 group-hover:scale-105 transform">
-            <ShoppingCart className="w-4 h-4" />
-            Order
-          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-4">
+          {/* Category & Mess Name */}
+          <div className="flex items-center justify-between mb-2">
+            <span 
+              className="text-xs font-medium"
+              style={{ color: 'var(--gray-500)' }}
+            >
+              {meal.category}
+            </span>
+            <span 
+              className="text-xs"
+              style={{ color: 'var(--primary-500)' }}
+            >
+              {meal.messId.name}
+            </span>
+          </div>
+
+          {/* Name */}
+          <h3 
+            className="text-lg font-bold mb-2 line-clamp-1"
+            style={{ color: 'var(--gray-900)' }}
+          >
+            {meal.name}
+          </h3>
+
+          {/* Description */}
+          <p 
+            className="text-sm mb-3 line-clamp-2"
+            style={{ color: 'var(--gray-700)' }}
+          >
+            {meal.description}
+          </p>
+
+          {/* Rating & Price */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <span style={{ color: 'var(--warning)' }}>★</span>
+              <span className="font-semibold text-sm" style={{ color: 'var(--gray-900)' }}>
+                {meal.averageRating}
+              </span>
+              <span className="text-xs" style={{ color: 'var(--gray-500)' }}>
+                ({meal.totalReviews})
+              </span>
+            </div>
+            <span 
+              className="text-xl font-bold"
+              style={{ color: 'var(--primary-500)' }}
+            >
+              ₹{meal.price}
+            </span>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
-};
+});
+
+MealCard.displayName = 'MealCard';
 
 export default MealCard;

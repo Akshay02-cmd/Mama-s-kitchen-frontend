@@ -1,5 +1,35 @@
 @import 'tailwindcss';
 
+:root {
+  /* Primary Colors */
+  --primary-50: #FFF5F0;
+  --primary-100: #FFE8DC;
+  --primary-500: #FF6B35;    /* Main brand color - Warm Orange */
+  --primary-600: #E65A2A;
+  --primary-700: #CC4A1F;
+
+  /* Secondary Colors */
+  --secondary-500: #2C3E50;  /* Deep Blue-Gray */
+  --secondary-600: #233140;
+  --secondary-700: #1A2530;
+
+  /* Accent */
+  --accent-500: #27AE60;     /* Fresh Green - for success states */
+
+  /* Neutrals */
+  --gray-900: #1A1A1A;       /* Text, headers */
+  --gray-700: #4A5568;       /* Secondary text */
+  --gray-500: #A0AEC0;       /* Disabled states, borders */
+  --gray-100: #EDF2F7;       /* Backgrounds, cards */
+  --white: #FFFFFF;
+
+  /* Semantic Colors */
+  --success: #27AE60;        /* Order delivered, completed */
+  --warning: #F39C12;        /* Pending, preparing */
+  --error: #E74C3C;          /* Cancelled, errors */
+  --info: #3498DB;           /* General info */
+}
+
 @layer utilities {
   @keyframes fade-in {
     from {

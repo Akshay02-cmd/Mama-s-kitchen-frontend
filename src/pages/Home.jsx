@@ -2,8 +2,16 @@ import { useState } from "react";
 import { MealsHeader, MealFilters, MealCard } from "../components/meals";
 
 const Home = () => {
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState({
+    search: '',
+    category: 'all',
+    dietaryType: 'all',
+    priceRange: 'all'
+  });
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
 
   const categories = [
     { id: "all", name: "All Meals" },
@@ -113,11 +121,11 @@ const Home = () => {
   ];
 
   const filteredMeals = meals.filter((meal) => {
-    const matchesCategory =
-      selectedCategory === "all" || meal.category === selectedCategory;
     const matchesSearch =
-      meal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      meal.description.toLowerCase().includes(searchQuery.toLowerCase());
+      meal.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+      meal.description.toLowerCase().includes(filters.search.toLowerCase());
+    const matchesCategory = filters.category === 'all' || meal.category === filters.category;
+    
     return matchesCategory && matchesSearch;
   });
 
@@ -126,11 +134,8 @@ const Home = () => {
       <MealsHeader />
 
       <MealFilters
-        categories={categories}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
+        filters={filters}
+        onFilterChange={handleFilterChange}
       />
 
       {/* Meals Grid */}
