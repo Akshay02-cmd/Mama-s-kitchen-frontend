@@ -23,7 +23,7 @@ const Home = () => {
 
   const meals = [
     {
-      id: 1,
+      _id: '1',
       name: "Classic Lasagna",
       category: "dinner",
       price: 12.99,
@@ -33,9 +33,14 @@ const Home = () => {
       prepTime: "35 min",
       calories: "450 cal",
       description: "Layers of pasta, rich meat sauce, and creamy béchamel",
+      dietaryType: "Non-Veg",
+      isAvailable: true,
+      messId: { name: "Mama's Kitchen", _id: "m1" },
+      averageRating: 4.9,
+      totalReviews: 45
     },
     {
-      id: 2,
+      _id: '2',
       name: "Chicken Curry",
       category: "lunch",
       price: 10.99,
@@ -45,9 +50,14 @@ const Home = () => {
       prepTime: "30 min",
       calories: "380 cal",
       description: "Tender chicken in aromatic curry sauce with basmati rice",
+      dietaryType: "Non-Veg",
+      isAvailable: true,
+      messId: { name: "Mama's Kitchen", _id: "m1" },
+      averageRating: 4.8,
+      totalReviews: 38
     },
     {
-      id: 3,
+      _id: '3',
       name: "Beef Stew",
       category: "dinner",
       price: 13.99,
@@ -57,9 +67,14 @@ const Home = () => {
       prepTime: "40 min",
       calories: "520 cal",
       description: "Slow-cooked beef with vegetables in rich gravy",
+      dietaryType: "Non-Veg",
+      isAvailable: true,
+      messId: { name: "Mama's Kitchen", _id: "m1" },
+      averageRating: 4.7,
+      totalReviews: 32
     },
     {
-      id: 4,
+      _id: '4',
       name: "Pancake Stack",
       category: "breakfast",
       price: 8.99,
@@ -69,9 +84,14 @@ const Home = () => {
       prepTime: "15 min",
       calories: "320 cal",
       description: "Fluffy pancakes with maple syrup and fresh berries",
+      dietaryType: "Veg",
+      isAvailable: true,
+      messId: { name: "Mama's Kitchen", _id: "m1" },
+      averageRating: 4.9,
+      totalReviews: 52
     },
     {
-      id: 5,
+      _id: '5',
       name: "Caesar Salad",
       category: "lunch",
       price: 7.99,
@@ -81,9 +101,14 @@ const Home = () => {
       prepTime: "10 min",
       calories: "280 cal",
       description: "Crisp romaine with parmesan, croutons, and Caesar dressing",
+      dietaryType: "Veg",
+      isAvailable: true,
+      messId: { name: "Mama's Kitchen", _id: "m1" },
+      averageRating: 4.6,
+      totalReviews: 28
     },
     {
-      id: 6,
+      _id: '6',
       name: "Chocolate Cake",
       category: "dessert",
       price: 6.99,
@@ -93,9 +118,14 @@ const Home = () => {
       prepTime: "5 min",
       calories: "420 cal",
       description: "Rich chocolate cake with ganache frosting",
+      dietaryType: "Veg",
+      isAvailable: true,
+      messId: { name: "Mama's Kitchen", _id: "m1" },
+      averageRating: 5.0,
+      totalReviews: 61
     },
     {
-      id: 7,
+      _id: '7',
       name: "Grilled Salmon",
       category: "dinner",
       price: 15.99,
@@ -105,9 +135,14 @@ const Home = () => {
       prepTime: "25 min",
       calories: "350 cal",
       description: "Fresh salmon with lemon butter and seasonal vegetables",
+      dietaryType: "Non-Veg",
+      isAvailable: true,
+      messId: { name: "Mama's Kitchen", _id: "m1" },
+      averageRating: 4.8,
+      totalReviews: 41
     },
     {
-      id: 8,
+      _id: '8',
       name: "French Toast",
       category: "breakfast",
       price: 9.49,
@@ -117,6 +152,11 @@ const Home = () => {
       prepTime: "20 min",
       calories: "380 cal",
       description: "Golden French toast with powdered sugar and fresh fruit",
+      dietaryType: "Veg",
+      isAvailable: true,
+      messId: { name: "Mama's Kitchen", _id: "m1" },
+      averageRating: 4.7,
+      totalReviews: 35
     },
   ];
 
@@ -160,7 +200,7 @@ const Home = () => {
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {filteredMeals.map((meal) => (
-                  <MealCard key={meal.id} meal={meal} />
+                  <MealCard key={meal._id} meal={meal} />
                 ))}
               </div>
             </>

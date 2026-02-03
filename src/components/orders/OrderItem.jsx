@@ -5,7 +5,7 @@ const OrderItem = ({ item, index, isLast }) => {
       style={{ borderBottom: !isLast ? '1px solid var(--gray-100)' : 'none' }}
     >
       <img
-        src={`https://via.placeholder.com/100x100/FF6B35/FFFFFF?text=${encodeURIComponent(item.mealId.name.substring(0, 1))}`}
+        src={item.mealId.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100&h=100&fit=crop'}
         alt={item.mealId.name}
         className="w-20 h-20 rounded-lg object-cover"
       />

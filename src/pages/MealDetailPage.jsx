@@ -1,8 +1,21 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import Breadcrumb from '../components/common/Breadcrumb';
 import Card from '../components/common/Card';
 import StatusBadge from '../components/common/StatusBadge';
+
+const dietaryTypeConfig = {
+  'Veg': { color: 'var(--accent-500)', label: 'Veg', textColor: 'var(--white)' },
+  'Non-Veg': { color: 'var(--error)', label: 'Non-Veg', textColor: 'var(--white)' }
+};
+
+const categoryConfig = {
+  'Main Course': { color: 'var(--gray-100)', label: 'Main Course', textColor: 'var(--gray-700)' },
+  'breakfast': { color: 'var(--gray-100)', label: 'Breakfast', textColor: 'var(--gray-700)' },
+  'lunch': { color: 'var(--gray-100)', label: 'Lunch', textColor: 'var(--gray-700)' },
+  'dinner': { color: 'var(--gray-100)', label: 'Dinner', textColor: 'var(--gray-700)' },
+  'dessert': { color: 'var(--gray-100)', label: 'Dessert', textColor: 'var(--gray-700)' }
+};
 
 // Mock meal data
 const mockMeal = {
@@ -13,6 +26,7 @@ const mockMeal = {
   category: 'Main Course',
   dietaryType: 'Non-Veg',
   isAvailable: true,
+  image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&h=400&fit=crop',
   servingSize: '1 plate',
   preparationTime: '30-40 mins',
   messId: {
@@ -82,7 +96,7 @@ const MealDetailPage = () => {
           <div>
             <div className="rounded-lg overflow-hidden shadow-lg" style={{ backgroundColor: 'var(--white)' }}>
               <img 
-                src={`https://via.placeholder.com/600x400/FF6B35/FFFFFF?text=${encodeURIComponent(mockMeal.name)}`}
+                src={mockMeal.image || `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop`}
                 alt={mockMeal.name}
                 className="w-full h-96 object-cover"
               />
@@ -97,9 +111,9 @@ const MealDetailPage = () => {
                 <div className="flex items-center gap-2 mb-2">
                   <StatusBadge 
                     status={mockMeal.dietaryType}
-                    color={mockMeal.dietaryType === 'Veg' ? 'var(--accent-500)' : 'var(--error)'}
+                    statusConfig={dietaryTypeConfig}
                   />
-                  <StatusBadge status={mockMeal.category} color="var(--gray-100)" textColor="var(--gray-700)" />
+                  <StatusBadge status={mockMeal.category} statusConfig={categoryConfig} />
                 </div>
                 <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--gray-900)' }}>
                   {mockMeal.name}

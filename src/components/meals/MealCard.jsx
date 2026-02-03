@@ -11,7 +11,7 @@ const MealCard = memo(({ meal }) => {
         {/* Image */}
         <div className="relative">
           <img 
-            src={`https://via.placeholder.com/400x250/FF6B35/FFFFFF?text=${encodeURIComponent(meal.name)}`}
+            src={meal.image || `https://via.placeholder.com/400x250/FF6B35/FFFFFF?text=${encodeURIComponent(meal.name)}`}
             alt={meal.name}
             className="w-full h-48 object-cover"
           />
