@@ -28,14 +28,14 @@ const mockProfile = {
 
 const CustomerProfilePage = () => {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--gray-100)' }}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <PageHeader 
           title="My Profile" 
           subtitle="Manage your personal information and preferences" 
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
           {/* Sidebar */}
           <div className="space-y-6">
             <ProfileCard profile={mockProfile} />
@@ -47,11 +47,14 @@ const CustomerProfilePage = () => {
             <PersonalInfo profile={mockProfile} />
 
             {/* Delivery Address */}
-            <Card className="p-6">
-              <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--gray-900)' }}>
-                Delivery Address
-              </h2>
-              <p className="text-lg" style={{ color: 'var(--gray-700)' }}>
+            <Card className="p-8 shadow-xl border border-gray-100">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-8 rounded-full" style={{ backgroundColor: 'var(--primary-600)' }}></div>
+                <h2 className="text-2xl font-bold" style={{ color: 'var(--gray-900)' }}>
+                  Delivery Address
+                </h2>
+              </div>
+              <p className="text-lg leading-relaxed" style={{ color: 'var(--gray-700)' }}>
                 {mockProfile.address}
               </p>
             </Card>

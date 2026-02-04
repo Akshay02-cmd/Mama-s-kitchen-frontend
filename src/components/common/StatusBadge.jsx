@@ -8,7 +8,7 @@ const StatusBadge = ({ status, statusConfig, color, textColor, label }) => {
 
   return (
     <span 
-      className="px-4 py-2 rounded-full font-semibold"
+      className="px-5 py-2 rounded-full font-bold text-sm uppercase tracking-wider shadow-md"
       style={{ 
         backgroundColor: finalColor,
         color: finalTextColor

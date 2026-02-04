@@ -8,12 +8,31 @@ const Button = ({
   className = "",
   fullWidth = true,
 }) => {
-  const baseClasses = "font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed";
+  const baseClasses = "font-bold py-4 px-6 rounded-xl focus:outline-none focus:ring-4 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95";
   
   const variants = {
-    primary: "bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600 focus:ring-orange-500",
-    secondary: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-gray-500",
-    outline: "border-2 border-orange-500 text-orange-500 hover:bg-orange-50 focus:ring-orange-500",
+    primary: "text-white shadow-xl hover:shadow-2xl",
+    secondary: "border-2 border-gray-300 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg",
+    outline: "border-3 text-white hover:bg-primary-50 shadow-md hover:shadow-lg",
+  };
+
+  const getStyle = () => {
+    if (variant === 'primary') {
+      return {
+        background: 'linear-gradient(135deg, var(--primary-600) 0%, var(--primary-500) 100%)',
+        color: 'var(--white)'
+      };
+    } else if (variant === 'secondary') {
+      return {
+        borderColor: 'var(--gray-300)',
+        color: 'var(--gray-700)'
+      };
+    } else {
+      return {
+        borderColor: 'var(--primary-600)',
+        color: 'var(--primary-600)'
+      };
+    }
   };
 
   return (
@@ -24,6 +43,7 @@ const Button = ({
       className={`${baseClasses} ${variants[variant]} ${
         fullWidth ? 'w-full' : ''
       } ${className}`}
+      style={getStyle()}
     >
       {isLoading ? (
         <span className="flex items-center justify-center">

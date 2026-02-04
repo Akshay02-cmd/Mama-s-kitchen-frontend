@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import AuthLayout from "../components/auth/AuthLayout";
 import FormInput from "../components/auth/FormInput";
 import Button from "../components/auth/Button";
 import SocialLoginButton from "../components/auth/SocialLoginButton";
 import Divider from "../components/auth/Divider";
+import { useAuth } from "../hooks/useAuth";
 
 const Signup = () => {
-  //   const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { register } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -80,7 +82,7 @@ const Signup = () => {
 
     setIsLoading(true);
 
-    // Prepare data for API (exclude confirmPassword)
+    // Prepare data for API (exclude confirmPassword and agreeToTerms)
     const apiData = {
       name: formData.name,
       email: formData.email,
@@ -88,12 +90,24 @@ const Signup = () => {
       role: formData.role,
     };
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Signup data:", apiData);
+    try {
+      const response = await register(apiData);
+      if (response.success) {
+        // Redirect based on role
+        if (formData.role === "OWNER") {
+          navigate("/profile/owner");
+        } else {
+          navigate("/");
+        }
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      setErrors({
+        submit: error.response?.data?.message || "Registration failed. Please try again.",
+      });
+    } finally {
       setIsLoading(false);
-      // navigate("/login"); // Uncomment to redirect after signup
-    }, 1500);
+    }
   };
 
   return (

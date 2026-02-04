@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import AuthLayout from "../components/auth/AuthLayout";
 import FormInput from "../components/auth/FormInput";
 import Button from "../components/auth/Button";
 import SocialLoginButton from "../components/auth/SocialLoginButton";
 import Divider from "../components/auth/Divider";
+import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -16,6 +20,9 @@ const Login = () => {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+
+  // Get the page user was trying to access before being redirected to login
+  const from = location.state?.from?.pathname || "/";
 
   const validateForm = () => {
     const newErrors = {};
@@ -58,12 +65,20 @@ const Login = () => {
 
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Login data:", formData);
+    try {
+      const response = await login(formData);
+      if (response.success) {
+        // Redirect to the page they were trying to access, or home
+        navigate(from, { replace: true });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setErrors({
+        submit: error.response?.data?.message || "Login failed. Please check your credentials.",
+      });
+    } finally {
       setIsLoading(false);
-      // navigate("/"); // Uncomment to redirect after login
-    }, 1500);
+    }
   };
 
   return (
@@ -142,6 +157,12 @@ const Login = () => {
             Forgot password?
           </Link>
         </div>
+
+        {errors.submit && (
+          <div className="p-3 rounded-lg bg-red-50 border border-red-200">
+            <p className="text-sm text-red-600">{errors.submit}</p>
+          </div>
+        )}
 
         <Button type="submit" isLoading={isLoading}>
           Log In

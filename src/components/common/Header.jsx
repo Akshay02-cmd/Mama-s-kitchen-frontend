@@ -1,16 +1,28 @@
-import { Link } from "react-router-dom";
-import { Menu, X, User, ShoppingBag } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, User, ShoppingBag, LogOut } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 import logo from "../../assets/logo.png";
 import defaultProfilePic from "../../assets/DefaulProfile.jpg";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   const navLinks = [
     { to: "/", label: "About" },
     { to: "/home", label: "Meals" },
-    { to: "/contact", label: "Contact" },
+    ...(isAuthenticated ? [{ to: "/contact", label: "Contact" }] : []),
   ];
 
   return (
@@ -47,22 +59,52 @@ const Header = () => {
 
           {/* Desktop Profile Section */}
           <div className="hidden md:flex items-center gap-4">
-            <Link
-              to="/home"
-              className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-full hover:from-amber-600 hover:to-amber-700 transition-all font-semibold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 flex items-center gap-2"
-            >
-              <ShoppingBag className="w-4 h-4" />
-              Order Now
-            </Link>
-            <Link to="/login" className="group">
-              <div className="w-10 h-10 rounded-full ring-2 ring-amber-500/50 group-hover:ring-amber-500 transition-all overflow-hidden">
-                <img
-                  src={defaultProfilePic}
-                  alt="Profile"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-                />
-              </div>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  to="/orders"
+                  className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-full hover:from-amber-600 hover:to-amber-700 transition-all font-semibold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 flex items-center gap-2"
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  My Orders
+                </Link>
+                <Link to="/profile" className="group">
+                  <div className="w-10 h-10 rounded-full ring-2 ring-amber-500/50 group-hover:ring-amber-500 transition-all overflow-hidden">
+                    <img
+                      src={defaultProfilePic}
+                      alt="Profile"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                    />
+                  </div>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 text-amber-50 hover:text-amber-400 transition-all flex items-center gap-2"
+                  title="Logout"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/home"
+                  className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-full hover:from-amber-600 hover:to-amber-700 transition-all font-semibold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 flex items-center gap-2"
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  Order Now
+                </Link>
+                <Link to="/login" className="group">
+                  <div className="w-10 h-10 rounded-full ring-2 ring-amber-500/50 group-hover:ring-amber-500 transition-all overflow-hidden">
+                    <img
+                      src={defaultProfilePic}
+                      alt="Profile"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                    />
+                  </div>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -95,20 +137,50 @@ const Header = () => {
               </Link>
             ))}
             <div className="pt-4 pb-2 space-y-3 border-t border-amber-600/20">
-              <Link
-                to="/home"
-                onClick={() => setIsMenuOpen(false)}
-                className="block w-full px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-center rounded-lg hover:from-amber-600 hover:to-amber-700 transition font-semibold"
-              >
-                Order Now
-              </Link>
-              <Link
-                to="/login"
-                onClick={() => setIsMenuOpen(false)}
-                className="block px-4 py-3 text-amber-50 hover:bg-slate-700/50 rounded-lg transition text-center font-medium"
-              >
-                Login / Sign Up
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    to="/orders"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block w-full px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-center rounded-lg hover:from-amber-600 hover:to-amber-700 transition font-semibold"
+                  >
+                    My Orders
+                  </Link>
+                  <Link
+                    to="/profile"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block px-4 py-3 text-amber-50 hover:bg-slate-700/50 rounded-lg transition text-center font-medium"
+                  >
+                    My Profile
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="block w-full px-4 py-3 text-amber-50 hover:bg-red-600/20 rounded-lg transition text-center font-medium"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/home"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block w-full px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-center rounded-lg hover:from-amber-600 hover:to-amber-700 transition font-semibold"
+                  >
+                    Order Now
+                  </Link>
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block px-4 py-3 text-amber-50 hover:bg-slate-700/50 rounded-lg transition text-center font-medium"
+                  >
+                    Login / Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
         </div>

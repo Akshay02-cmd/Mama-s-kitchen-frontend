@@ -87,23 +87,24 @@ const MyOrdersPage = () => {
   }, [filterStatus]);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--gray-100)' }}>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <PageHeader 
           title="My Orders" 
           subtitle="Track and manage your orders" 
         />
 
         {/* Filter Tabs */}
-        <div className="mb-6 bg-white rounded-lg shadow p-2 flex gap-2 overflow-x-auto">
+        <div className="mb-8 bg-white rounded-2xl shadow-xl p-3 flex gap-3 overflow-x-auto border border-gray-100">
           {['all', 'PENDING', 'PREPARING', 'DELIVERED', 'CANCELLED'].map(status => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors"
+              className="px-6 py-3 rounded-xl font-bold whitespace-nowrap transition-all duration-300 transform hover:scale-105 shadow-sm"
               style={{
-                backgroundColor: filterStatus === status ? 'var(--primary-500)' : 'transparent',
-                color: filterStatus === status ? 'var(--white)' : 'var(--gray-700)'
+                backgroundColor: filterStatus === status ? 'var(--primary-600)' : 'transparent',
+                color: filterStatus === status ? 'var(--white)' : 'var(--gray-700)',
+                border: filterStatus === status ? 'none' : '2px solid var(--gray-200)'
               }}
             >
               {status === 'all' ? 'All Orders' : statusConfig[status].label}
@@ -113,20 +114,26 @@ const MyOrdersPage = () => {
 
         {/* Orders List */}
         {filteredOrders.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-            <p className="text-xl mb-4" style={{ color: 'var(--gray-700)' }}>
+          <div className="bg-white rounded-2xl shadow-xl p-16 text-center border border-gray-100">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--primary-50)' }}>
+              <span className="text-5xl">📦</span>
+            </div>
+            <p className="text-2xl font-bold mb-2" style={{ color: 'var(--gray-900)' }}>
               No orders found
+            </p>
+            <p className="text-lg mb-8" style={{ color: 'var(--gray-600)' }}>
+              Start exploring our delicious menu!
             </p>
             <Link
               to="/meals"
-              className="inline-block px-6 py-3 rounded-lg font-semibold"
-              style={{ backgroundColor: 'var(--primary-500)', color: 'var(--white)' }}
+              className="inline-block px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+              style={{ background: 'linear-gradient(135deg, var(--primary-600) 0%, var(--primary-500) 100%)', color: 'var(--white)' }}
             >
-              Browse Meals
+              🍴 Browse Meals
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {filteredOrders.map(order => (
               <OrderCard key={order._id} order={order} />
             ))}

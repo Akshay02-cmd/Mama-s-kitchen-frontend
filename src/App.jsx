@@ -15,6 +15,7 @@ import CustomerProfilePage from "./pages/CustomerProfilePage.jsx";
 import EditProfilePage from "./pages/EditProfilePage.jsx";
 import Header from "./components/common/Header.jsx";
 import Footer from "./components/common/Footer.jsx";
+import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 
 // 404 Page Component
 const NotFound = () => (
@@ -35,29 +36,102 @@ const App = () => {
       <Header />
       <main className="flex-1 pt-20">
         <Routes>
+          {/* Public Routes - Accessible without authentication */}
           <Route path="/" element={<About />} />
           <Route path="/home" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           
-          {/* Meals Routes */}
-          <Route path="/meals" element={<MealsListPage />} />
-          <Route path="/meals/:id" element={<MealDetailPage />} />
+          {/* Protected Public Browsing Routes - Require authentication */}
+          <Route 
+            path="/contact" 
+            element={
+              <ProtectedRoute>
+                <Contact />
+              </ProtectedRoute>
+            } 
+          />
           
-          {/* Order Routes */}
-          <Route path="/orders" element={<MyOrdersPage />} />
-          <Route path="/orders/:id" element={<OrderDetailPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
+          {/* Meals Routes - Protected, require authentication */}
+          <Route 
+            path="/meals" 
+            element={
+              <ProtectedRoute>
+                <MealsListPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/meals/:id" 
+            element={
+              <ProtectedRoute>
+                <MealDetailPage />
+              </ProtectedRoute>
+            } 
+          />
           
-          {/* Mess Routes */}
-          <Route path="/mess" element={<MessListPage />} />
-          <Route path="/mess/:id" element={<MessDetailPage />} />
+          {/* Order Routes - Protected, require authentication and complete profile */}
+          <Route 
+            path="/orders" 
+            element={
+              <ProtectedRoute requireProfileComplete={true}>
+                <MyOrdersPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/orders/:id" 
+            element={
+              <ProtectedRoute requireProfileComplete={true}>
+                <OrderDetailPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/checkout" 
+            element={
+              <ProtectedRoute requireProfileComplete={true}>
+                <CheckoutPage />
+              </ProtectedRoute>
+            } 
+          />
           
-          {/* Profile Routes */}
-          <Route path="/profile" element={<CustomerProfilePage />} />
-          <Route path="/profile/edit" element={<EditProfilePage />} />
+          {/* Mess Routes - Protected, require authentication */}
+          <Route 
+            path="/mess" 
+            element={
+              <ProtectedRoute>
+                <MessListPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/mess/:id" 
+            element={
+              <ProtectedRoute>
+                <MessDetailPage />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Profile Routes - Protected, require authentication */}
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <CustomerProfilePage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile/edit" 
+            element={
+              <ProtectedRoute>
+                <EditProfilePage />
+              </ProtectedRoute>
+            } 
+          />
           
           {/* 404 Fallback */}
           <Route path="*" element={<NotFound />} />

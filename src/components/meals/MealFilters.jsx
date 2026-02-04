@@ -4,15 +4,18 @@ const MealFilters = ({ filters, onFilterChange }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--gray-900)' }}>
-        Filter Meals
-      </h2>
+    <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-1 h-8 rounded-full" style={{ backgroundColor: 'var(--primary-600)' }}></div>
+        <h2 className="text-2xl font-bold" style={{ color: 'var(--gray-900)' }}>
+          Filter Meals
+        </h2>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Search */}
         <div>
-          <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
+          <label className="block mb-3 font-semibold text-sm uppercase tracking-wider" style={{ color: 'var(--gray-700)' }}>
             Search
           </label>
           <input
@@ -20,9 +23,9 @@ const MealFilters = ({ filters, onFilterChange }) => {
             value={filters.search}
             onChange={(e) => handleChange('search', e.target.value)}
             placeholder="Search meals..."
-            className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+            className="w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all duration-300"
             style={{ 
-              borderColor: 'var(--gray-500)',
+              borderColor: 'var(--gray-200)',
               color: 'var(--gray-900)'
             }}
           />
@@ -30,15 +33,15 @@ const MealFilters = ({ filters, onFilterChange }) => {
 
         {/* Category */}
         <div>
-          <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
+          <label className="block mb-3 font-semibold text-sm uppercase tracking-wider" style={{ color: 'var(--gray-700)' }}>
             Category
           </label>
           <select
             value={filters.category}
             onChange={(e) => handleChange('category', e.target.value)}
-            className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+            className="w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all duration-300 cursor-pointer"
             style={{ 
-              borderColor: 'var(--gray-500)',
+              borderColor: 'var(--gray-200)',
               color: 'var(--gray-900)'
             }}
           >
@@ -53,15 +56,15 @@ const MealFilters = ({ filters, onFilterChange }) => {
 
         {/* Dietary Type */}
         <div>
-          <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
+          <label className="block mb-3 font-semibold text-sm uppercase tracking-wider" style={{ color: 'var(--gray-700)' }}>
             Dietary Type
           </label>
           <select
             value={filters.dietaryType}
             onChange={(e) => handleChange('dietaryType', e.target.value)}
-            className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+            className="w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all duration-300 cursor-pointer"
             style={{ 
-              borderColor: 'var(--gray-500)',
+              borderColor: 'var(--gray-200)',
               color: 'var(--gray-900)'
             }}
           >
@@ -73,15 +76,15 @@ const MealFilters = ({ filters, onFilterChange }) => {
 
         {/* Price Range */}
         <div>
-          <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
+          <label className="block mb-3 font-semibold text-sm uppercase tracking-wider" style={{ color: 'var(--gray-700)' }}>
             Price Range
           </label>
           <select
             value={filters.priceRange}
             onChange={(e) => handleChange('priceRange', e.target.value)}
-            className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+            className="w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all duration-300 cursor-pointer"
             style={{ 
-              borderColor: 'var(--gray-500)',
+              borderColor: 'var(--gray-200)',
               color: 'var(--gray-900)'
             }}
           >
@@ -95,16 +98,18 @@ const MealFilters = ({ filters, onFilterChange }) => {
 
       {/* Clear Filters */}
       {(filters.search || filters.category !== 'all' || filters.dietaryType !== 'all' || filters.priceRange !== 'all') && (
-        <button
-          onClick={() => onFilterChange({ search: '', category: 'all', dietaryType: 'all', priceRange: 'all' })}
-          className="mt-4 px-4 py-2 rounded-lg font-medium"
-          style={{ 
-            backgroundColor: 'var(--primary-500)', 
-            color: 'var(--white)' 
-          }}
-        >
-          Clear All Filters
-        </button>
+        <div className="mt-6 pt-6 border-t border-gray-100">
+          <button
+            onClick={() => onFilterChange({ search: '', category: 'all', dietaryType: 'all', priceRange: 'all' })}
+            className="px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+            style={{ 
+              backgroundColor: 'var(--primary-600)', 
+              color: 'var(--white)' 
+            }}
+          >
+            ✕ Clear All Filters
+          </button>
+        </div>
       )}
     </div>
   );

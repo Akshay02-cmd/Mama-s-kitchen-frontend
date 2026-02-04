@@ -1,50 +1,135 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import * as profileService from '../services/profile.service';
 import Breadcrumb from '../components/common/Breadcrumb';
 import Card from '../components/common/Card';
 
-// Mock profile data
-const initialProfile = {
-  name: 'Rahul Sharma',
-  email: 'rahul.sharma@example.com',
-  phone: '+91 9876543210',
-  address: 'Hostel Block A, Room 201, Delhi University, New Delhi - 110007',
-  dietaryType: 'Non-Veg',
-  favoriteCuisines: ['North Indian', 'Mughlai', 'Chinese']
-};
-
-const cuisineOptions = [
-  'North Indian', 'South Indian', 'Mughlai', 'Chinese', 
-  'Continental', 'Coastal', 'Maharashtrian', 'Gujarati', 
-  'Bengali', 'Punjabi', 'Kerala', 'Tamil'
-];
-
 const EditProfilePage = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(initialProfile);
-  const [selectedCuisines, setSelectedCuisines] = useState(initialProfile.favoriteCuisines);
+  const location = useLocation();
+  const { user, updateProfileStatus } = useAuth();
+  const requiresCompletion = location.state?.requiresCompletion || false;
+  
+  const [formData, setFormData] = useState({
+    phone: '',
+    address: '',
+  });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [isNewProfile, setIsNewProfile] = useState(false);
+
+  // Fetch existing profile on mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        let response;
+        
+        if (user.role === 'CUSTOMER') {
+          response = await profileService.getCustomerProfile();
+        } else if (user.role === 'OWNER') {
+          response = await profileService.getOwnerProfile();
+        }
+
+        if (response?.profile) {
+          setFormData({
+            phone: response.profile.phone || '',
+            address: response.profile.address || '',
+          });
+          setIsNewProfile(false);
+        }
+      } catch (err) {
+        // Profile doesn't exist, this is a new profile
+        console.log('No existing profile, creating new one');
+        setIsNewProfile(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchProfile();
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
-  const toggleCuisine = (cuisine) => {
-    if (selectedCuisines.includes(cuisine)) {
-      setSelectedCuisines(selectedCuisines.filter(c => c !== cuisine));
-    } else {
-      setSelectedCuisines([...selectedCuisines, cuisine]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validate phone number (Indian format)
+    const phoneRegex = /^[6-9]\d{9}$/;
+    const cleanPhone = formData.phone.replace(/[\s\-\+]/g, '').slice(-10);
+    
+    if (!phoneRegex.test(cleanPhone)) {
+      setError('Please enter a valid Indian mobile number (10 digits starting with 6-9)');
+      return;
+    }
+
+    if (formData.address.length < 10 || formData.address.length > 300) {
+      setError('Address must be between 10 and 300 characters');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setError('');
+
+      const profileData = {
+        phone: cleanPhone,
+        address: formData.address,
+      };
+
+      if (user.role === 'CUSTOMER') {
+        if (isNewProfile) {
+          await profileService.createCustomerProfile(profileData);
+        } else {
+          await profileService.updateCustomerProfile(profileData);
+        }
+      } else if (user.role === 'OWNER') {
+        if (isNewProfile) {
+          await profileService.createOwnerProfile(profileData);
+        } else {
+          await profileService.updateOwnerProfile(profileData);
+        }
+      }
+
+      // Update profile completion status
+      updateProfileStatus(true);
+      
+      // Navigate based on whether this was required
+      if (requiresCompletion && location.state?.from) {
+        navigate(location.state.from.pathname, { replace: true });
+      } else {
+        navigate('/profile');
+      }
+    } catch (err) {
+      console.error('Profile update error:', err);
+      setError(err.response?.data?.message || 'Failed to save profile. Please try again.');
+    } finally {
+      setSaving(false);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Mock update
-    alert('Profile updated successfully!');
-    navigate('/profile');
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--gray-100)' }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: 'var(--primary-500)' }}></div>
+          <p style={{ color: 'var(--gray-700)' }}>Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--gray-100)' }}>
@@ -52,57 +137,35 @@ const EditProfilePage = () => {
         <Breadcrumb backTo="/profile" backText="← Back to Profile" />
 
         <Card className="p-8">
+          {requiresCompletion && (
+            <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: 'var(--warning-100)', borderLeft: '4px solid var(--warning-500)' }}>
+              <p style={{ color: 'var(--warning-700)' }} className="font-medium">
+                ⚠️ Please complete your profile to continue
+              </p>
+            </div>
+          )}
+
           <h1 className="text-3xl font-bold mb-6" style={{ color: 'var(--gray-900)' }}>
-            Edit Profile
+            {isNewProfile ? 'Complete Your Profile' : 'Edit Profile'}
           </h1>
 
+          {error && (
+            <div className="mb-4 p-4 rounded-lg" style={{ backgroundColor: 'var(--error-100)' }}>
+              <p style={{ color: 'var(--error-700)' }}>{error}</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
-            {/* Personal Information */}
+            {/* Profile Information */}
             <div className="mb-8">
               <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--gray-900)' }}>
-                Personal Information
+                {user.role === 'CUSTOMER' ? 'Customer' : 'Business'} Information
               </h2>
               
               <div className="space-y-4">
                 <div>
                   <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
-                    style={{ 
-                      borderColor: 'var(--gray-500)',
-                      color: 'var(--gray-900)'
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
-                    style={{ 
-                      borderColor: 'var(--gray-500)',
-                      color: 'var(--gray-900)'
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
-                    Phone *
+                    Phone Number *
                   </label>
                   <input
                     type="tel"
@@ -110,17 +173,21 @@ const EditProfilePage = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     required
+                    placeholder="9876543210"
                     className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
                     style={{ 
                       borderColor: 'var(--gray-500)',
                       color: 'var(--gray-900)'
                     }}
                   />
+                  <p className="mt-1 text-sm" style={{ color: 'var(--gray-600)' }}>
+                    10-digit Indian mobile number
+                  </p>
                 </div>
 
                 <div>
                   <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
-                    Delivery Address *
+                    {user.role === 'CUSTOMER' ? 'Delivery Address' : 'Business Address'} *
                   </label>
                   <textarea
                     name="address"
@@ -128,68 +195,16 @@ const EditProfilePage = () => {
                     onChange={handleChange}
                     required
                     rows="3"
+                    placeholder="Enter your complete address (minimum 10 characters)"
                     className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
                     style={{ 
                       borderColor: 'var(--gray-500)',
                       color: 'var(--gray-900)'
                     }}
                   />
-                </div>
-              </div>
-            </div>
-
-            {/* Food Preferences */}
-            <div className="mb-8">
-              <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--gray-900)' }}>
-                Food Preferences
-              </h2>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
-                    Dietary Preference *
-                  </label>
-                  <select
-                    name="dietaryType"
-                    value={formData.dietaryType}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
-                    style={{ 
-                      borderColor: 'var(--gray-500)',
-                      color: 'var(--gray-900)'
-                    }}
-                  >
-                    <option value="Veg">Vegetarian</option>
-                    <option value="Non-Veg">Non-Vegetarian</option>
-                    <option value="Vegan">Vegan</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block mb-3 font-medium" style={{ color: 'var(--gray-900)' }}>
-                    Favorite Cuisines (Select multiple)
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {cuisineOptions.map((cuisine) => (
-                      <button
-                        key={cuisine}
-                        type="button"
-                        onClick={() => toggleCuisine(cuisine)}
-                        className="px-4 py-2 rounded-full font-medium transition-colors"
-                        style={{
-                          backgroundColor: selectedCuisines.includes(cuisine) 
-                            ? 'var(--primary-500)' 
-                            : 'var(--gray-100)',
-                          color: selectedCuisines.includes(cuisine) 
-                            ? 'var(--white)' 
-                            : 'var(--gray-700)'
-                        }}
-                      >
-                        {cuisine}
-                      </button>
-                    ))}
-                  </div>
+                  <p className="mt-1 text-sm" style={{ color: 'var(--gray-600)' }}>
+                    {formData.address.length}/300 characters
+                  </p>
                 </div>
               </div>
             </div>
@@ -198,25 +213,28 @@ const EditProfilePage = () => {
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="flex-1 py-3 rounded-lg font-semibold"
+                disabled={saving}
+                className="flex-1 py-3 rounded-lg font-semibold disabled:opacity-50"
                 style={{ 
                   backgroundColor: 'var(--primary-500)', 
                   color: 'var(--white)' 
                 }}
               >
-                Save Changes
+                {saving ? 'Saving...' : (isNewProfile ? 'Create Profile' : 'Save Changes')}
               </button>
-              <Link
-                to="/profile"
-                className="flex-1 py-3 rounded-lg font-semibold text-center"
-                style={{
-                  backgroundColor: 'var(--white)',
-                  color: 'var(--gray-700)',
-                  border: '2px solid var(--gray-500)'
-                }}
-              >
-                Cancel
-              </Link>
+              {!requiresCompletion && (
+                <Link
+                  to="/profile"
+                  className="flex-1 py-3 rounded-lg font-semibold text-center"
+                  style={{
+                    backgroundColor: 'var(--white)',
+                    color: 'var(--gray-700)',
+                    border: '2px solid var(--gray-500)'
+                  }}
+                >
+                  Cancel
+                </Link>
+              )}
             </div>
           </form>
         </Card>

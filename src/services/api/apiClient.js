@@ -68,27 +68,42 @@ apiClient.interceptors.response.use(
     // Handle response errors
     const errorResponse = error.response;
 
-    // Log error in development
+    // Log error in development (except for expected 404s on profile endpoints)
     if (import.meta.env.DEV) {
-      console.error('[API Error]', {
-        url: error.config?.url,
-        method: error.config?.method,
-        status: errorResponse?.status,
-        data: errorResponse?.data,
-      });
+      const url = error.config?.url || '';
+      const status = errorResponse?.status;
+      
+      // Don't log expected errors
+      const isExpectedError = (
+        (status === 404 && url.includes('/profile/')) || // Profile not found is expected
+        (status === 401 && !url.includes('/auth/')) // 401 on non-auth endpoints might be profile checks
+      );
+      
+      if (!isExpectedError) {
+        console.error('[API Error]', {
+          url: error.config?.url,
+          method: error.config?.method,
+          status: errorResponse?.status,
+          data: errorResponse?.data,
+        });
+      }
     }
 
     // Handle specific error cases
     if (errorResponse) {
       const { status, data } = errorResponse;
 
-      // 401 Unauthorized - Clear token and redirect to login
+      // 401 Unauthorized - Only clear auth for authentication endpoints
       if (status === 401) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        // Redirect to login page
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
+        const url = error.config?.url || '';
+        // Only logout for actual auth failures, not for missing profiles
+        if (url.includes('/auth/') || data?.message?.toLowerCase().includes('token')) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          // Redirect to login page
+          if (window.location.pathname !== '/login') {
+            window.location.href = '/login';
+          }
         }
       }
 

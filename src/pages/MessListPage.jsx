@@ -1,8 +1,32 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import PageHeader from '../components/common/PageHeader';
 import MessCard from '../components/mess/MessCard';
+import { getAllMesses } from '../services/mess.service';
 
-// Mock messes data
+const MessListPage = () => {
+  const [messes, setMesses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchMesses = async () => {
+      try {
+        setLoading(true);
+        const response = await getAllMesses();
+        if (response.success && response.data) {
+          setMesses(response.data);
+        }
+      } catch (err) {
+        console.error('Error fetching messes:', err);
+        setError('Failed to load messes');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMesses();
+  }, []);
+
+// Fallback mock data
 const mockMesses = [
   {
     _id: 'mess1',
@@ -62,16 +86,16 @@ const mockMesses = [
   }
 ];
 
-const MessListPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredMesses = useMemo(() => {
-    return mockMesses.filter(mess =>
+    const messesToFilter = messes.length > 0 ? messes : mockMesses;
+    return messesToFilter.filter(mess =>
       mess.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      mess.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      mess.cuisineTypes.some(cuisine => cuisine.toLowerCase().includes(searchQuery.toLowerCase()))
+      mess.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      mess.cuisineTypes?.some(cuisine => cuisine.toLowerCase().includes(searchQuery.toLowerCase()))
     );
-  }, [searchQuery]);
+  }, [searchQuery, messes]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--gray-100)' }}>
