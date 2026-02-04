@@ -23,6 +23,7 @@
   "homepage": "https://github.com/Akshay02-cmd/Mama-s-kitchen-frontend#readme",
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
+    "axios": "^1.13.4",
     "lucide-react": "^0.562.0",
     "prop-types": "^15.8.1",
     "react": "^19.2.0",
