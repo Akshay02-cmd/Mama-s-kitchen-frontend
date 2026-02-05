@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home.jsx";
-import About from "./pages/AboutPage.jsx";
 import Contact from "./pages/Contact.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
@@ -15,130 +14,136 @@ import CustomerProfilePage from "./pages/CustomerProfilePage.jsx";
 import EditProfilePage from "./pages/EditProfilePage.jsx";
 import Header from "./components/common/Header.jsx";
 import Footer from "./components/common/Footer.jsx";
+import ErrorBoundary from "./components/common/ErrorBoundary.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 
 // 404 Page Component
-const NotFound = () => (
-  <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--gray-100)' }}>
-    <div className="text-center">
-      <h1 className="text-6xl font-bold mb-4" style={{ color: 'var(--primary-500)' }}>404</h1>
-      <p className="text-xl mb-4" style={{ color: 'var(--gray-700)' }}>Page Not Found</p>
-      <a href="/" className="px-6 py-3 rounded-lg" style={{ backgroundColor: 'var(--primary-500)', color: 'white' }}>
-        Go Home
-      </a>
+const NotFound = () => {
+  return (
+    <div className="min-h-screen flex items-center justify-center" 
+      style={{ backgroundColor: 'var(--bg-secondary)' }}>
+      <div className="text-center">
+        <h1 className="text-6xl font-bold mb-4" style={{ color: 'var(--primary-500)' }}>404</h1>
+        <p className="text-xl mb-4" style={{ color: 'var(--text-secondary)' }}>Page Not Found</p>
+        <a href="/" className="px-6 py-3 rounded-lg" style={{ backgroundColor: 'var(--primary-500)', color: 'white' }}>
+          Go Home
+        </a>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const App = () => {
   return (
-    <div className="App min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1 pt-20">
-        <Routes>
-          {/* Public Routes - Accessible without authentication */}
-          <Route path="/" element={<About />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          
-          {/* Protected Public Browsing Routes - Require authentication */}
-          <Route 
-            path="/contact" 
-            element={
-              <ProtectedRoute>
-                <Contact />
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* Meals Routes - Protected, require authentication */}
-          <Route 
-            path="/meals" 
-            element={
-              <ProtectedRoute>
-                <MealsListPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/meals/:id" 
-            element={
-              <ProtectedRoute>
-                <MealDetailPage />
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* Order Routes - Protected, require authentication and complete profile */}
-          <Route 
-            path="/orders" 
-            element={
-              <ProtectedRoute requireProfileComplete={true}>
-                <MyOrdersPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/orders/:id" 
-            element={
-              <ProtectedRoute requireProfileComplete={true}>
-                <OrderDetailPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/checkout" 
-            element={
-              <ProtectedRoute requireProfileComplete={true}>
-                <CheckoutPage />
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* Mess Routes - Protected, require authentication */}
-          <Route 
-            path="/mess" 
-            element={
-              <ProtectedRoute>
-                <MessListPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/mess/:id" 
-            element={
-              <ProtectedRoute>
-                <MessDetailPage />
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* Profile Routes - Protected, require authentication */}
-          <Route 
-            path="/profile" 
-            element={
-              <ProtectedRoute>
-                <CustomerProfilePage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/profile/edit" 
-            element={
-              <ProtectedRoute>
-                <EditProfilePage />
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* 404 Fallback */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+    <ErrorBoundary>
+      <div className="App min-h-screen flex flex-col overflow-x-hidden" 
+        style={{ backgroundColor: 'var(--bg-secondary)' }}>
+        <Header />
+        <main className="flex-1 pt-20">
+          <Routes>
+            {/* Public Routes - Accessible without authentication */}
+            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            
+            {/* Protected Public Browsing Routes - Require authentication */}
+            <Route 
+              path="/contact" 
+              element={
+                <ProtectedRoute>
+                  <Contact />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Meals Routes - Protected, require authentication */}
+            <Route 
+              path="/meals" 
+              element={
+                <ProtectedRoute>
+                  <MealsListPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/meals/:id" 
+              element={
+                <ProtectedRoute>
+                  <MealDetailPage />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Order Routes - Protected, require authentication and complete profile */}
+            <Route 
+              path="/orders" 
+              element={
+                <ProtectedRoute requireProfileComplete={true}>
+                  <MyOrdersPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/orders/:id" 
+              element={
+                <ProtectedRoute requireProfileComplete={true}>
+                  <OrderDetailPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/checkout" 
+              element={
+                <ProtectedRoute requireProfileComplete={true}>
+                  <CheckoutPage />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Mess Routes - Protected, require authentication */}
+            <Route 
+              path="/mess" 
+              element={
+                <ProtectedRoute>
+                  <MessListPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/mess/:id" 
+              element={
+                <ProtectedRoute>
+                  <MessDetailPage />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Profile Routes - Protected, require authentication */}
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <CustomerProfilePage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile/edit" 
+              element={
+                <ProtectedRoute>
+                  <EditProfilePage />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* 404 Fallback */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </ErrorBoundary>
   );
 };
 export default App;

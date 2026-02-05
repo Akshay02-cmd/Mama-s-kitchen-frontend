@@ -1,14 +1,17 @@
 import { useState, useMemo, useEffect } from 'react';
 import MealCard from '../components/meals/MealCard';
+import MealDetailModal from '../components/meals/MealDetailModal';
 import MealFilters from '../components/meals/MealFilters';
-import PageHeader from '../components/common/PageHeader';
 import Pagination from '../components/common/Pagination';
+import Sidebar from '../components/common/Sidebar';
 import { getAllMeals } from '../services/meal.service';
 
 const MealsListPage = () => {
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedMeal, setSelectedMeal] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchMeals = async () => {
@@ -91,62 +94,70 @@ const MealsListPage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleMealClick = (meal) => {
+    setSelectedMeal(meal);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMeal(null);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <PageHeader 
-          title="Our Meals"
-          subtitle="Discover delicious meals from various mess kitchens"
-        />
+    <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
+      <Sidebar />
+      
+      <main className="flex-1 md:ml-64 p-4 md:p-8">
+        <h1 
+          className="text-3xl font-bold mb-6"
+          style={{ color: '#111827' }}
+        >
+          Our Meals
+        </h1>
 
         {/* Filters */}
-        <div className="mb-10">
+        <div className="mb-6">
           <MealFilters filters={filters} onFilterChange={handleFilterChange} />
         </div>
 
         {/* Loading and Error States */}
         {loading && (
-          <div className="text-center py-20 bg-white rounded-2xl shadow-md">
-            <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-gray-200" style={{ borderTopColor: 'var(--primary-600)' }}></div>
-            <p className="mt-6 text-lg font-medium" style={{ color: 'var(--gray-600)' }}>Loading delicious meals...</p>
+          <div className="text-center py-20">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <p className="mt-4" style={{ color: '#6B7280' }}>Loading meals...</p>
           </div>
         )}
 
         {error && (
-          <div className="text-center py-20 bg-white rounded-2xl shadow-md">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(231, 76, 60, 0.1)' }}>
-              <span className="text-4xl">⚠️</span>
-            </div>
-            <p className="text-xl font-semibold" style={{ color: 'var(--error)' }}>{error}</p>
+          <div className="text-center py-20">
+            <p style={{ color: '#EF4444' }}>{error}</p>
           </div>
         )}
 
         {/* Meals Grid */}
         {!loading && !error && (
-          <div className="mt-8">
+          <div>
             {filteredMeals.length === 0 ? (
-              <div className="text-center py-20 bg-white rounded-2xl shadow-md">
-                <div className="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--primary-50)' }}>
-                  <span className="text-5xl">🍴</span>
-                </div>
-                <p className="text-2xl font-bold mb-2" style={{ color: 'var(--gray-900)' }}>
-                  No meals found
-                </p>
-                <p className="text-lg" style={{ color: 'var(--gray-600)' }}>
-                  Try adjusting your filters to discover more delicious options
+              <div className="text-center py-20">
+                <p className="text-xl" style={{ color: '#6B7280' }}>
+                  No meals found. Try adjusting your filters.
                 </p>
               </div>
             ) : (
               <>
-                {/* Results info and items per page selector */}
+                {/* Results info */}
                 <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <p className="text-lg font-medium" style={{ color: 'var(--gray-700)' }}>
-                      <span className="font-bold text-2xl" style={{ color: 'var(--primary-600)' }}>{filteredMeals.length}</span> meal{filteredMeals.length !== 1 ? 's' : ''} found
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3 bg-white px-5 py-3 rounded-xl shadow-md border border-gray-100">
-                    <label htmlFor="itemsPerPage" className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--gray-600)' }}>
+                  <p style={{ color: '#6B7280' }}>
+                    <span className="font-bold" style={{ color: '#111827' }}>{filteredMeals.length}</span> meal{filteredMeals.length !== 1 ? 's' : ''} found
+                  </p>
+                  <div className="flex items-center gap-3 px-4 py-2 rounded-lg"
+                    style={{ 
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #E5E7EB'
+                    }}>
+                    <label htmlFor="itemsPerPage" className="text-sm font-medium"
+                      style={{ color: '#6B7280' }}>
                       Show:
                     </label>
                     <select
@@ -156,25 +167,24 @@ const MealsListPage = () => {
                         setItemsPerPage(Number(e.target.value));
                         setCurrentPage(1);
                       }}
-                      className="px-4 py-2 rounded-lg border-2 font-semibold cursor-pointer transition-all focus:outline-none focus:ring-2"
+                      className="px-3 py-1 rounded border font-medium cursor-pointer"
                       style={{ 
-                        borderColor: 'var(--gray-200)',
-                        color: 'var(--gray-700)',
-                        backgroundColor: 'var(--white)'
+                        backgroundColor: '#FFFFFF',
+                        borderColor: '#D1D5DB',
+                        color: '#111827'
                       }}
                     >
                       <option value={6}>6</option>
                       <option value={12}>12</option>
                       <option value={24}>24</option>
-                      <option value={48}>48</option>
                     </select>
                   </div>
                 </div>
 
                 {/* Meals grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                   {paginatedMeals.map(meal => (
-                    <MealCard key={meal._id} meal={meal} />
+                    <MealCard key={meal._id} meal={meal} showAddToCart={true} onCardClick={handleMealClick} />
                   ))}
                 </div>
 
@@ -185,13 +195,19 @@ const MealsListPage = () => {
                   onPageChange={handlePageChange}
                   totalItems={filteredMeals.length}
                   itemsPerPage={itemsPerPage}
-                  className="mt-8"
                 />
               </>
             )}
           </div>
         )}
-      </div>
+      </main>
+
+      {/* Meal Detail Modal */}
+      <MealDetailModal 
+        meal={selectedMeal}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };

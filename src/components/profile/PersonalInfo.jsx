@@ -10,7 +10,7 @@ const PersonalInfo = ({ profile }) => {
             Full Name
           </label>
           <p className="text-lg font-semibold" style={{ color: 'var(--gray-900)' }}>
-            {profile.userId.name}
+            {profile?.userId?.name || 'N/A'}
           </p>
         </div>
         <div>
@@ -18,7 +18,7 @@ const PersonalInfo = ({ profile }) => {
             Email
           </label>
           <p className="text-lg font-semibold" style={{ color: 'var(--gray-900)' }}>
-            {profile.userId.email}
+            {profile?.userId?.email || 'N/A'}
           </p>
         </div>
         <div>
@@ -26,7 +26,7 @@ const PersonalInfo = ({ profile }) => {
             Phone
           </label>
           <p className="text-lg font-semibold" style={{ color: 'var(--gray-900)' }}>
-            {profile.userId.phone}
+            {profile?.userId?.phone || profile?.phone || 'N/A'}
           </p>
         </div>
         <div>
@@ -34,7 +34,7 @@ const PersonalInfo = ({ profile }) => {
             Dietary Preference
           </label>
           <p className="text-lg font-semibold" style={{ color: 'var(--gray-900)' }}>
-            {profile.preferences.dietaryType}
+            {profile?.preferences?.dietaryType || 'Not specified'}
           </p>
         </div>
       </div>

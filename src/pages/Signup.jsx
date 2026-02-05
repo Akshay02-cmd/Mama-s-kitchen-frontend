@@ -93,12 +93,8 @@ const Signup = () => {
     try {
       const response = await register(apiData);
       if (response.success) {
-        // Redirect based on role
-        if (formData.role === "OWNER") {
-          navigate("/profile/owner");
-        } else {
-          navigate("/");
-        }
+        // Redirect to home page after successful registration
+        navigate("/");
       }
     } catch (error) {
       console.error("Registration error:", error);

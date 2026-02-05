@@ -69,7 +69,9 @@ const Login = () => {
       const response = await login(formData);
       if (response.success) {
         // Redirect to the page they were trying to access, or home
-        navigate(from, { replace: true });
+        // If coming from login page directly, redirect to home
+        const redirectPath = from === "/login" ? "/" : from;
+        navigate(redirectPath, { replace: true });
       }
     } catch (error) {
       console.error("Login error:", error);

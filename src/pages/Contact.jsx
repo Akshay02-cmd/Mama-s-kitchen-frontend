@@ -2,7 +2,7 @@ import { ContactHeader, ContactForm, ContactInfo } from "../components/contact";
 
 const Contact = () => {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
+    <main className="min-h-screen bg-linear-to-br from-slate-50 via-white to-gray-50">
       <ContactHeader />
 
       {/* Contact Content */}

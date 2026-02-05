@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import PageHeader from '../components/common/PageHeader';
 import OrderCard from '../components/orders/OrderCard';
+import Sidebar from '../components/common/Sidebar.jsx';
 
 // Mock orders data
 const mockOrders = [
@@ -87,24 +87,31 @@ const MyOrdersPage = () => {
   }, [filterStatus]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <PageHeader 
-          title="My Orders" 
-          subtitle="Track and manage your orders" 
-        />
+    <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
+      <Sidebar />
+      <main className="flex-1 md:ml-64 p-4 md:p-8">
+        <h1 
+          className="text-3xl font-bold mb-6"
+          style={{ color: '#111827' }}
+        >
+          My Orders
+        </h1>
 
         {/* Filter Tabs */}
-        <div className="mb-8 bg-white rounded-2xl shadow-xl p-3 flex gap-3 overflow-x-auto border border-gray-100">
+        <div className="mb-8 flex gap-3 overflow-x-auto">
           {['all', 'PENDING', 'PREPARING', 'DELIVERED', 'CANCELLED'].map(status => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className="px-6 py-3 rounded-xl font-bold whitespace-nowrap transition-all duration-300 transform hover:scale-105 shadow-sm"
+              className="px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all"
               style={{
-                backgroundColor: filterStatus === status ? 'var(--primary-600)' : 'transparent',
-                color: filterStatus === status ? 'var(--white)' : 'var(--gray-700)',
-                border: filterStatus === status ? 'none' : '2px solid var(--gray-200)'
+                backgroundColor: filterStatus === status 
+                  ? '#3B82F6'
+                  : '#FFFFFF',
+                color: filterStatus === status 
+                  ? '#FFFFFF' 
+                  : '#6B7280',
+                border: '1px solid #E5E7EB'
               }}
             >
               {status === 'all' ? 'All Orders' : statusConfig[status].label}
@@ -114,22 +121,23 @@ const MyOrdersPage = () => {
 
         {/* Orders List */}
         {filteredOrders.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-xl p-16 text-center border border-gray-100">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--primary-50)' }}>
-              <span className="text-5xl">📦</span>
-            </div>
-            <p className="text-2xl font-bold mb-2" style={{ color: 'var(--gray-900)' }}>
+          <div className="text-center py-20 rounded-lg"
+            style={{ 
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E5E7EB'
+            }}>
+            <p className="text-xl mb-4" style={{ color: '#111827' }}>
               No orders found
             </p>
-            <p className="text-lg mb-8" style={{ color: 'var(--gray-600)' }}>
-              Start exploring our delicious menu!
-            </p>
             <Link
-              to="/meals"
-              className="inline-block px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-              style={{ background: 'linear-gradient(135deg, var(--primary-600) 0%, var(--primary-500) 100%)', color: 'var(--white)' }}
+              to="/home"
+              className="inline-block px-6 py-3 rounded-lg font-medium transition-all"
+              style={{ 
+                backgroundColor: '#3B82F6',
+                color: '#FFFFFF'
+              }}
             >
-              🍴 Browse Meals
+              Browse Meals
             </Link>
           </div>
         ) : (
@@ -139,7 +147,7 @@ const MyOrdersPage = () => {
             ))}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 };

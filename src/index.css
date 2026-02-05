@@ -1,40 +1,100 @@
 @import 'tailwindcss';
 
+/* Prevent horizontal scrolling globally */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Light Mode (Default) */
 :root {
-  /* Primary Colors */
-  --primary-50: #FFF5F0;
-  --primary-100: #FFE8DC;
-  --primary-500: #FF6B35;    /* Main brand color - Warm Orange */
-  --primary-600: #E65A2A;
-  --primary-700: #CC4A1F;
+  /* Primary Colors - Modern Purple/Violet */
+  --primary-50: #F5F3FF;
+  --primary-100: #EDE9FE;
+  --primary-200: #DDD6FE;
+  --primary-300: #C4B5FD;
+  --primary-400: #A78BFA;
+  --primary-500: #8B5CF6;    /* Main brand color - Vibrant Purple */
+  --primary-600: #7C3AED;
+  --primary-700: #6D28D9;
+  --primary-800: #5B21B6;
+  --primary-900: #4C1D95;
 
-  /* Secondary Colors */
-  --secondary-500: #2C3E50;  /* Deep Blue-Gray */
-  --secondary-600: #233140;
-  --secondary-700: #1A2530;
+  /* Secondary Colors - Elegant Blue */
+  --secondary-50: #EFF6FF;
+  --secondary-100: #DBEAFE;
+  --secondary-500: #3B82F6;  /* Sky Blue */
+  --secondary-600: #2563EB;
+  --secondary-700: #1D4ED8;
+  --secondary-800: #1E40AF;
 
-  /* Accent */
-  --accent-500: #27AE60;     /* Fresh Green - for success states */
+  /* Accent - Teal/Cyan */
+  --accent-400: #2DD4BF;
+  --accent-500: #14B8A6;     /* Fresh Teal */
+  --accent-600: #0D9488;
 
-  /* Neutrals */
-  --gray-900: #1A1A1A;       /* Text, headers */
-  --gray-700: #4A5568;       /* Secondary text */
-  --gray-600: #718096;       /* Tertiary text */
-  --gray-500: #A0AEC0;       /* Disabled states, borders */
-  --gray-200: #E2E8F0;       /* Light borders */
-  --gray-100: #EDF2F7;       /* Backgrounds, cards */
-  --white: #FFFFFF;
+  /* Background & Surface */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F9FAFB;
+  --bg-tertiary: #F3F4F6;
+  --surface: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+
+  /* Text Colors */
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-tertiary: #6B7280;
+  --text-muted: #9CA3AF;
+
+  /* Borders */
+  --border-light: #E5E7EB;
+  --border-medium: #D1D5DB;
+  --border-dark: #9CA3AF;
 
   /* Semantic Colors */
-  --success: #27AE60;        /* Order delivered, completed */
-  --warning: #F39C12;        /* Pending, preparing */
-  --error: #E74C3C;          /* Cancelled, errors */
-  --info: #3498DB;           /* General info */
+  --success: #10B981;        /* Emerald Green */
+  --warning: #F59E0B;        /* Amber */
+  --error: #EF4444;          /* Red */
+  --info: #3B82F6;           /* Blue */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
 }
 
+/* Smooth transitions */
 * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   scroll-behavior: smooth;
 }
+
+/* Utility classes for theme-aware colors */
+.bg-primary {
+  background-color: var(--bg-primary);
+}
+
+.bg-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.bg-surface {
+  background-color: var(--surface);
+}
+
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.border-light {
+  border-color: var(--border-light);
+}
+
 
 @layer utilities {
   @keyframes fade-in {

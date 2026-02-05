@@ -1,75 +1,145 @@
-import PageHeader from '../components/common/PageHeader';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProfileCard from '../components/profile/ProfileCard';
 import ProfileStats from '../components/profile/ProfileStats';
 import PersonalInfo from '../components/profile/PersonalInfo';
 import FoodPreferences from '../components/profile/FoodPreferences';
 import QuickActions from '../components/profile/QuickActions';
 import Card from '../components/common/Card';
-
-// Mock customer profile data
-const mockProfile = {
-  _id: 'cust1',
-  userId: {
-    name: 'Rahul Sharma',
-    email: 'rahul.sharma@example.com',
-    phone: '+91 9876543210'
-  },
-  address: 'Hostel Block A, Room 201, Delhi University, New Delhi - 110007',
-  preferences: {
-    dietaryType: 'Non-Veg',
-    favoriteCuisines: ['North Indian', 'Mughlai', 'Chinese']
-  },
-  stats: {
-    totalOrders: 45,
-    totalSpent: 12500,
-    favoriteMessId: { name: 'Delhi Mess', _id: 'mess1' }
-  }
-};
+import { useAuth } from '../hooks/useAuth';
+import Sidebar from '../components/common/Sidebar.jsx';
+import { getCustomerProfile } from '../services/profile.service';
+import { LogOut } from 'lucide-react';
 
 const CustomerProfilePage = () => {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <PageHeader 
-          title="My Profile" 
-          subtitle="Manage your personal information and preferences" 
-        />
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const response = await getCustomerProfile();
+        setProfile(response.profile);
+      } catch (err) {
+        console.error('Error fetching profile:', err);
+        
+        // If unauthorized, redirect to login
+        if (err.status === 401) {
+          await logout();
+          navigate('/login');
+          return;
+        }
+        
+        setError('Failed to load profile. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [logout, navigate]);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+  
+  if (loading) {
+    return (
+      <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
+        <Sidebar />
+        <main className="flex-1 md:ml-64 p-4 md:p-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
+        <Sidebar />
+        <main className="flex-1 md:ml-64 p-4 md:p-8">
+          <div className="text-center py-20">
+            <p style={{ color: '#EF4444' }}>{error || 'Profile not found'}</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
+      <Sidebar />
+      <main className="flex-1 md:ml-64 p-4 md:p-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 
+            className="text-3xl font-bold"
+            style={{ color: '#111827' }}
+          >
+            My Profile
+          </h1>
+          
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all hover:opacity-90"
+            style={{ 
+              backgroundColor: '#EF4444',
+              color: '#FFFFFF'
+            }}
+          >
+            <LogOut className="w-5 h-5" />
+            Logout
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Sidebar */}
           <div className="space-y-6">
-            <ProfileCard profile={mockProfile} />
-            <ProfileStats stats={mockProfile.stats} />
+            <ProfileCard profile={profile} />
+            <ProfileStats stats={profile.stats || { totalOrders: 0, totalSpent: 0 }} />
           </div>
 
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            <PersonalInfo profile={mockProfile} />
+            <PersonalInfo profile={profile} />
 
             {/* Delivery Address */}
-            <Card className="p-8 shadow-xl border border-gray-100">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-1 h-8 rounded-full" style={{ backgroundColor: 'var(--primary-600)' }}></div>
-                <h2 className="text-2xl font-bold" style={{ color: 'var(--gray-900)' }}>
-                  Delivery Address
-                </h2>
-              </div>
-              <p className="text-lg leading-relaxed" style={{ color: 'var(--gray-700)' }}>
-                {mockProfile.address}
+            <div className="p-6 rounded-lg"
+              style={{ 
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #E5E7EB'
+              }}>
+              <h2 className="text-xl font-bold mb-4" style={{ color: '#111827' }}>
+                Delivery Address
+              </h2>
+              <p style={{ color: '#6B7280' }}>
+                {profile.address}
               </p>
-            </Card>
+            </div>
 
             <FoodPreferences 
-              preferences={mockProfile.preferences} 
-              favoriteMessId={mockProfile.stats.favoriteMessId} 
+              preferences={profile.preferences} 
+              favoriteMessId={profile.stats?.favoriteMessId} 
             />
 
             <QuickActions />
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
 export default CustomerProfilePage;
+

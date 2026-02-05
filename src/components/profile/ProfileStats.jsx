@@ -1,4 +1,4 @@
-const ProfileStats = ({ stats }) => {
+const ProfileStats = ({ stats = { totalOrders: 0, totalSpent: 0 } }) => {
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
       <h3 className="font-bold mb-4" style={{ color: 'var(--gray-900)' }}>
@@ -8,13 +8,13 @@ const ProfileStats = ({ stats }) => {
         <div className="flex justify-between items-center">
           <span style={{ color: 'var(--gray-700)' }}>Total Orders</span>
           <span className="text-xl font-bold" style={{ color: 'var(--primary-500)' }}>
-            {stats.totalOrders}
+            {stats?.totalOrders || 0}
           </span>
         </div>
         <div className="flex justify-between items-center">
           <span style={{ color: 'var(--gray-700)' }}>Total Spent</span>
           <span className="text-xl font-bold" style={{ color: 'var(--primary-500)' }}>
-            ₹{stats.totalSpent}
+            ₹{stats?.totalSpent || 0}
           </span>
         </div>
       </div>
