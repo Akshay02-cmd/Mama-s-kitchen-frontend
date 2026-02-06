@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState } from 'react';
 import * as authService from '../services/auth.service';
 import * as profileService from '../services/profile.service';
 
@@ -11,58 +11,46 @@ export const AuthProvider = ({ children }) => {
   });
   const [loading, setLoading] = useState(false);
   const [profileComplete, setProfileComplete] = useState(false);
-  const [checkingProfile, setCheckingProfile] = useState(true);
+  const [checkingProfile, setCheckingProfile] = useState(false);
 
-  // Check profile completion status when user is authenticated
-  useEffect(() => {
-    const checkProfileStatus = async () => {
-      if (!user) {
-        setProfileComplete(false);
-        setCheckingProfile(false);
-        return;
+  // Function to check profile completion - called only when needed (e.g., before checkout)
+  const checkProfileCompletion = async () => {
+    if (!user) {
+      setProfileComplete(false);
+      return false;
+    }
+
+    try {
+      setCheckingProfile(true);
+      let profile;
+      
+      // Fetch profile based on user role
+      if (user.role === 'CUSTOMER') {
+        const response = await profileService.getCustomerProfile();
+        profile = response.profile;
+      } else if (user.role === 'OWNER') {
+        const response = await profileService.getOwnerProfile();
+        profile = response.profile;
       }
 
-      try {
-        setCheckingProfile(true);
-        let profile;
-        
-        // Fetch profile based on user role
-        if (user.role === 'CUSTOMER') {
-          const response = await profileService.getCustomerProfile();
-          profile = response.profile;
-        } else if (user.role === 'OWNER') {
-          const response = await profileService.getOwnerProfile();
-          profile = response.profile;
-        }
-
-        // Check if profile has required fields
-        if (profile) {
-          const hasRequiredFields = profile.phone && profile.address;
-          setProfileComplete(hasRequiredFields);
-        } else {
-          setProfileComplete(false);
-        }
-      } catch (error) {
-        // Profile doesn't exist yet or API error
-        // Don't logout user, just mark profile as incomplete
-        console.log('Profile check failed:', error.message || 'Profile not found');
+      // Check if profile has required fields
+      if (profile) {
+        const hasRequiredFields = profile.phone && profile.address;
+        setProfileComplete(hasRequiredFields);
+        return hasRequiredFields;
+      } else {
         setProfileComplete(false);
-        
-        // If the error is an authentication error (token invalid), clear user state
-        const isAuthError = error.message?.toLowerCase().includes('token') || 
-                           error.message?.toLowerCase().includes('authentication');
-        if (isAuthError) {
-          setUser(null);
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-        }
-      } finally {
-        setCheckingProfile(false);
+        return false;
       }
-    };
-
-    checkProfileStatus();
-  }, [user]);
+    } catch (error) {
+      // Profile doesn't exist yet - user needs to complete it
+      console.log('Profile not found - needs completion');
+      setProfileComplete(false);
+      return false;
+    } finally {
+      setCheckingProfile(false);
+    }
+  };
 
   const register = async (userData) => {
     const response = await authService.register(userData);
@@ -84,9 +72,11 @@ export const AuthProvider = ({ children }) => {
     try {
       await authService.logout();
       setUser(null);
+      setProfileComplete(false);
     } catch (error) {
       // Even if API call fails, clear local state
       setUser(null);
+      setProfileComplete(false);
       throw error;
     }
   };
@@ -99,6 +89,7 @@ export const AuthProvider = ({ children }) => {
     user,
     loading: loading || checkingProfile,
     profileComplete,
+    checkProfileCompletion,
     register,
     login,
     logout,

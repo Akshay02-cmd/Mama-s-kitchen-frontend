@@ -241,7 +241,7 @@ const MealDetailPage = () => {
                     border: '3px solid var(--primary-600)'
                   }}
                 >
-                  🛒 Add to Cart
+                  🛒 Order Now
                 </button>
               </div>
             </Card>

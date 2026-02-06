@@ -7,6 +7,7 @@ import Button from "../../components/shared/Button";
 import SocialLoginButton from "../../components/shared/SocialLoginButton";
 import Divider from "../../components/shared/Divider";
 import { useAuth, useNotification } from "../../hooks/shared";
+import * as profileService from "../../services/profile.service";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -71,20 +72,58 @@ const Login = () => {
       if (response.success) {
         showSuccess('Login successful! Welcome back.');
         
-        // Role-based redirection
-        if (response.user?.role === 'OWNER') {
-          // Check if owner profile is complete
-          // For now, always redirect to complete profile page (it will redirect to dashboard if already complete)
-          navigate('/owner/complete-profile', { replace: true });
-        } else {
-          // CUSTOMER - redirect to the page they were trying to access, or home
-          const redirectPath = from === "/login" ? "/" : from;
-          navigate(redirectPath, { replace: true });
+        // Check if profile is complete
+        try {
+          let profileResponse;
+          if (response.user?.role === 'CUSTOMER') {
+            profileResponse = await profileService.getCustomerProfile();
+          } else if (response.user?.role === 'OWNER') {
+            profileResponse = await profileService.getOwnerProfile();
+          }
+          
+          // Profile exists, check if complete
+          const profile = profileResponse?.profile;
+          const isComplete = profile && profile.phone && profile.address;
+          
+          if (!isComplete) {
+            // Profile incomplete - redirect to complete it
+            if (response.user?.role === 'OWNER') {
+              navigate('/owner/complete-profile', { replace: true });
+            } else {
+              navigate('/profile/edit', { replace: true, state: { requiresCompletion: true } });
+            }
+          } else {
+            // Profile complete - redirect normally
+            if (response.user?.role === 'OWNER') {
+              navigate('/owner/dashboard', { replace: true });
+            } else {
+              const redirectPath = from === "/login" ? "/" : from;
+              navigate(redirectPath, { replace: true });
+            }
+          }
+        } catch (profileError) {
+          // Profile doesn't exist - redirect to create it
+          console.log('Profile not found, redirecting to create profile');
+          if (response.user?.role === 'OWNER') {
+            navigate('/owner/complete-profile', { replace: true });
+          } else {
+            navigate('/profile/edit', { replace: true, state: { requiresCompletion: true } });
+          }
         }
       }
     } catch (error) {
       console.error("Login error:", error);
-      const errorMessage = error.response?.data?.message || "Login failed. Please check your credentials.";
+      let errorMessage = "Login failed. Please check your credentials.";
+      
+      // More specific error messages
+      if (error.status === 401) {
+        errorMessage = error.message || "Invalid email, password, or account type. Please check and try again.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
       showError(errorMessage);
       setErrors({
         submit: errorMessage,

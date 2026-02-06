@@ -1,7 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, UtensilsCrossed, ShoppingBag, User, LayoutDashboard, Store, Plus } from "lucide-react";
 import { useAuth } from "../../hooks/shared";
-import logo from "../../assets/logo.png";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -33,23 +32,8 @@ const Sidebar = () => {
         borderColor: "#E5E7EB",
       }}
     >
-      {/* Logo Section */}
-      <div className="p-6 border-b" style={{ borderColor: "#E5E7EB" }}>
-        <div className="flex items-center gap-3">
-          <img src={logo} alt="Mama's Kitchen" className="w-10 h-10 rounded-lg" />
-          <div>
-            <h2 className="font-bold text-lg" style={{ color: "#111827" }}>
-              Mamma's
-            </h2>
-            <p className="text-sm" style={{ color: "#111827" }}>
-              Kitchen
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Navigation */}
-      <nav className="p-4">
+      <nav className="p-4 pt-6">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);

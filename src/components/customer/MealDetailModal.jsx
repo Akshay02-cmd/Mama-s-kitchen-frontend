@@ -225,7 +225,7 @@ const MealDetailModal = ({ meal, isOpen, onClose }) => {
                 color: '#FFFFFF'
               }}
             >
-              Add to Cart (₹{meal.price * quantity})
+              Order Now (₹{meal.price * quantity})
             </button>
           </div>
         </div>

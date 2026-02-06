@@ -5,47 +5,39 @@ import ProfileStats from '../../components/customer/ProfileStats';
 import PersonalInfo from '../../components/customer/PersonalInfo';
 import FoodPreferences from '../../components/customer/FoodPreferences';
 import QuickActions from '../../components/customer/QuickActions';
-import Card from '../../components/shared/Card';
 import { useAuth, useNotification } from '../../hooks/shared';
 import Sidebar from '../../components/shared/Sidebar.jsx';
-import { getCustomerProfile } from '../../services/profile.service';
+import profileService from '../../services/profile.service';
 import { LogOut } from 'lucide-react';
 
 const CustomerProfilePage = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const { showSuccess } = useNotification();
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const response = await getCustomerProfile();
+        // Fetch profile based on user's role
+        const response = user?.role === 'OWNER' 
+          ? await profileService.getOwnerProfile()
+          : await profileService.getCustomerProfile();
         setProfile(response.profile);
-        setError(null);
       } catch (err) {
         console.error('Error fetching profile:', err);
-        
-        // Don't logout on profile errors - user is still authenticated
-        // Profile might just not exist yet or there's a temporary issue
-        // Only the explicit logout button should log them out
-        if (err.status === 404) {
-          setError('Profile not found. Please complete your profile.');
-        } else if (err.status === 401) {
-          setError('Authentication issue. Please try refreshing the page.');
-        } else {
-          setError('Failed to load profile. Please try again later.');
-        }
+        // Don't logout - user is still authenticated
+        // Just set profile to null and show create profile option
+        setProfile(null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [navigate]);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -70,13 +62,47 @@ const CustomerProfilePage = () => {
     );
   }
 
-  if (error || !profile) {
+  if (!profile) {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <Sidebar />
         <main className="flex-1 md:ml-64 p-4 md:p-8">
-          <div className="text-center py-20">
-            <p style={{ color: '#EF4444' }}>{error || 'Profile not found'}</p>
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+              <div className="mb-6">
+                <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-4xl">👤</span>
+                </div>
+                <h2 className="text-2xl font-bold mb-2" style={{ color: '#111827' }}>
+                  Complete Your Profile
+                </h2>
+                <p className="text-lg mb-6" style={{ color: '#6B7280' }}>
+                  Welcome! To start ordering delicious meals, please complete your profile first.
+                </p>
+              </div>
+              
+              <button
+                onClick={() => navigate('/profile/edit')}
+                className="px-8 py-3 rounded-lg font-medium transition-colors mb-4"
+                style={{ backgroundColor: '#3B82F6', color: '#FFFFFF' }}
+              >
+                Complete Profile Now
+              </button>
+              
+              <div className="mt-8 pt-8 border-t" style={{ borderColor: '#E5E7EB' }}>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-6 py-3 rounded-lg transition-all mx-auto"
+                  style={{ 
+                    backgroundColor: '#EF4444',
+                    color: '#FFFFFF'
+                  }}
+                >
+                  <LogOut className="w-5 h-5" />
+                  Logout
+                </button>
+              </div>
+            </div>
           </div>
         </main>
       </div>
@@ -87,25 +113,13 @@ const CustomerProfilePage = () => {
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <Sidebar />
       <main className="flex-1 md:ml-64 p-4 md:p-8">
-        <div className="flex justify-between items-center mb-6">
+        <div className="mb-6">
           <h1 
             className="text-3xl font-bold"
             style={{ color: '#111827' }}
           >
             My Profile
           </h1>
-          
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all hover:opacity-90"
-            style={{ 
-              backgroundColor: '#EF4444',
-              color: '#FFFFFF'
-            }}
-          >
-            <LogOut className="w-5 h-5" />
-            Logout
-          </button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -139,6 +153,21 @@ const CustomerProfilePage = () => {
             />
 
             <QuickActions />
+            
+            {/* Logout Button at Bottom */}
+            <div className="pt-6">
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-6 py-3 rounded-lg transition-all hover:opacity-90"
+                style={{ 
+                  backgroundColor: '#EF4444',
+                  color: '#FFFFFF'
+                }}
+              >
+                <LogOut className="w-5 h-5" />
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </main>

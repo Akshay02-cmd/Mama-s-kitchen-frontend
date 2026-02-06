@@ -93,18 +93,31 @@ const Signup = () => {
     try {
       const response = await register(apiData);
       if (response.success) {
-        // Role-based redirection after signup
+        // Always redirect to complete profile after signup
+        // New users need to complete their profile
         if (formData.role === 'OWNER') {
-          navigate('/owner/complete-profile');
+          navigate('/owner/complete-profile', { replace: true });
         } else {
-          // CUSTOMER - redirect to home
-          navigate('/');
+          navigate('/profile/edit', { replace: true, state: { requiresCompletion: true } });
         }
       }
     } catch (error) {
       console.error("Registration error:", error);
+      let errorMessage = "Registration failed. Please try again.";
+      
+      // More specific error messages
+      if (error.status === 400) {
+        errorMessage = error.message || "User with this email already exists or invalid data.";
+      } else if (error.status === 500) {
+        errorMessage = "Server error. Please try again later or contact support.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
       setErrors({
-        submit: error.response?.data?.message || "Registration failed. Please try again.",
+        submit: errorMessage,
       });
     } finally {
       setIsLoading(false);

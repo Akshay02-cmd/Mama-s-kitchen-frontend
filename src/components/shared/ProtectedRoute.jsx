@@ -14,7 +14,7 @@ import { useAuth } from '../../hooks/shared';
  * @param {string} props.requireRole - Required user role (CUSTOMER, OWNER, MESS) - optional
  */
 const ProtectedRoute = ({ children, requireProfileComplete = false, requireRole = null }) => {
-  const { user, isAuthenticated, profileComplete, loading } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
   // Show loading state while checking authentication
@@ -46,17 +46,9 @@ const ProtectedRoute = ({ children, requireProfileComplete = false, requireRole 
     return <Navigate to="/" replace />;
   }
 
-  // Check if profile completion is required
-  if (requireProfileComplete && !profileComplete) {
-    // For owners, redirect to owner profile completion
-    if (user?.role === 'OWNER') {
-      return <Navigate to="/owner/complete-profile" state={{ from: location, requiresCompletion: true }} replace />;
-    }
-    // For customers, redirect to profile edit page
-    return <Navigate to="/profile/edit" state={{ from: location, requiresCompletion: true }} replace />;
-  }
-
-  // User is authenticated, has correct role, and (if required) has complete profile
+  // User is authenticated and has correct role
+  // Note: We don't check profile completion here anymore
+  // Profile completion is checked only during login/register
   return children;
 };
 

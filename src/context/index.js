@@ -10,4 +10,3 @@
 export { AuthProvider, AuthContext } from './AuthContext.jsx';
 export { ThemeProvider, ThemeContext } from './ThemeContext.jsx';
 export { NotificationProvider, NotificationContext } from './NotificationContext.jsx';
-export { ThemeProvider, ThemeContext } from './ThemeContext.jsx';

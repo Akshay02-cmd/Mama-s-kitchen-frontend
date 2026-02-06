@@ -79,7 +79,7 @@ const MealCard = memo(({ meal, showAddToCart = false, onCardClick }) => {
                 color: '#FFFFFF'
               }}
             >
-              Add to Cart
+              Order Now
             </button>
           </div>
         ) : (
