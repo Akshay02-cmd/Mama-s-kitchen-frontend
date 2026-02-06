@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import Breadcrumb from '../components/common/Breadcrumb';
-import Card from '../components/common/Card';
-import StatusBadge from '../components/common/StatusBadge';
-import { getMealById } from '../services/meal.service';
-import { getReviewsByMealId } from '../services/review.service';
+import Breadcrumb from '../../components/shared/Breadcrumb';
+import Card from '../../components/shared/Card';
+import StatusBadge from '../../components/shared/StatusBadge';
+import { getMealById } from '../../services/meal.service';
+import { getReviewsByMealId } from '../../services/review.service';
 
 const dietaryTypeConfig = {
   'Veg': { color: 'var(--accent-500)', label: 'Veg', textColor: 'var(--white)' },

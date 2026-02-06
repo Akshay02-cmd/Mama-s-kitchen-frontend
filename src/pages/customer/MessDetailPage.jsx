@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Breadcrumb from '../components/common/Breadcrumb';
-import Card from '../components/common/Card';
-import MealCard from '../components/meals/MealCard';
-import MessInfo from '../components/mess/MessInfo';
+import Breadcrumb from '../../components/shared/Breadcrumb';
+import Card from '../../components/shared/Card';
+import MealCard from '../../components/customer/MealCard';
+import MessInfo from '../../components/customer/MessInfo';
 
 // Mock mess detail
 const mockMess = {

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Building2, Phone, MapPin, Save } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
-import * as profileService from '../services/profile.service';
+import { useAuth } from '../../hooks/shared';
+import * as profileService from '../../services/profile.service';
 
 const OwnerProfileCompletePage = () => {
   const { user, updateProfileStatus } = useAuth();

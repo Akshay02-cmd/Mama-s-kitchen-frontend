@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import PageHeader from '../components/common/PageHeader';
-import Card from '../components/common/Card';
-import OrderSummary from '../components/orders/OrderSummary';
-import OrderItem from '../components/orders/OrderItem';
+import PageHeader from '../../components/shared/PageHeader';
+import Card from '../../components/shared/Card';
+import OrderSummary from '../../components/customer/OrderSummary';
+import OrderItem from '../../components/customer/OrderItem';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();

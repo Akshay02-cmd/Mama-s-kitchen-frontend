@@ -43,9 +43,19 @@ export const AuthProvider = ({ children }) => {
           setProfileComplete(false);
         }
       } catch (error) {
-        // Profile doesn't exist yet
-        console.log('Profile not found, needs to be created');
+        // Profile doesn't exist yet or API error
+        // Don't logout user, just mark profile as incomplete
+        console.log('Profile check failed:', error.message || 'Profile not found');
         setProfileComplete(false);
+        
+        // If the error is an authentication error (token invalid), clear user state
+        const isAuthError = error.message?.toLowerCase().includes('token') || 
+                           error.message?.toLowerCase().includes('authentication');
+        if (isAuthError) {
+          setUser(null);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
       } finally {
         setCheckingProfile(false);
       }

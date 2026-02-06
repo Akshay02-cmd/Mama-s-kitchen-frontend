@@ -96,8 +96,20 @@ apiClient.interceptors.response.use(
       // 401 Unauthorized - Only clear auth for authentication endpoints
       if (status === 401) {
         const url = error.config?.url || '';
-        // Only logout for actual auth failures, not for missing profiles
-        if (url.includes('/auth/') || data?.message?.toLowerCase().includes('token')) {
+        const message = data?.message?.toLowerCase() || '';
+        
+        // Only logout for actual auth failures (expired/invalid tokens)
+        // Don't logout for profile not found (404) or profile check errors
+        const isAuthFailure = (
+          url.includes('/auth/login') ||
+          url.includes('/auth/register') ||
+          message.includes('invalid token') ||
+          message.includes('token expired') ||
+          message.includes('no token') ||
+          message.includes('authentication failed')
+        );
+        
+        if (isAuthFailure) {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           // Redirect to login page

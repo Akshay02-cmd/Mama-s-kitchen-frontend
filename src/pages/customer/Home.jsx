@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { MealCard } from "../components/meals";
-import MealDetailModal from "../components/meals/MealDetailModal";
-import { getAllMeals } from "../services/meal.service";
-import Sidebar from "../components/common/Sidebar.jsx";
+import { MealCard } from "../../components/customer";
+import MealDetailModal from "../../components/customer/MealDetailModal";
+import { getAllMeals } from "../../services/meal.service";
+import Sidebar from "../../components/shared/Sidebar.jsx";
 import { Search } from "lucide-react";
 
 const Home = () => {

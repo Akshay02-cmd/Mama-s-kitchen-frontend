@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, TrendingUp, ShoppingBag, DollarSign, Store } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
-import Sidebar from '../components/common/Sidebar';
+import { useAuth } from '../../hooks/shared';
+import Sidebar from '../../components/shared/Sidebar';
 
 const OwnerDashboard = () => {
   const { user } = useAuth();

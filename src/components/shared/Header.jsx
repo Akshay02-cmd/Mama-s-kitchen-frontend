@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, ShoppingBag, LogOut, Bell } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/shared";
 import logo from "../../assets/logo.png";
 import defaultProfilePic from "../../assets/DefaulProfile.jpg";
 

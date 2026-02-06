@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, UtensilsCrossed, ShoppingBag, User, LayoutDashboard, Store, Plus } from "lucide-react";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/shared";
 import logo from "../../assets/logo.png";
 
 const Sidebar = () => {

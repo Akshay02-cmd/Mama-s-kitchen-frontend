@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import OrderCard from '../components/orders/OrderCard';
-import Sidebar from '../components/common/Sidebar.jsx';
+import OrderCard from '../../components/customer/OrderCard';
+import Sidebar from '../../components/shared/Sidebar.jsx';
 
 // Mock orders data
 const mockOrders = [

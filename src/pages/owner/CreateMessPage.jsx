@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Store, MapPin, Clock, Phone, Mail, UtensilsCrossed, Save } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
-import Sidebar from '../components/common/Sidebar';
+import { useAuth } from '../../hooks/shared';
+import Sidebar from '../../components/shared/Sidebar';
 
 const CreateMessPage = () => {
   const { user } = useAuth();

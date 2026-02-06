@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
-import AuthLayout from "../components/auth/AuthLayout";
-import FormInput from "../components/auth/FormInput";
-import Button from "../components/auth/Button";
-import SocialLoginButton from "../components/auth/SocialLoginButton";
-import Divider from "../components/auth/Divider";
-import { useAuth } from "../hooks/useAuth";
+import AuthLayout from "../../components/shared/AuthLayout";
+import FormInput from "../../components/shared/FormInput";
+import Button from "../../components/shared/Button";
+import SocialLoginButton from "../../components/shared/SocialLoginButton";
+import Divider from "../../components/shared/Divider";
+import { useAuth } from "../../hooks/shared";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -93,8 +93,13 @@ const Signup = () => {
     try {
       const response = await register(apiData);
       if (response.success) {
-        // Redirect to home page after successful registration
-        navigate("/");
+        // Role-based redirection after signup
+        if (formData.role === 'OWNER') {
+          navigate('/owner/complete-profile');
+        } else {
+          // CUSTOMER - redirect to home
+          navigate('/');
+        }
       }
     } catch (error) {
       console.error("Registration error:", error);

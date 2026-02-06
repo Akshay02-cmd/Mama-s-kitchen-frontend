@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ProfileCard from '../components/profile/ProfileCard';
-import ProfileStats from '../components/profile/ProfileStats';
-import PersonalInfo from '../components/profile/PersonalInfo';
-import FoodPreferences from '../components/profile/FoodPreferences';
-import QuickActions from '../components/profile/QuickActions';
-import Card from '../components/common/Card';
-import { useAuth } from '../hooks/useAuth';
-import Sidebar from '../components/common/Sidebar.jsx';
-import { getCustomerProfile } from '../services/profile.service';
+import ProfileCard from '../../components/customer/ProfileCard';
+import ProfileStats from '../../components/customer/ProfileStats';
+import PersonalInfo from '../../components/customer/PersonalInfo';
+import FoodPreferences from '../../components/customer/FoodPreferences';
+import QuickActions from '../../components/customer/QuickActions';
+import Card from '../../components/shared/Card';
+import { useAuth } from '../../hooks/shared';
+import Sidebar from '../../components/shared/Sidebar.jsx';
+import { getCustomerProfile } from '../../services/profile.service';
 import { LogOut } from 'lucide-react';
 
 const CustomerProfilePage = () => {

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
-import PageHeader from '../components/common/PageHeader';
-import MessCard from '../components/mess/MessCard';
-import { getAllMesses } from '../services/mess.service';
+import PageHeader from '../../components/shared/PageHeader';
+import MessCard from '../../components/customer/MessCard';
+import { getAllMesses } from '../../services/mess.service';
 
 const MessListPage = () => {
   const [messes, setMesses] = useState([]);

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import * as profileService from '../services/profile.service';
-import Breadcrumb from '../components/common/Breadcrumb';
-import Card from '../components/common/Card';
+import { useAuth } from '../../hooks/shared';
+import * as profileService from '../../services/profile.service';
+import Breadcrumb from '../../components/shared/Breadcrumb';
+import Card from '../../components/shared/Card';
 
 const EditProfilePage = () => {
   const navigate = useNavigate();

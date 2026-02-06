@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom';
-import Breadcrumb from '../components/common/Breadcrumb';
-import Card from '../components/common/Card';
-import OrderItem from '../components/orders/OrderItem';
-import OrderTimeline from '../components/orders/OrderTimeline';
-import OrderSummary from '../components/orders/OrderSummary';
+import Breadcrumb from '../../components/shared/Breadcrumb';
+import Card from '../../components/shared/Card';
+import OrderItem from '../../components/customer/OrderItem';
+import OrderTimeline from '../../components/customer/OrderTimeline';
+import OrderSummary from '../../components/customer/OrderSummary';
 
 // Mock order detail
 const mockOrder = {

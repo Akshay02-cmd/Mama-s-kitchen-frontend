@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import AuthLayout from "../components/auth/AuthLayout";
-import FormInput from "../components/auth/FormInput";
-import Button from "../components/auth/Button";
-import SocialLoginButton from "../components/auth/SocialLoginButton";
-import Divider from "../components/auth/Divider";
-import { useAuth } from "../hooks/useAuth";
+import AuthLayout from "../../components/shared/AuthLayout";
+import FormInput from "../../components/shared/FormInput";
+import Button from "../../components/shared/Button";
+import SocialLoginButton from "../../components/shared/SocialLoginButton";
+import Divider from "../../components/shared/Divider";
+import { useAuth } from "../../hooks/shared";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -68,10 +68,16 @@ const Login = () => {
     try {
       const response = await login(formData);
       if (response.success) {
-        // Redirect to the page they were trying to access, or home
-        // If coming from login page directly, redirect to home
-        const redirectPath = from === "/login" ? "/" : from;
-        navigate(redirectPath, { replace: true });
+        // Role-based redirection
+        if (response.user?.role === 'OWNER') {
+          // Check if owner profile is complete
+          // For now, always redirect to complete profile page (it will redirect to dashboard if already complete)
+          navigate('/owner/complete-profile', { replace: true });
+        } else {
+          // CUSTOMER - redirect to the page they were trying to access, or home
+          const redirectPath = from === "/login" ? "/" : from;
+          navigate(redirectPath, { replace: true });
+        }
       }
     } catch (error) {
       console.error("Login error:", error);

@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
-import MealCard from '../components/meals/MealCard';
-import MealDetailModal from '../components/meals/MealDetailModal';
-import MealFilters from '../components/meals/MealFilters';
-import Pagination from '../components/common/Pagination';
-import Sidebar from '../components/common/Sidebar';
-import { getAllMeals } from '../services/meal.service';
+import MealCard from '../../components/customer/MealCard';
+import MealDetailModal from '../../components/customer/MealDetailModal';
+import MealFilters from '../../components/customer/MealFilters';
+import Pagination from '../../components/shared/Pagination';
+import Sidebar from '../../components/shared/Sidebar';
+import { getAllMeals } from '../../services/meal.service';
 
 const MealsListPage = () => {
   const [meals, setMeals] = useState([]);

@@ -1,24 +1,12 @@
-import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home.jsx";
-import Contact from "./pages/Contact.jsx";
-import Login from "./pages/Login.jsx";
-import Signup from "./pages/Signup.jsx";
-import MealsListPage from "./pages/MealsListPage.jsx";
-import MealDetailPage from "./pages/MealDetailPage.jsx";
-import MyOrdersPage from "./pages/MyOrdersPage.jsx";
-import OrderDetailPage from "./pages/OrderDetailPage.jsx";
-import CheckoutPage from "./pages/CheckoutPage.jsx";
-import MessListPage from "./pages/MessListPage.jsx";
-import MessDetailPage from "./pages/MessDetailPage.jsx";
-import CustomerProfilePage from "./pages/CustomerProfilePage.jsx";
-import EditProfilePage from "./pages/EditProfilePage.jsx";
-import OwnerProfileCompletePage from "./pages/OwnerProfileCompletePage.jsx";
-import OwnerDashboard from "./pages/OwnerDashboard.jsx";
-import CreateMessPage from "./pages/CreateMessPage.jsx";
-import Header from "./components/common/Header.jsx";
-import Footer from "./components/common/Footer.jsx";
-import ErrorBoundary from "./components/common/ErrorBoundary.jsx";
-import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
+import { Routes, Route } from "react-router-dom";
+
+// Route Configurations
+import { CustomerRoutes, OwnerRoutes, MessRoutes, SharedRoutes } from "./routes";
+
+// Shared Components
+import Header from "./components/shared/Header.jsx";
+import Footer from "./components/shared/Footer.jsx";
+import ErrorBoundary from "./components/shared/ErrorBoundary.jsx";
 
 // 404 Page Component
 const NotFound = () => {
@@ -44,128 +32,18 @@ const App = () => {
         <Header />
         <main className="flex-1 pt-20">
           <Routes>
-            {/* Public Routes - Accessible without authentication */}
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            
-            {/* Protected Public Browsing Routes - Require authentication */}
-            <Route 
-              path="/contact" 
-              element={
-                <ProtectedRoute>
-                  <Contact />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* Meals Routes - Protected, require authentication */}
-            <Route 
-              path="/meals" 
-              element={
-                <ProtectedRoute>
-                  <MealsListPage />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/meals/:id" 
-              element={
-                <ProtectedRoute>
-                  <MealDetailPage />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* Order Routes - Protected, require authentication and complete profile */}
-            <Route 
-              path="/orders" 
-              element={
-                <ProtectedRoute requireProfileComplete={true}>
-                  <MyOrdersPage />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/orders/:id" 
-              element={
-                <ProtectedRoute requireProfileComplete={true}>
-                  <OrderDetailPage />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/checkout" 
-              element={
-                <ProtectedRoute requireProfileComplete={true}>
-                  <CheckoutPage />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* Mess Routes - Protected, require authentication */}
-            <Route 
-              path="/mess" 
-              element={
-                <ProtectedRoute>
-                  <MessListPage />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/mess/:id" 
-              element={
-                <ProtectedRoute>
-                  <MessDetailPage />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* Profile Routes - Protected, require authentication */}
-            <Route 
-              path="/profile" 
-              element={
-                <ProtectedRoute>
-                  <CustomerProfilePage />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/profile/edit" 
-              element={
-                <ProtectedRoute>
-                  <EditProfilePage />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* Owner Routes - Protected, require OWNER role */}
-            <Route 
-              path="/owner/complete-profile" 
-              element={
-                <ProtectedRoute requireRole="OWNER">
-                  <OwnerProfileCompletePage />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/owner/dashboard" 
-              element={
-                <ProtectedRoute requireRole="OWNER">
-                  <OwnerDashboard />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/owner/create-mess" 
-              element={
-                <ProtectedRoute requireRole="OWNER">
-                  <CreateMessPage />
-                </ProtectedRoute>
-              } 
-            />
-            
+            {/* Shared Routes - Authentication and common pages */}
+            {SharedRoutes()}
+
+            {/* Customer Routes - Customer-facing functionality */}
+            {CustomerRoutes()}
+
+            {/* Owner Routes - Owner management functionality */}
+            {OwnerRoutes()}
+
+            {/* Mess Routes - Mess management functionality */}
+            {MessRoutes()}
+
             {/* 404 Fallback */}
             <Route path="*" element={<NotFound />} />
           </Routes>
