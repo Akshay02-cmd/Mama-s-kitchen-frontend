@@ -12,6 +12,9 @@ import MessListPage from "./pages/MessListPage.jsx";
 import MessDetailPage from "./pages/MessDetailPage.jsx";
 import CustomerProfilePage from "./pages/CustomerProfilePage.jsx";
 import EditProfilePage from "./pages/EditProfilePage.jsx";
+import OwnerProfileCompletePage from "./pages/OwnerProfileCompletePage.jsx";
+import OwnerDashboard from "./pages/OwnerDashboard.jsx";
+import CreateMessPage from "./pages/CreateMessPage.jsx";
 import Header from "./components/common/Header.jsx";
 import Footer from "./components/common/Footer.jsx";
 import ErrorBoundary from "./components/common/ErrorBoundary.jsx";
@@ -133,6 +136,32 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <EditProfilePage />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Owner Routes - Protected, require OWNER role */}
+            <Route 
+              path="/owner/complete-profile" 
+              element={
+                <ProtectedRoute requireRole="OWNER">
+                  <OwnerProfileCompletePage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/owner/dashboard" 
+              element={
+                <ProtectedRoute requireRole="OWNER">
+                  <OwnerDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/owner/create-mess" 
+              element={
+                <ProtectedRoute requireRole="OWNER">
+                  <CreateMessPage />
                 </ProtectedRoute>
               } 
             />
