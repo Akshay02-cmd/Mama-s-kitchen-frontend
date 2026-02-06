@@ -1,14 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, ShoppingBag, LogOut, Bell } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from "../../hooks/shared";
+import { useAuth, useNotification } from "../../hooks/shared";
 import logo from "../../assets/logo.png";
 import defaultProfilePic from "../../assets/DefaulProfile.jpg";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
+  const { showSuccess, showError, showWarning, showInfo } = useNotification();
   const navigate = useNavigate();
+  const [notificationIndex, setNotificationIndex] = useState(0);
 
   const handleLogout = async () => {
     try {
@@ -17,6 +19,37 @@ const Header = () => {
     } catch (error) {
       console.error('Logout error:', error);
     }
+  };
+
+  // Demo: Cycle through different notification types on bell icon click
+  const handleNotificationClick = () => {
+    const notifications = [
+      { type: 'success', message: 'Your order has been placed successfully!' },
+      { type: 'error', message: 'Failed to process payment. Please try again.' },
+      { type: 'warning', message: 'Your session will expire in 5 minutes.' },
+      { type: 'info', message: 'New meals added to the menu. Check them out!' },
+    ];
+    
+    const current = notifications[notificationIndex % notifications.length];
+    
+    switch (current.type) {
+      case 'success':
+        showSuccess(current.message);
+        break;
+      case 'error':
+        showError(current.message);
+        break;
+      case 'warning':
+        showWarning(current.message);
+        break;
+      case 'info':
+        showInfo(current.message);
+        break;
+      default:
+        showInfo(current.message);
+    }
+    
+    setNotificationIndex(prev => prev + 1);
   };
 
   return (
@@ -44,12 +77,16 @@ const Header = () => {
 
           {/* Right side actions */}
           <div className="flex items-center gap-4">
-            {/* Notifications */}
+            {/* Notifications - Click to see demo */}
             {isAuthenticated && (
-              <button className="relative p-2 rounded-lg transition-colors"
+              <button 
+                onClick={handleNotificationClick}
+                className="relative p-2 rounded-lg transition-colors hover:bg-gray-100"
                 style={{
                   color: '#6B7280'
-                }}>
+                }}
+                title="Click to see notification demo"
+              >
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>

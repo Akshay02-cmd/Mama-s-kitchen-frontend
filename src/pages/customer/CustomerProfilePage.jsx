@@ -6,13 +6,14 @@ import PersonalInfo from '../../components/customer/PersonalInfo';
 import FoodPreferences from '../../components/customer/FoodPreferences';
 import QuickActions from '../../components/customer/QuickActions';
 import Card from '../../components/shared/Card';
-import { useAuth } from '../../hooks/shared';
+import { useAuth, useNotification } from '../../hooks/shared';
 import Sidebar from '../../components/shared/Sidebar.jsx';
 import { getCustomerProfile } from '../../services/profile.service';
 import { LogOut } from 'lucide-react';
 
 const CustomerProfilePage = () => {
   const { logout } = useAuth();
+  const { showSuccess } = useNotification();
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,28 +25,32 @@ const CustomerProfilePage = () => {
         setLoading(true);
         const response = await getCustomerProfile();
         setProfile(response.profile);
+        setError(null);
       } catch (err) {
         console.error('Error fetching profile:', err);
         
-        // If unauthorized, redirect to login
-        if (err.status === 401) {
-          await logout();
-          navigate('/login');
-          return;
+        // Don't logout on profile errors - user is still authenticated
+        // Profile might just not exist yet or there's a temporary issue
+        // Only the explicit logout button should log them out
+        if (err.status === 404) {
+          setError('Profile not found. Please complete your profile.');
+        } else if (err.status === 401) {
+          setError('Authentication issue. Please try refreshing the page.');
+        } else {
+          setError('Failed to load profile. Please try again later.');
         }
-        
-        setError('Failed to load profile. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [logout, navigate]);
+  }, [navigate]);
 
   const handleLogout = async () => {
     try {
       await logout();
+      showSuccess('Logged out successfully. See you soon!');
       navigate('/login');
     } catch (error) {
       console.error('Logout error:', error);

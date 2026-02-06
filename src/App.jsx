@@ -7,6 +7,7 @@ import { CustomerRoutes, OwnerRoutes, MessRoutes, SharedRoutes } from "./routes"
 import Header from "./components/shared/Header.jsx";
 import Footer from "./components/shared/Footer.jsx";
 import ErrorBoundary from "./components/shared/ErrorBoundary.jsx";
+import NotificationContainer from "./components/shared/NotificationContainer.jsx";
 
 // 404 Page Component
 const NotFound = () => {
@@ -30,6 +31,7 @@ const App = () => {
       <div className="App min-h-screen flex flex-col overflow-x-hidden" 
         style={{ backgroundColor: 'var(--bg-secondary)' }}>
         <Header />
+        <NotificationContainer />
         <main className="flex-1 pt-20">
           <Routes>
             {/* Shared Routes - Authentication and common pages */}

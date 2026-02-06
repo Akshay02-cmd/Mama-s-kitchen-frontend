@@ -5,6 +5,7 @@
 
 export { useAuth } from './useAuth';
 export { useTheme } from './useTheme';
+export { useNotification } from './useNotification';
 export { useForm } from './useForm';
 export { useLocalStorage } from './useLocalStorage';
 export { useDebounce } from './useDebounce';

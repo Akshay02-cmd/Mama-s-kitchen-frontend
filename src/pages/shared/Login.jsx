@@ -6,12 +6,13 @@ import FormInput from "../../components/shared/FormInput";
 import Button from "../../components/shared/Button";
 import SocialLoginButton from "../../components/shared/SocialLoginButton";
 import Divider from "../../components/shared/Divider";
-import { useAuth } from "../../hooks/shared";
+import { useAuth, useNotification } from "../../hooks/shared";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const { showSuccess, showError } = useNotification();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -68,6 +69,8 @@ const Login = () => {
     try {
       const response = await login(formData);
       if (response.success) {
+        showSuccess('Login successful! Welcome back.');
+        
         // Role-based redirection
         if (response.user?.role === 'OWNER') {
           // Check if owner profile is complete
@@ -81,8 +84,10 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
+      const errorMessage = error.response?.data?.message || "Login failed. Please check your credentials.";
+      showError(errorMessage);
       setErrors({
-        submit: error.response?.data?.message || "Login failed. Please check your credentials.",
+        submit: errorMessage,
       });
     } finally {
       setIsLoading(false);
