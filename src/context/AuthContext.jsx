@@ -35,9 +35,10 @@ export const AuthProvider = ({ children }) => {
 
       // Check if profile has required fields
       if (profile) {
-        const hasRequiredFields = profile.phone && profile.address;
-        setProfileComplete(hasRequiredFields);
-        return hasRequiredFields;
+        // Use the isProfileCompleted field from backend instead of manually checking
+        const isComplete = profile.isProfileCompleted === true;
+        setProfileComplete(isComplete);
+        return isComplete;
       } else {
         setProfileComplete(false);
         return false;

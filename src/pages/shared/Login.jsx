@@ -83,7 +83,7 @@ const Login = () => {
           
           // Profile exists, check if complete
           const profile = profileResponse?.profile;
-          const isComplete = profile && profile.phone && profile.address;
+          const isComplete = profile?.isProfileCompleted === true;
           
           if (!isComplete) {
             // Profile incomplete - redirect to complete it
