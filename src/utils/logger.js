@@ -1,8 +1,3 @@
-/**
- * Logger utility for consistent logging across the application
- * Prevents console logs in production while maintaining debug capability
- */
-
 const isDevelopment = import.meta.env.DEV;
 
 export const logger = {
