@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Package, Clock, CheckCircle, XCircle, Eye } from 'lucide-react';
 import { useAuth } from '../../hooks/shared';
 import MessSidebar from '../../components/shared/MessSidebar';
+import ownerService from '../../services/owner.service';
 
 const MessOrdersDashboard = () => {
   const { user } = useAuth();
@@ -10,56 +11,49 @@ const MessOrdersDashboard = () => {
   const [activeTab, setActiveTab] = useState('new');
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [messId, setMessId] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // TODO: Fetch orders from API based on mess
-    // For now, using mock data
-    setTimeout(() => {
-      setOrders([
-        {
-          _id: '1',
-          orderNumber: 'ORD-1001',
-          customer: { name: 'John Doe', phone: '9876543210' },
-          items: [
-            { meal: { name: 'Dal Tadka', price: 80 }, quantity: 2 },
-            { meal: { name: 'Roti (4 pcs)', price: 40 }, quantity: 1 },
-          ],
-          totalAmount: 200,
-          status: 'pending',
-          orderTime: new Date(Date.now() - 10 * 60000),
-        },
-        {
-          _id: '2',
-          orderNumber: 'ORD-1002',
-          customer: { name: 'Jane Smith', phone: '9123456789' },
-          items: [
-            { meal: { name: 'Paneer Butter Masala', price: 120 }, quantity: 1 },
-            { meal: { name: 'Jeera Rice', price: 60 }, quantity: 1 },
-          ],
-          totalAmount: 180,
-          status: 'preparing',
-          orderTime: new Date(Date.now() - 30 * 60000),
-        },
-        {
-          _id: '3',
-          orderNumber: 'ORD-1003',
-          customer: { name: 'Mike Johnson', phone: '9988776655' },
-          items: [
-            { meal: { name: 'Chicken Biryani', price: 150 }, quantity: 2 },
-          ],
-          totalAmount: 300,
-          status: 'delivered',
-          orderTime: new Date(Date.now() - 120 * 60000),
-        },
-      ]);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    const fetchMessAndOrders = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // First, get the mess(es) owned by this user
+        const messesResponse = await ownerService.getOwnerMesses();
+        const messes = messesResponse.messes || [];
+        
+        if (messes.length === 0) {
+          setError('No mess found. Please create a mess first.');
+          setLoading(false);
+          return;
+        }
+        
+        // Use the first mess (can be extended to support multiple messes)
+        const firstMess = messes[0];
+        setMessId(firstMess._id);
+        
+        // Fetch orders for this mess
+        const ordersResponse = await ownerService.getMessOrders(firstMess._id);
+        setOrders(ordersResponse.orders || []);
+      } catch (err) {
+        console.error('Error fetching mess orders:', err);
+        setError('Failed to load orders');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchMessAndOrders();
+    }
+  }, [user]);
 
   const filteredOrders = orders.filter((order) => {
-    if (activeTab === 'new') return order.status === 'pending';
-    if (activeTab === 'preparing') return order.status === 'preparing';
-    if (activeTab === 'delivered') return order.status === 'delivered';
+    if (activeTab === 'new') return order.status === 'PLACED' || order.status === 'PENDING';
+    if (activeTab === 'preparing') return order.status === 'PREPARING';
+    if (activeTab === 'delivered') return order.status === 'DELIVERED';
     return true;
   });
 
@@ -83,12 +77,15 @@ const MessOrdersDashboard = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending':
+      case 'PLACED':
+      case 'PENDING':
         return { bg: '#FEF3C7', text: '#92400E', border: '#FCD34D' };
-      case 'preparing':
+      case 'PREPARING':
         return { bg: '#DBEAFE', text: '#1E40AF', border: '#93C5FD' };
-      case 'delivered':
+      case 'DELIVERED':
         return { bg: '#D1FAE5', text: '#065F46', border: '#6EE7B7' };
+      case 'CANCELLED':
+        return { bg: '#FEE2E2', text: '#991B1B', border: '#FCA5A5' };
       default:
         return { bg: '#F3F4F6', text: '#374151', border: '#D1D5DB' };
     }
@@ -105,14 +102,14 @@ const MessOrdersDashboard = () => {
         <div className="flex items-start justify-between mb-4">
           <div>
             <h3 className="font-bold text-lg mb-1" style={{ color: '#111827' }}>
-              {order.orderNumber}
+              Order #{order._id.slice(-6)}
             </h3>
             <p className="text-sm mb-1" style={{ color: '#6B7280' }}>
-              {order.customer.name} • {order.customer.phone}
+              {order.userId?.name || 'Unknown'} • {order.userId?.phone || order.deliveryPhone}
             </p>
             <p className="text-xs" style={{ color: '#9CA3AF' }}>
               <Clock className="w-3 h-3 inline mr-1" />
-              {formatTime(order.orderTime)}
+              {formatTime(new Date(order.createdAt))}
             </p>
           </div>
           <span
@@ -128,13 +125,13 @@ const MessOrdersDashboard = () => {
 
         {/* Order Items */}
         <div className="border-t border-b py-3 mb-4" style={{ borderColor: '#E5E7EB' }}>
-          {order.items.map((item, index) => (
+          {order.orderItems && order.orderItems.map((item, index) => (
             <div key={index} className="flex justify-between py-1">
               <span style={{ color: '#6B7280' }}>
-                {item.quantity}x {item.meal.name}
+                {item.quantity}x {item.mealId?.name || 'Unknown Meal'}
               </span>
               <span className="font-medium" style={{ color: '#111827' }}>
-                ₹{item.meal.price * item.quantity}
+                ₹{item.price * item.quantity}
               </span>
             </div>
           ))}
@@ -148,18 +145,18 @@ const MessOrdersDashboard = () => {
 
         {/* Action Buttons */}
         <div className="flex gap-2">
-          {order.status === 'pending' && (
+          {(order.status === 'PLACED' || order.status === 'PENDING') && (
             <button
-              onClick={() => handleStatusUpdate(order._id, 'preparing')}
+              onClick={() => handleStatusUpdate(order._id, 'PREPARING')}
               className="flex-1 py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
               style={{ backgroundColor: '#8B5CF6', color: '#FFFFFF' }}>
               <CheckCircle className="w-4 h-4" />
               Accept Order
             </button>
           )}
-          {order.status === 'preparing' && (
+          {order.status === 'PREPARING' && (
             <button
-              onClick={() => handleStatusUpdate(order._id, 'delivered')}
+              onClick={() => handleStatusUpdate(order._id, 'DELIVERED')}
               className="flex-1 py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
               style={{ backgroundColor: '#10B981', color: '#FFFFFF' }}>
               <CheckCircle className="w-4 h-4" />
@@ -192,6 +189,27 @@ const MessOrdersDashboard = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
+        <MessSidebar />
+        <div className="flex-1 md:ml-64 flex items-center justify-center">
+          <div className="text-center p-8">
+            <XCircle className="w-16 h-16 mx-auto mb-4" style={{ color: '#EF4444' }} />
+            <h3 className="text-xl font-bold mb-2" style={{ color: '#111827' }}>{error}</h3>
+            <p className="mb-4" style={{ color: '#6B7280' }}>Please try again or contact support</p>
+            <button
+              onClick={() => navigate('/owner/dashboard')}
+              className="px-6 py-3 rounded-lg font-medium"
+              style={{ backgroundColor: '#8B5CF6', color: '#FFFFFF' }}>
+              Go to Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <MessSidebar />
@@ -215,7 +233,7 @@ const MessOrdersDashboard = () => {
               <Package className="w-5 h-5" style={{ color: '#F59E0B' }} />
             </div>
             <p className="text-3xl font-bold" style={{ color: '#111827' }}>
-              {orders.filter((o) => o.status === 'pending').length}
+              {orders.filter((o) => o.status === 'PLACED' || o.status === 'PENDING').length}
             </p>
           </div>
           <div className="p-6 rounded-xl shadow-sm" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
@@ -224,7 +242,7 @@ const MessOrdersDashboard = () => {
               <Clock className="w-5 h-5" style={{ color: '#3B82F6' }} />
             </div>
             <p className="text-3xl font-bold" style={{ color: '#111827' }}>
-              {orders.filter((o) => o.status === 'preparing').length}
+              {orders.filter((o) => o.status === 'PREPARING').length}
             </p>
           </div>
           <div className="p-6 rounded-xl shadow-sm" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
@@ -233,7 +251,7 @@ const MessOrdersDashboard = () => {
               <CheckCircle className="w-5 h-5" style={{ color: '#10B981' }} />
             </div>
             <p className="text-3xl font-bold" style={{ color: '#111827' }}>
-              {orders.filter((o) => o.status === 'delivered').length}
+              {orders.filter((o) => o.status === 'DELIVERED').length}
             </p>
           </div>
         </div>
@@ -241,9 +259,9 @@ const MessOrdersDashboard = () => {
         {/* Tabs */}
         <div className="flex gap-2 mb-6 border-b" style={{ borderColor: '#E5E7EB' }}>
           {[
-            { key: 'new', label: 'New Orders', count: orders.filter((o) => o.status === 'pending').length },
-            { key: 'preparing', label: 'Preparing', count: orders.filter((o) => o.status === 'preparing').length },
-            { key: 'delivered', label: 'Delivered', count: orders.filter((o) => o.status === 'delivered').length },
+            { key: 'new', label: 'New Orders', count: orders.filter((o) => o.status === 'PLACED' || o.status === 'PENDING').length },
+            { key: 'preparing', label: 'Preparing', count: orders.filter((o) => o.status === 'PREPARING').length },
+            { key: 'delivered', label: 'Delivered', count: orders.filter((o) => o.status === 'DELIVERED').length },
           ].map((tab) => (
             <button
               key={tab.key}

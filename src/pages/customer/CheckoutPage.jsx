@@ -4,52 +4,72 @@ import PageHeader from '../../components/shared/PageHeader';
 import Card from '../../components/shared/Card';
 import OrderSummary from '../../components/customer/OrderSummary';
 import OrderItem from '../../components/customer/OrderItem';
+import orderService from '../../services/order.service';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { meal, quantity = 1 } = location.state || {};
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
-    deliveryAddress: 'Hostel Block A, Room 201, Delhi University',
-    phone: '+91 9876543210',
-    specialInstructions: ''
+    deliveryAddress: '',
+    phone: '',
+    paymentMethod: 'COD',
+    notes: ''
   });
 
-  // Mock cart items if coming from meal detail page
+  // Prepare cart items - must have valid meal data
   const cartItems = meal ? [{
     mealId: meal,
     quantity
-  }] : [
-    {
-      mealId: {
-        _id: 'm1',
-        name: 'Chicken Biryani',
-        price: 150,
-        messId: { name: 'Delhi Mess' }
-      },
-      quantity: 2
-    },
-    {
-      mealId: {
-        _id: 'm2',
-        name: 'Dal Tadka',
-        price: 80,
-        messId: { name: 'Delhi Mess' }
-      },
-      quantity: 1
-    }
-  ];
+  }] : [];
+
+  // If no cart items, redirect back
+  if (!cartItems || cartItems.length === 0) {
+    navigate('/messes');
+    return null;
+  }
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.mealId.price * item.quantity), 0);
   const deliveryFee = 0; // Free delivery
   const total = subtotal + deliveryFee;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Mock order creation
-    alert('Order placed successfully!');
-    navigate('/orders');
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Prepare order data
+      const orderData = {
+        items: cartItems.map(item => ({
+          mealId: item.mealId._id,
+          quantity: item.quantity,
+          price: item.mealId.price
+        })),
+        deliveryAddress: formData.deliveryAddress,
+        deliveryPhone: formData.phone,
+        paymentMethod: formData.paymentMethod,
+        paymentStatus: 'PENDING',
+        notes: formData.notes,
+        status: 'PLACED'
+      };
+
+      // Create order via API
+      await orderService.createOrder(orderData);
+      
+      // Success - navigate to orders page
+      navigate('/orders', { 
+        state: { message: 'Order placed successfully!' }
+      });
+    } catch (err) {
+      console.error('Error placing order:', err);
+      setError(err.response?.data?.message || 'Failed to place order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -112,28 +132,57 @@ const CheckoutPage = () => {
                   </div>
 
                   <div>
-                    <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
+                    <label className="block mb-2 font-medium" style={{ color: '#111827' }}>
                       Special Instructions (Optional)
                     </label>
                     <textarea
-                      name="specialInstructions"
-                      value={formData.specialInstructions}
+                      name="notes"
+                      value={formData.notes}
                       onChange={handleChange}
                       rows="3"
                       placeholder="e.g., Extra spicy, No onions, etc."
                       className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
                       style={{ 
-                        borderColor: 'var(--gray-500)',
-                        color: 'var(--gray-900)'
+                        borderColor: '#D1D5DB',
+                        color: '#111827'
                       }}
                     />
+                  </div>
+
+                  <div>
+                    <label className="block mb-2 font-medium" style={{ color: '#111827' }}>
+                      Payment Method *
+                    </label>
+                    <select
+                      name="paymentMethod"
+                      value={formData.paymentMethod}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+                      style={{ 
+                        borderColor: '#D1D5DB',
+                        color: '#111827'
+                      }}
+                    >
+                      <option value="COD">Cash on Delivery</option>
+                      <option value="UPI">UPI</option>
+                      <option value="CREDIT_CARD">Credit Card</option>
+                      <option value="DEBIT_CARD">Debit Card</option>
+                    </select>
                   </div>
                 </div>
               </Card>
 
+              {/* Error Message */}
+              {error && (
+                <Card className="p-4" style={{ backgroundColor: '#FEE2E2', borderColor: '#EF4444' }}>
+                  <p style={{ color: '#991B1B' }}>{error}</p>
+                </Card>
+              )}
+
               {/* Order Items */}
               <Card className="p-6">
-                <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--gray-900)' }}>
+                <h2 className="text-xl font-bold mb-4" style={{ color: '#111827' }}>
                   Order Items
                 </h2>
                 <div className="space-y-4">
@@ -147,42 +196,12 @@ const CheckoutPage = () => {
                   ))}
                 </div>
               </Card>
-
-              {/* Payment Method */}
-              <Card className="p-6">
-                <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--gray-900)' }}>
-                  Payment Method
-                </h2>
-                <div className="space-y-3">
-                  <label 
-                    className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer"
-                    style={{ borderColor: 'var(--primary-500)', backgroundColor: 'var(--primary-50)' }}
-                  >
-                    <input 
-                      type="radio" 
-                      name="payment" 
-                      value="cod" 
-                      defaultChecked
-                      className="w-5 h-5"
-                      style={{ accentColor: 'var(--primary-500)' }}
-                    />
-                    <div>
-                      <p className="font-semibold" style={{ color: 'var(--gray-900)' }}>
-                        Cash on Delivery
-                      </p>
-                      <p className="text-sm" style={{ color: 'var(--gray-700)' }}>
-                        Pay when you receive your order
-                      </p>
-                    </div>
-                  </label>
-                </div>
-              </Card>
             </div>
 
             {/* Sidebar - Order Summary */}
             <div>
               <Card className="p-6 sticky top-24">
-                <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--gray-900)' }}>
+                <h2 className="text-xl font-bold mb-4" style={{ color: '#111827' }}>
                   Order Summary
                 </h2>
                 
@@ -192,13 +211,16 @@ const CheckoutPage = () => {
 
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-lg font-bold text-lg"
-                  style={{ backgroundColor: 'var(--primary-500)', color: 'var(--white)' }}
+                  disabled={loading}
+                  className="w-full py-3 rounded-lg font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ backgroundColor: '#8B5CF6', color: '#FFFFFF' }}
                 >
-                  Place Order
+                  {loading ? 'Placing Order...' : 'Place Order'}
                 </button>
 
-                <p className="text-xs text-center mt-4" style={{ color: 'var(--gray-500)' }}>
+                <p className="text-xs text-center mt-4" style={{ color: '#6B7280' }}>
+                  By placing this order, you agree to our terms and conditions
+                </p>
                   By placing this order, you agree to our Terms & Conditions
                 </p>
               </Card>
