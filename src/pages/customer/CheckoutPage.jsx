@@ -219,8 +219,6 @@ const CheckoutPage = () => {
                 </button>
 
                 <p className="text-xs text-center mt-4" style={{ color: '#6B7280' }}>
-                  By placing this order, you agree to our terms and conditions
-                </p>
                   By placing this order, you agree to our Terms & Conditions
                 </p>
               </Card>
