@@ -24,6 +24,7 @@ export { default as orderService } from './order.service.js';
 export { default as reviewService } from './review.service.js';
 export { default as contactService } from './contact.service.js';
 export { default as userService } from './user.service.js';
+export { default as ownerService } from './owner.service.js';
 
 // Named exports for convenience
 export * from './auth.service.js';
@@ -34,3 +35,4 @@ export * from './order.service.js';
 export * from './review.service.js';
 export * from './contact.service.js';
 export * from './user.service.js';
+export * from './owner.service.js';

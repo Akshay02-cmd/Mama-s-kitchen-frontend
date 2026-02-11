@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, TrendingUp, ShoppingBag, DollarSign, Store } from 'lucide-react';
 import { useAuth } from '../../hooks/shared';
 import Sidebar from '../../components/shared/Sidebar';
+import ownerService from '../../services/owner.service';
 
 const OwnerDashboard = () => {
   const { user } = useAuth();
@@ -15,6 +16,7 @@ const OwnerDashboard = () => {
   });
   const [messes, setMesses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // If user is not OWNER, redirect
@@ -23,45 +25,40 @@ const OwnerDashboard = () => {
       return;
     }
 
-    // TODO: Fetch owner statistics and messes from API
-    // For now, using mock data
-    setTimeout(() => {
-      setStats({
-        totalSales: 45820,
-        totalOrders: 342,
-        totalMesses: 3,
-        monthlyRevenue: 125400,
-      });
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Fetch owner dashboard statistics
+        const statsResponse = await ownerService.getOwnerDashboardStats();
+        setStats(statsResponse.stats || {
+          totalSales: 0,
+          totalOrders: 0,
+          totalMesses: 0,
+          monthlyRevenue: 0,
+        });
 
-      setMesses([
-        {
-          _id: '1',
-          name: 'Sunrise Mess',
-          location: 'MG Road, Bangalore',
-          totalOrders: 156,
-          revenue: 45600,
-          status: 'active',
-        },
-        {
-          _id: '2',
-          name: 'Homely Kitchen',
-          location: 'Koramangala, Bangalore',
-          totalOrders: 124,
-          revenue: 52800,
-          status: 'active',
-        },
-        {
-          _id: '3',
-          name: 'Student Canteen',
-          location: 'BTM Layout, Bangalore',
-          totalOrders: 62,
-          revenue: 27000,
-          status: 'active',
-        },
-      ]);
+        // Fetch owner's messes
+        const messesResponse = await ownerService.getOwnerMesses();
+        setMesses(messesResponse.messes || []);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError('Failed to load dashboard data');
+        // Set empty data on error
+        setStats({
+          totalSales: 0,
+          totalOrders: 0,
+          totalMesses: 0,
+          monthlyRevenue: 0,
+        });
+        setMesses([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      setLoading(false);
-    }, 1000);
+    fetchDashboardData();
   }, [user, navigate]);
 
   const StatCard = ({ icon: Icon, title, value, subtitle, color }) => (

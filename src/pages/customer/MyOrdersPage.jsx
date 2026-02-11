@@ -1,74 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import OrderCard from '../../components/customer/OrderCard';
 import Sidebar from '../../components/shared/Sidebar.jsx';
-
-// Mock orders data
-const mockOrders = [
-  {
-    _id: 'ord1',
-    meals: [
-      {
-        mealId: { _id: 'm1', name: 'Chicken Biryani', price: 150 },
-        quantity: 2
-      },
-      {
-        mealId: { _id: 'm2', name: 'Dal Tadka', price: 80 },
-        quantity: 1
-      }
-    ],
-    totalAmount: 380,
-    status: 'DELIVERED',
-    deliveryAddress: 'Hostel Block A, Room 201, Delhi University',
-    createdAt: '2026-01-28T18:30:00Z',
-    deliveredAt: '2026-01-28T19:45:00Z'
-  },
-  {
-    _id: 'ord2',
-    meals: [
-      {
-        mealId: { _id: 'm3', name: 'Paneer Butter Masala', price: 120 },
-        quantity: 1
-      }
-    ],
-    totalAmount: 120,
-    status: 'PREPARING',
-    deliveryAddress: 'Hostel Block A, Room 201, Delhi University',
-    createdAt: '2026-02-02T12:15:00Z',
-    estimatedDeliveryTime: '2026-02-02T13:30:00Z'
-  },
-  {
-    _id: 'ord3',
-    meals: [
-      {
-        mealId: { _id: 'm4', name: 'Fish Curry', price: 180 },
-        quantity: 1
-      },
-      {
-        mealId: { _id: 'm5', name: 'Veg Pulao', price: 90 },
-        quantity: 2
-      }
-    ],
-    totalAmount: 360,
-    status: 'PENDING',
-    deliveryAddress: 'Hostel Block A, Room 201, Delhi University',
-    createdAt: '2026-02-02T11:00:00Z'
-  },
-  {
-    _id: 'ord4',
-    meals: [
-      {
-        mealId: { _id: 'm1', name: 'Chicken Biryani', price: 150 },
-        quantity: 1
-      }
-    ],
-    totalAmount: 150,
-    status: 'CANCELLED',
-    deliveryAddress: 'Hostel Block A, Room 201, Delhi University',
-    createdAt: '2026-01-25T14:20:00Z',
-    cancelledAt: '2026-01-25T14:35:00Z'
-  }
-];
+import orderService from '../../services/order.service';
 
 const statusConfig = {
   PENDING: { color: 'var(--warning)', label: 'Pending', bgColor: '#FFF9E6' },
@@ -78,13 +12,35 @@ const statusConfig = {
 };
 
 const MyOrdersPage = () => {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await orderService.getUserOrders();
+        setOrders(response.orders || []);
+      } catch (err) {
+        console.error('Error fetching orders:', err);
+        setError('Failed to load orders');
+        setOrders([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
 
   const filteredOrders = useMemo(() => {
     return filterStatus === 'all' 
-      ? mockOrders 
-      : mockOrders.filter(order => order.status === filterStatus);
-  }, [filterStatus]);
+      ? orders 
+      : orders.filter(order => order.status === filterStatus);
+  }, [orders, filterStatus]);
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
@@ -97,30 +53,46 @@ const MyOrdersPage = () => {
           My Orders
         </h1>
 
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: '#FEE2E2', border: '1px solid #FCA5A5' }}>
+            <p style={{ color: '#DC2626' }}>{error}</p>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#3B82F6' }}></div>
+          </div>
+        )}
+
         {/* Filter Tabs */}
-        <div className="mb-8 flex gap-3 overflow-x-auto">
-          {['all', 'PENDING', 'PREPARING', 'DELIVERED', 'CANCELLED'].map(status => (
-            <button
-              key={status}
-              onClick={() => setFilterStatus(status)}
-              className="px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all"
-              style={{
-                backgroundColor: filterStatus === status 
-                  ? '#3B82F6'
-                  : '#FFFFFF',
-                color: filterStatus === status 
-                  ? '#FFFFFF' 
-                  : '#6B7280',
-                border: '1px solid #E5E7EB'
-              }}
-            >
-              {status === 'all' ? 'All Orders' : statusConfig[status].label}
-            </button>
-          ))}
-        </div>
+        {!loading && (
+          <div className="mb-8 flex gap-3 overflow-x-auto">
+            {['all', 'PENDING', 'PREPARING', 'DELIVERED', 'CANCELLED'].map(status => (
+              <button
+                key={status}
+                onClick={() => setFilterStatus(status)}
+                className="px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-all"
+                style={{
+                  backgroundColor: filterStatus === status 
+                    ? '#3B82F6'
+                    : '#FFFFFF',
+                  color: filterStatus === status 
+                    ? '#FFFFFF' 
+                    : '#6B7280',
+                  border: '1px solid #E5E7EB'
+                }}
+              >
+                {status === 'all' ? 'All Orders' : statusConfig[status].label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Orders List */}
-        {filteredOrders.length === 0 ? (
+        {!loading && filteredOrders.length === 0 ? (
           <div className="text-center py-20 rounded-lg"
             style={{ 
               backgroundColor: '#FFFFFF',
@@ -140,7 +112,7 @@ const MyOrdersPage = () => {
               Browse Meals
             </Link>
           </div>
-        ) : (
+        ) : !loading && (
           <div className="space-y-6">
             {filteredOrders.map(order => (
               <OrderCard key={order._id} order={order} />

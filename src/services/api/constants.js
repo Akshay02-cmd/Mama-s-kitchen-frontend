@@ -23,12 +23,21 @@ export const API_ENDPOINTS = {
   MESS: {
     BASE: '/mess',
     BY_ID: (id) => `/mess/${id}`,
+    MEALS: (id) => `/mess/${id}/meals`,
+    ORDERS: (id) => `/mess/${id}/orders`,
+    STATS: (id) => `/mess/${id}/stats`,
   },
 
   // Meals/Menu
   MEALS: {
     BASE: '/menu',
     BY_ID: (id) => `/menu/${id}`,
+  },
+
+  // Owner
+  OWNER: {
+    DASHBOARD_STATS: '/owner/dashboard/stats',
+    MESSES: '/owner/messes',
   },
 
   // Orders
