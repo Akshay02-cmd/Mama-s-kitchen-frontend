@@ -5,6 +5,7 @@ import Sidebar from '../../components/shared/Sidebar.jsx';
 import orderService from '../../services/order.service';
 
 const statusConfig = {
+  PLACED: { color: 'var(--info)', label: 'Placed', bgColor: '#E6F4FF' },
   PENDING: { color: 'var(--warning)', label: 'Pending', bgColor: '#FFF9E6' },
   PREPARING: { color: 'var(--info)', label: 'Preparing', bgColor: '#E6F4FF' },
   DELIVERED: { color: 'var(--success)', label: 'Delivered', bgColor: '#E6F9F0' },
@@ -70,7 +71,7 @@ const MyOrdersPage = () => {
         {/* Filter Tabs */}
         {!loading && (
           <div className="mb-8 flex gap-3 overflow-x-auto">
-            {['all', 'PENDING', 'PREPARING', 'DELIVERED', 'CANCELLED'].map(status => (
+            {['all', 'PLACED', 'PENDING', 'PREPARING', 'DELIVERED', 'CANCELLED'].map(status => (
               <button
                 key={status}
                 onClick={() => setFilterStatus(status)}

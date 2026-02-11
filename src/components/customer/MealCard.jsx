@@ -1,8 +1,11 @@
 import { memo } from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
 
 const MealCard = memo(({ meal, showAddToCart = false, onCardClick }) => {
+  const navigate = useNavigate();
+  
   const getPlaceholderColor = () => {
     const colors = {
       'breakfast': 'F59E0B',
@@ -14,9 +17,8 @@ const MealCard = memo(({ meal, showAddToCart = false, onCardClick }) => {
   };
 
   const handleAddToCart = (e) => {
-    e.preventDefault();
-    // Add to cart logic here
-    console.log('Adding to cart:', meal._id);
+    e.stopPropagation();
+    navigate('/checkout', { state: { meal, quantity: 1 } });
   };
 
   return (

@@ -1,4 +1,5 @@
 const statusConfig = {
+  PLACED: { color: 'var(--info)', label: 'Placed' },
   PENDING: { color: 'var(--warning)', label: 'Pending' },
   PREPARING: { color: 'var(--info)', label: 'Preparing' },
   OUT_FOR_DELIVERY: { color: 'var(--info)', label: 'Out for Delivery' },

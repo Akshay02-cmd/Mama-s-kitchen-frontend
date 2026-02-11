@@ -95,12 +95,6 @@ const MealDetailPage = () => {
     );
   }
 
-  const handleAddToCart = () => {
-    // Mock add to cart functionality
-    alert(`Added ${quantity} ${meal.name} to cart!`);
-    navigate('/checkout');
-  };
-
   const handleOrderNow = () => {
     navigate('/checkout', { state: { meal, quantity } });
   };
@@ -218,30 +212,18 @@ const MealDetailPage = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex gap-4">
+              {/* Action Button */}
+              <div>
                 <button
                   onClick={handleOrderNow}
                   disabled={!meal.isAvailable}
-                  className="flex-1 py-4 px-8 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  className="w-full py-4 px-8 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   style={{
                     background: meal.isAvailable ? 'linear-gradient(135deg, var(--primary-600) 0%, var(--primary-500) 100%)' : 'var(--gray-400)',
                     color: 'var(--white)'
                   }}
                 >
                   {meal.isAvailable ? '🛒 Order Now' : 'Not Available'}
-                </button>
-                <button
-                  onClick={handleAddToCart}
-                  disabled={!meal.isAvailable}
-                  className="flex-1 py-4 px-8 rounded-xl font-bold text-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{
-                    backgroundColor: 'var(--white)',
-                    color: 'var(--primary-600)',
-                    border: '3px solid var(--primary-600)'
-                  }}
-                >
-                  🛒 Order Now
                 </button>
               </div>
             </Card>

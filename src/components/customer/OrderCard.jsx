@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { memo } from 'react';
 
 const statusConfig = {
+  PLACED: { color: 'var(--info)', label: 'Placed', bgColor: '#E6F4FF' },
   PENDING: { color: 'var(--warning)', label: 'Pending', bgColor: '#FFF9E6' },
   PREPARING: { color: 'var(--info)', label: 'Preparing', bgColor: '#E6F4FF' },
   DELIVERED: { color: 'var(--success)', label: 'Delivered', bgColor: '#E6F9F0' },
@@ -41,16 +42,16 @@ const OrderCard = memo(({ order }) => {
         <div className="mb-4">
           <h3 className="font-bold mb-3" style={{ color: 'var(--gray-900)' }}>Items</h3>
           <div className="space-y-2">
-            {order.meals.map((item, index) => (
+            {(order.orderItems || order.meals || []).map((item, index) => (
               <div key={index} className="flex justify-between items-center">
                 <div>
-                  <span style={{ color: 'var(--gray-900)' }}>{item.mealId.name}</span>
+                  <span style={{ color: 'var(--gray-900)' }}>{item.mealId?.name || 'Unknown Item'}</span>
                   <span className="ml-2" style={{ color: 'var(--gray-500)' }}>
                     x{item.quantity}
                   </span>
                 </div>
                 <span className="font-semibold" style={{ color: 'var(--gray-900)' }}>
-                  ₹{item.mealId.price * item.quantity}
+                  ₹{(item.mealId?.price || item.price) * item.quantity}
                 </span>
               </div>
             ))}

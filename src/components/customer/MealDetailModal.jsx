@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import { MapPin, Star, Plus, Minus } from 'lucide-react';
 
 const MealDetailModal = ({ meal, isOpen, onClose }) => {
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
 
   if (!isOpen || !meal) return null;
 
   const handleAddToCart = () => {
-    console.log(`Added ${quantity} ${meal.name} to cart`);
-    // Add your cart logic here
+    navigate('/checkout', { state: { meal, quantity } });
     onClose();
   };
 
