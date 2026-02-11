@@ -28,16 +28,30 @@ const CustomerProfilePage = () => {
         setProfile(response.profile);
       } catch (err) {
         console.error('Error fetching profile:', err);
-        // Don't logout - user is still authenticated
-        // Just set profile to null and show create profile option
-        setProfile(null);
+        
+        // Check if error is 401 (unauthorized/token expired)
+        if (err.response?.status === 401) {
+          // Token expired - redirect to login
+          console.log('Session expired. Redirecting to login...');
+          navigate('/login');
+          return;
+        }
+        
+        // Check if error is 404 (profile not found)
+        if (err.response?.status === 404) {
+          // Profile doesn't exist - show complete profile option
+          setProfile(null);
+        } else {
+          // Other errors - redirect to login to be safe
+          navigate('/login');
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, []);
+  }, [navigate]);
 
   const handleLogout = async () => {
     try {

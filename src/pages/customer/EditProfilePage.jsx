@@ -114,7 +114,13 @@ const EditProfilePage = () => {
       }
     } catch (err) {
       console.error('Profile update error:', err);
-      setError(err.response?.data?.message || 'Failed to save profile. Please try again.');
+      
+      // Show detailed validation errors from backend
+      if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
+        setError(err.response.data.errors.join('. '));
+      } else {
+        setError(err.response?.data?.message || 'Failed to save profile. Please try again.');
+      }
     } finally {
       setSaving(false);
     }

@@ -14,6 +14,7 @@ const OwnerProfileCompletePage = () => {
     address: '',
   });
   const [errors, setErrors] = useState({});
+  const [profileExists, setProfileExists] = useState(false); // Track if profile already exists
 
   useEffect(() => {
     // If user is not OWNER, redirect
@@ -26,13 +27,33 @@ const OwnerProfileCompletePage = () => {
     const checkProfile = async () => {
       try {
         const response = await profileService.getOwnerProfile();
-        if (response.profile && response.profile.isProfileCompleted) {
-          // Profile already complete, redirect to dashboard
-          navigate('/owner/dashboard');
+        if (response.profile) {
+          // Profile exists
+          if (response.profile.isProfileCompleted) {
+            // Profile already complete, redirect to dashboard
+            navigate('/owner/dashboard');
+          } else {
+            // Profile exists but incomplete - load it for updating
+            setProfileExists(true);
+            setFormData({
+              phone: response.profile.phone || '',
+              address: response.profile.address || '',
+            });
+          }
         }
       } catch (err) {
-        // Profile doesn't exist yet, which is fine
-        console.log('No existing profile found');
+        // Check error type
+        if (err.response?.status === 401) {
+          // Token expired, redirect to login
+          navigate('/login');
+        } else if (err.response?.status === 404) {
+          // Profile doesn't exist yet, which is fine - stay on this page
+          console.log('No existing profile found');
+          setProfileExists(false);
+        } else {
+          // Other errors, redirect to login to be safe
+          navigate('/login');
+        }
       }
     };
 
@@ -42,16 +63,21 @@ const OwnerProfileCompletePage = () => {
   const validateForm = () => {
     const newErrors = {};
 
+    // Clean phone number for validation
+    const cleanPhone = formData.phone.replace(/[\s\-\+\(\)]/g, '').slice(-10);
+
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone number is required';
-    } else if (!/^[6-9]\d{9}$/.test(formData.phone)) {
+    } else if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
       newErrors.phone = 'Invalid phone number (10 digits starting with 6-9)';
     }
 
     if (!formData.address.trim()) {
       newErrors.address = 'Business address is required';
-    } else if (formData.address.length < 10) {
+    } else if (formData.address.trim().length < 10) {
       newErrors.address = 'Address must be at least 10 characters';
+    } else if (formData.address.trim().length > 300) {
+      newErrors.address = 'Address must not exceed 300 characters';
     }
 
     setErrors(newErrors);
@@ -82,12 +108,20 @@ const OwnerProfileCompletePage = () => {
     setError(null);
 
     try {
+      // Clean phone number (remove spaces, dashes, etc., and get last 10 digits)
+      const cleanPhone = formData.phone.replace(/[\s\-\+\(\)]/g, '').slice(-10);
+      
       const profileData = {
-        phone: formData.phone,
-        address: formData.address,
+        phone: cleanPhone,
+        address: formData.address.trim(),
       };
 
-      await profileService.createOwnerProfile(profileData);
+      // Use UPDATE if profile exists, CREATE if it doesn't
+      if (profileExists) {
+        await profileService.updateOwnerProfile(profileData);
+      } else {
+        await profileService.createOwnerProfile(profileData);
+      }
       
       // Update profile completion status
       updateProfileStatus(true);
@@ -95,7 +129,14 @@ const OwnerProfileCompletePage = () => {
       // Redirect to owner dashboard
       navigate('/owner/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create profile. Please try again.');
+      console.error('Profile save error:', err.response?.data);
+      
+      // Show detailed validation errors from backend
+      if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
+        setError(err.response.data.errors.join('. '));
+      } else {
+        setError(err.response?.data?.message || 'Failed to save profile. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -206,7 +247,7 @@ const OwnerProfileCompletePage = () => {
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Creating Profile...
+                  Saving Profile...
                 </>
               ) : (
                 <>

@@ -83,10 +83,17 @@ const Login = () => {
           
           // Profile exists, check if complete
           const profile = profileResponse?.profile;
+          console.log('Profile check after login:', { 
+            role: response.user?.role,
+            profile: profile,
+            isProfileCompleted: profile?.isProfileCompleted 
+          });
+          
           const isComplete = profile?.isProfileCompleted === true;
           
           if (!isComplete) {
             // Profile incomplete - redirect to complete it
+            console.log('Profile incomplete, redirecting to complete profile');
             if (response.user?.role === 'OWNER') {
               navigate('/owner/complete-profile', { replace: true });
             } else {
@@ -94,6 +101,7 @@ const Login = () => {
             }
           } else {
             // Profile complete - redirect normally
+            console.log('Profile complete, redirecting to dashboard');
             if (response.user?.role === 'OWNER') {
               navigate('/owner/dashboard', { replace: true });
             } else {
@@ -102,12 +110,26 @@ const Login = () => {
             }
           }
         } catch (profileError) {
-          // Profile doesn't exist - redirect to create it
-          console.log('Profile not found, redirecting to create profile');
-          if (response.user?.role === 'OWNER') {
-            navigate('/owner/complete-profile', { replace: true });
+          console.log('Profile check error:', profileError.response?.status, profileError.response?.data);
+          
+          // Check if it's a 404 (profile doesn't exist) or other error
+          if (profileError.response?.status === 404) {
+            // Profile doesn't exist - redirect to create it
+            console.log('Profile not found, redirecting to create profile');
+            if (response.user?.role === 'OWNER') {
+              navigate('/owner/complete-profile', { replace: true });
+            } else {
+              navigate('/profile/edit', { replace: true, state: { requiresCompletion: true } });
+            }
           } else {
-            navigate('/profile/edit', { replace: true, state: { requiresCompletion: true } });
+            // Other errors (like 401) shouldn't happen after login, but redirect to dashboard anyway
+            console.log('Error checking profile, redirecting to dashboard');
+            if (response.user?.role === 'OWNER') {
+              navigate('/owner/dashboard', { replace: true });
+            } else {
+              const redirectPath = from === "/login" ? "/" : from;
+              navigate(redirectPath, { replace: true });
+            }
           }
         }
       }

@@ -93,29 +93,19 @@ apiClient.interceptors.response.use(
     if (errorResponse) {
       const { status, data } = errorResponse;
 
-      // 401 Unauthorized - Only clear auth for authentication endpoints
+      // 401 Unauthorized - Token expired or invalid
       if (status === 401) {
+        // Clear authentication data
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        
+        // Don't redirect during login/register - let those pages handle it
         const url = error.config?.url || '';
-        const message = data?.message?.toLowerCase() || '';
+        const isAuthEndpoint = url.includes('/auth/login') || url.includes('/auth/register');
         
-        // Only logout for actual auth failures (expired/invalid tokens)
-        // Don't logout for profile not found (404) or profile check errors
-        const isAuthFailure = (
-          url.includes('/auth/login') ||
-          url.includes('/auth/register') ||
-          message.includes('invalid token') ||
-          message.includes('token expired') ||
-          message.includes('no token') ||
-          message.includes('authentication failed')
-        );
-        
-        if (isAuthFailure) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          // Redirect to login page
-          if (window.location.pathname !== '/login') {
-            window.location.href = '/login';
-          }
+        if (!isAuthEndpoint && window.location.pathname !== '/login') {
+          // Redirect to login page for all other 401 errors
+          window.location.href = '/login';
         }
       }
 
