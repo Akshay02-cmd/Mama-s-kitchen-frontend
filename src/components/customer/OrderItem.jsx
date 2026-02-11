@@ -5,29 +5,29 @@ const OrderItem = ({ item, index, isLast }) => {
       style={{ borderBottom: !isLast ? '1px solid var(--gray-100)' : 'none' }}
     >
       <img
-        src={item.mealId.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100&h=100&fit=crop'}
-        alt={item.mealId.name}
+        src={item.mealId?.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100&h=100&fit=crop'}
+        alt={item.mealId?.name || 'Meal'}
         className="w-20 h-20 rounded-lg object-cover"
       />
       <div className="flex-1">
         <h3 className="font-bold mb-1" style={{ color: 'var(--gray-900)' }}>
-          {item.mealId.name}
+          {item.mealId?.name || 'Unknown Item'}
         </h3>
         <p className="text-sm mb-2" style={{ color: 'var(--gray-700)' }}>
-          by {item.mealId.messId.name}
+          by {item.mealId?.messId?.name || 'Restaurant'}
         </p>
         <div className="flex items-center gap-4">
           <span style={{ color: 'var(--gray-700)' }}>
             Quantity: <span className="font-semibold">{item.quantity}</span>
           </span>
           <span className="font-bold" style={{ color: 'var(--primary-500)' }}>
-            ₹{item.mealId.price} each
+            ₹{item.mealId?.price || item.price} each
           </span>
         </div>
       </div>
       <div className="text-right">
         <p className="text-xl font-bold" style={{ color: 'var(--primary-500)' }}>
-          ₹{item.mealId.price * item.quantity}
+          ₹{(item.mealId?.price || item.price) * item.quantity}
         </p>
       </div>
     </div>
