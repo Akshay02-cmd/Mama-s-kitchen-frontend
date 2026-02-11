@@ -4,6 +4,7 @@ import { Package, Clock, CheckCircle, XCircle, Eye } from 'lucide-react';
 import { useAuth } from '../../hooks/shared';
 import MessSidebar from '../../components/shared/MessSidebar';
 import ownerService from '../../services/owner.service';
+import orderService from '../../services/order.service';
 
 const MessOrdersDashboard = () => {
   const { user } = useAuth();
@@ -57,13 +58,21 @@ const MessOrdersDashboard = () => {
     return true;
   });
 
-  const handleStatusUpdate = (orderId, newStatus) => {
-    // TODO: API call to update order status
-    setOrders((prev) =>
-      prev.map((order) =>
-        order._id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
+  const handleStatusUpdate = async (orderId, newStatus) => {
+    try {
+      // Update order status via API
+      await orderService.updateOrderStatus(orderId, { status: newStatus });
+      
+      // Update local state
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+    } catch (err) {
+      console.error('Error updating order status:', err);
+      alert('Failed to update order status. Please try again.');
+    }
   };
 
   const formatTime = (date) => {
