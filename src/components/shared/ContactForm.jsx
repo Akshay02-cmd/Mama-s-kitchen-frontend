@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Send } from "lucide-react";
+import contactService from "../../services/contact.service";
+import { useNotification } from "../../hooks/shared";
 
 const ContactForm = () => {
+  const { showSuccess, showError } = useNotification();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -39,14 +42,24 @@ const ContactForm = () => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Contact form data:", formData);
+    try {
+      await contactService.createContact({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
+      });
+
       setIsSubmitting(false);
       setSubmitSuccess(true);
+      showSuccess("Message sent successfully. We'll get back to you soon.");
       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
       setTimeout(() => setSubmitSuccess(false), 5000);
-    }, 1500);
+    } catch (error) {
+      setIsSubmitting(false);
+      showError(error?.message || "Failed to send message. Please try again.");
+    }
   };
 
   return (
@@ -174,7 +187,7 @@ const ContactForm = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold py-4 px-6 rounded-lg hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+          className="w-full bg-linear-to-r from-orange-500 to-red-500 text-white font-semibold py-4 px-6 rounded-lg hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <>

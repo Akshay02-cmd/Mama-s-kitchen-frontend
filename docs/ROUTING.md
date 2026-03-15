@@ -46,10 +46,12 @@ The route setup is intentionally split into four files so that each part of the 
 
 - /mess/dashboard
 - /mess/orders
+- /mess/orders/:orderId
 - /mess/create-meal
 - /mess/profile
 - /mess/:messId/dashboard
 - /mess/:messId/orders
+- /mess/:messId/orders/:orderId
 - /mess/:messId/create-meal
 - /mess/:messId/profile
 
@@ -96,6 +98,7 @@ Examples:
 
 - mess dashboard
 - mess orders
+- mess order detail
 - create meal
 - mess profile
 
@@ -153,6 +156,10 @@ Benefits:
 
 Owner mess cards navigate to a selected mess dashboard route.
 
+### Orders dashboard to order detail
+
+Owner order cards now navigate into mess-aware order detail URLs so order status can be updated from a dedicated page.
+
 ### Sidebar navigation
 
 Mess sidebar reads messId from route params and builds links using that selected context when available.
@@ -166,6 +173,10 @@ Meal detail modal navigates to checkout using route state, passing:
 - selectedExtras
 
 That means checkout depends on prior navigation state. If the page is refreshed without that state, it falls back out of the checkout flow.
+
+### Review actions
+
+Mess detail includes a review tab where customers can load reviews and manage their own review without leaving the page.
 
 ## Guidelines for Adding New Routes
 

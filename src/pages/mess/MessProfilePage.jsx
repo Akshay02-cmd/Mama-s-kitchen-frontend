@@ -1,17 +1,28 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Store, MapPin, Phone, Mail, Clock, Edit, UtensilsCrossed } from 'lucide-react';
-import { useAuth } from '../../hooks/shared';
+import { useAuth, useNotification } from '../../hooks/shared';
 import MessSidebar from '../../components/shared/MessSidebar';
 import ownerService from '../../services/owner.service';
 import messService from '../../services/mess.service';
 
 const MessProfilePage = () => {
   const { user } = useAuth();
+  const { showSuccess, showError } = useNotification();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [messData, setMessData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    area: '',
+    phone: '',
+    address: '',
+    description: '',
+    is_Active: true,
+  });
   const [stats, setStats] = useState({
     totalOrders: 0,
     totalRevenue: 0,
@@ -38,6 +49,14 @@ const MessProfilePage = () => {
         // Use the first mess
         const mess = messes[0];
         setMessData(mess);
+        setFormData({
+          name: mess.name || '',
+          area: mess.area || '',
+          phone: mess.phone || '',
+          address: mess.address || '',
+          description: mess.description || '',
+          is_Active: mess.is_Active ?? true,
+        });
         
         // Fetch stats for this mess
         const statsResponse = await ownerService.getMessStats(mess._id);
@@ -59,6 +78,48 @@ const MessProfilePage = () => {
       fetchMessProfile();
     }
   }, [user]);
+
+  const handleFieldChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = async () => {
+    if (!messData?._id) return;
+
+    try {
+      setIsSaving(true);
+      const response = await messService.updateMess(messData._id, formData);
+      const updatedMess = response.mess || response.data || { ...messData, ...formData };
+      setMessData(updatedMess);
+      setFormData({
+        name: updatedMess.name || '',
+        area: updatedMess.area || '',
+        phone: updatedMess.phone || '',
+        address: updatedMess.address || '',
+        description: updatedMess.description || '',
+        is_Active: updatedMess.is_Active ?? true,
+      });
+      setIsEditing(false);
+      showSuccess('Mess profile updated successfully.');
+    } catch (err) {
+      console.error('Error updating mess profile:', err);
+      showError(err?.message || 'Failed to update mess profile.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setFormData({
+      name: messData.name || '',
+      area: messData.area || '',
+      phone: messData.phone || '',
+      address: messData.address || '',
+      description: messData.description || '',
+      is_Active: messData.is_Active ?? true,
+    });
+    setIsEditing(false);
+  };
 
   if (loading) {
     return (
@@ -111,7 +172,7 @@ const MessProfilePage = () => {
             </p>
           </div>
           <button
-            onClick={() => navigate('/mess/edit-profile')}
+            onClick={() => setIsEditing(true)}
             className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all"
             style={{ backgroundColor: '#8B5CF6', color: '#FFFFFF' }}>
             <Edit className="w-5 h-5" />
@@ -148,21 +209,101 @@ const MessProfilePage = () => {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-2xl font-bold" style={{ color: '#111827' }}>
-                  {messData.name}
-                </h2>
+                {isEditing ? (
+                  <input
+                    value={formData.name}
+                    onChange={(event) => handleFieldChange('name', event.target.value)}
+                    className="w-full max-w-md rounded-lg border px-4 py-2 text-2xl font-bold focus:outline-none focus:ring-2"
+                    style={{ borderColor: '#D1D5DB', color: '#111827' }}
+                  />
+                ) : (
+                  <h2 className="text-2xl font-bold" style={{ color: '#111827' }}>
+                    {messData.name}
+                  </h2>
+                )}
                 <span
                   className="px-3 py-1 rounded-full text-xs font-medium"
                   style={{
-                    backgroundColor: messData.is_Active ? '#D1FAE5' : '#FEE2E2',
-                    color: messData.is_Active ? '#065F46' : '#991B1B'
+                    backgroundColor: (isEditing ? formData.is_Active : messData.is_Active) ? '#D1FAE5' : '#FEE2E2',
+                    color: (isEditing ? formData.is_Active : messData.is_Active) ? '#065F46' : '#991B1B'
                   }}>
-                  {messData.is_Active ? 'Active' : 'Inactive'}
+                  {(isEditing ? formData.is_Active : messData.is_Active) ? 'Active' : 'Inactive'}
                 </span>
               </div>
-              <p style={{ color: '#6B7280' }}>{messData.description}</p>
+              {isEditing ? (
+                <textarea
+                  value={formData.description}
+                  onChange={(event) => handleFieldChange('description', event.target.value)}
+                  rows={4}
+                  className="w-full rounded-lg border px-4 py-3 focus:outline-none focus:ring-2"
+                  style={{ borderColor: '#D1D5DB', color: '#111827' }}
+                />
+              ) : (
+                <p style={{ color: '#6B7280' }}>{messData.description}</p>
+              )}
             </div>
           </div>
+
+          {isEditing && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: '#111827' }}>Area</label>
+                <input
+                  value={formData.area}
+                  onChange={(event) => handleFieldChange('area', event.target.value)}
+                  className="w-full rounded-lg border px-4 py-3 focus:outline-none focus:ring-2"
+                  style={{ borderColor: '#D1D5DB', color: '#111827' }}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: '#111827' }}>Phone</label>
+                <input
+                  value={formData.phone}
+                  onChange={(event) => handleFieldChange('phone', event.target.value)}
+                  className="w-full rounded-lg border px-4 py-3 focus:outline-none focus:ring-2"
+                  style={{ borderColor: '#D1D5DB', color: '#111827' }}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: '#111827' }}>Address</label>
+                <textarea
+                  value={formData.address}
+                  onChange={(event) => handleFieldChange('address', event.target.value)}
+                  rows={3}
+                  className="w-full rounded-lg border px-4 py-3 focus:outline-none focus:ring-2"
+                  style={{ borderColor: '#D1D5DB', color: '#111827' }}
+                />
+              </div>
+              <div className="md:col-span-2 flex items-center gap-3">
+                <input
+                  id="mess-active-toggle"
+                  type="checkbox"
+                  checked={formData.is_Active}
+                  onChange={(event) => handleFieldChange('is_Active', event.target.checked)}
+                />
+                <label htmlFor="mess-active-toggle" style={{ color: '#111827' }}>
+                  Mess is active and visible to customers
+                </label>
+              </div>
+              <div className="md:col-span-2 flex gap-3">
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="px-5 py-3 rounded-lg font-semibold disabled:opacity-50"
+                  style={{ backgroundColor: '#8B5CF6', color: '#FFFFFF' }}
+                >
+                  {isSaving ? 'Saving...' : 'Save Changes'}
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="px-5 py-3 rounded-lg font-semibold"
+                  style={{ backgroundColor: '#F3F4F6', color: '#374151' }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Address */}
@@ -170,7 +311,7 @@ const MessProfilePage = () => {
               <MapPin className="w-5 h-5 shrink-0 mt-1" style={{ color: '#8B5CF6' }} />
               <div>
                 <p className="font-medium mb-1" style={{ color: '#111827' }}>Address</p>
-                <p style={{ color: '#6B7280' }}>{messData.address}</p>
+                <p style={{ color: '#6B7280' }}>{isEditing ? formData.address : messData.address}</p>
               </div>
             </div>
 
@@ -179,7 +320,7 @@ const MessProfilePage = () => {
               <Phone className="w-5 h-5 shrink-0 mt-1" style={{ color: '#8B5CF6' }} />
               <div>
                 <p className="font-medium mb-1" style={{ color: '#111827' }}>Phone</p>
-                <p style={{ color: '#6B7280' }}>{messData.phone}</p>
+                <p style={{ color: '#6B7280' }}>{isEditing ? formData.phone : messData.phone}</p>
               </div>
             </div>
 
@@ -199,7 +340,7 @@ const MessProfilePage = () => {
               <MapPin className="w-5 h-5 shrink-0 mt-1" style={{ color: '#8B5CF6' }} />
               <div>
                 <p className="font-medium mb-1" style={{ color: '#111827' }}>Area</p>
-                <p style={{ color: '#6B7280' }}>{messData.area}</p>
+                <p style={{ color: '#6B7280' }}>{isEditing ? formData.area : messData.area}</p>
               </div>
             </div>
 
@@ -241,7 +382,7 @@ const MessProfilePage = () => {
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <button
-            onClick={() => navigate('/mess/create-meal')}
+            onClick={() => navigate(messData?._id ? `/mess/${messData._id}/create-meal` : '/mess/create-meal')}
             className="p-6 rounded-xl text-left hover:shadow-md transition-all"
             style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
             <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4"
@@ -257,7 +398,7 @@ const MessProfilePage = () => {
           </button>
 
           <button
-            onClick={() => navigate('/mess/orders')}
+            onClick={() => navigate(messData?._id ? `/mess/${messData._id}/orders` : '/mess/orders')}
             className="p-6 rounded-xl text-left hover:shadow-md transition-all"
             style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
             <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4"

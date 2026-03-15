@@ -5,6 +5,7 @@ import ProtectedRoute from "../components/shared/ProtectedRoute.jsx";
 import MessOrdersDashboard from "../pages/mess/MessOrdersDashboard.jsx";
 import CreateMealPage from "../pages/mess/CreateMealPage.jsx";
 import MessProfilePage from "../pages/mess/MessProfilePage.jsx";
+import MessOrderDetailPage from "../pages/mess/MessOrderDetailPage.jsx";
 
 /**
  * Mess Routes
@@ -46,6 +47,22 @@ const MessRoutes = () => {
         element={
           <ProtectedRoute>
             <MessOrdersDashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/mess/orders/:orderId" 
+        element={
+          <ProtectedRoute>
+            <MessOrderDetailPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/mess/:messId/orders/:orderId" 
+        element={
+          <ProtectedRoute>
+            <MessOrderDetailPage />
           </ProtectedRoute>
         } 
       />

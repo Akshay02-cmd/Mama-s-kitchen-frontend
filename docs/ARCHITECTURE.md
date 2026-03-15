@@ -142,6 +142,8 @@ Examples:
 - meal.service.js
 - order.service.js
 - owner.service.js
+- review.service.js
+- contact.service.js
 
 This separation keeps HTTP details out of page components.
 
@@ -157,7 +159,9 @@ Key pieces:
 - Meal list and meal detail modal
 - Checkout page
 - Order history and order details
+- Review list plus review create, edit, and delete on mess detail
 - Customer profile and edit profile pages
+- Authenticated contact form submission
 
 ### Owner features
 
@@ -167,6 +171,8 @@ Owner flow is intentionally split into two layers:
 - mess-specific operational pages
 
 Owner dashboard shows mess cards. Clicking a mess card routes into a selected mess dashboard URL. From there, the mess sidebar keeps navigation scoped to that mess.
+
+Mess-specific pages now also include a dedicated owner order detail view and in-page mess profile editing.
 
 ### Extras flow
 
@@ -185,6 +191,34 @@ This is why these files are closely related:
 - components/customer/MealDetailModal.jsx
 - pages/customer/CheckoutPage.jsx
 - services/order.service.js
+
+## Review and Contact Flows
+
+### Reviews
+
+Review data is loaded directly inside the mess detail page.
+
+Current behavior:
+
+1. page loads mess and meal data
+2. page requests reviews filtered by mess id
+3. customer can create one review
+4. customer can edit or delete their own review
+
+This flow currently depends on these files:
+
+- pages/customer/MessDetailPage.jsx
+- services/review.service.js
+
+### Contact
+
+The shared contact page now performs a real API submission instead of a placeholder timeout.
+
+This flow currently depends on these files:
+
+- pages/shared/Contact.jsx
+- components/shared/ContactForm.jsx
+- services/contact.service.js
 
 ## Design System Approach
 

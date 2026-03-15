@@ -25,8 +25,12 @@ Current product flow:
 - Meal detail modal with extras selection
 - Checkout flow including selected extras
 - Customer order history pages
+- Customer review creation, editing, and deletion on mess detail pages
+- Authenticated contact form submission
 - Customer and owner profile pages
 - Owner dashboard and mess-specific dashboard routing
+- Owner order detail view and status updates
+- In-page mess profile editing
 - Create meal UI with extras management
 - Shared notifications, route protection, and common layout components
 
@@ -71,6 +75,7 @@ src/
 5. Continue to checkout.
 6. Place order.
 7. Track order history.
+8. Submit or manage a review on a mess detail page.
 
 ### Owner flow
 
@@ -79,7 +84,7 @@ src/
 3. View owned mess cards.
 4. Click one mess card.
 5. Land on that specific mess dashboard route.
-6. Manage orders, meals, and mess-specific pages from the sidebar.
+6. Open order detail pages, update order status, manage meals, and edit mess-specific profile data from the sidebar.
 
 ## Important Product Notes
 
@@ -147,6 +152,7 @@ npm run lint
 - /login
 - /signup
 - /contact
+- /contact
 
 ### Customer routes
 
@@ -172,10 +178,12 @@ npm run lint
 
 - /mess/dashboard
 - /mess/orders
+- /mess/orders/:orderId
 - /mess/create-meal
 - /mess/profile
 - /mess/:messId/dashboard
 - /mess/:messId/orders
+- /mess/:messId/orders/:orderId
 - /mess/:messId/create-meal
 - /mess/:messId/profile
 
@@ -189,6 +197,8 @@ Examples:
 - meal.service.js handles meal endpoints
 - order.service.js handles order CRUD and status APIs
 - owner.service.js handles owner dashboard and mess-specific owner APIs
+- review.service.js handles review loading and customer review mutations
+- contact.service.js handles authenticated contact submission
 
 This pattern keeps pages focused on UI and interaction while service files centralize HTTP details.
 
@@ -207,6 +217,7 @@ If you are new to the frontend, follow this order:
 
 - [docs/README.md](docs/README.md)
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md)
 - [docs/ROUTING.md](docs/ROUTING.md)
 
 ## Integration Notes
@@ -215,4 +226,4 @@ This frontend expects the backend to expose the route groups documented in the b
 
 ## Status
 
-The frontend is actively evolving. Core customer and owner workflows are present, but some parts still reflect an in-progress product, so documentation is intentionally explicit about current behavior and current constraints.
+The frontend is actively evolving. Core customer and owner workflows are now implemented and the app builds successfully for production, but there are still platform-level hardening items left for a fully mature deployment, especially admin features, production environment configuration, and broader automated test coverage.

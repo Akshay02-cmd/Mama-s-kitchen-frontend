@@ -183,7 +183,9 @@ const MessOrdersDashboard = () => {
             </button>
           )}
           <button
-            onClick={() => navigate(`/mess/orders/${order._id}`)}
+            onClick={() =>
+              navigate(messId ? `/mess/${messId}/orders/${order._id}` : `/mess/orders/${order._id}`)
+            }
             className="py-2 px-4 rounded-lg font-medium transition-all flex items-center gap-2"
             style={{ backgroundColor: '#F3F4F6', color: '#6B7280', border: '1px solid #E5E7EB' }}>
             <Eye className="w-4 h-4" />

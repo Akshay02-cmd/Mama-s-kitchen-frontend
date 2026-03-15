@@ -4,16 +4,24 @@ import Breadcrumb from '../../components/shared/Breadcrumb';
 import Card from '../../components/shared/Card';
 import MealCard from '../../components/customer/MealCard';
 import MessInfo from '../../components/customer/MessInfo';
+import { useAuth, useNotification } from '../../hooks/shared';
 import messService from '../../services/mess.service';
 import ownerService from '../../services/owner.service';
+import reviewService from '../../services/review.service';
 
 const MessDetailPage = () => {
+  const { user } = useAuth();
+  const { showSuccess, showError } = useNotification();
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState('menu');
   const [mess, setMess] = useState(null);
   const [meals, setMeals] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [editingReviewId, setEditingReviewId] = useState(null);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
 
   useEffect(() => {
     const fetchMessDetails = async () => {
@@ -21,14 +29,16 @@ const MessDetailPage = () => {
         setLoading(true);
         setError(null);
         
-        // Fetch mess details and meals
-        const [messResponse, mealsResponse] = await Promise.all([
+        // Fetch mess details, meals, and reviews
+        const [messResponse, mealsResponse, reviewsResponse] = await Promise.all([
           messService.getMessById(id),
-          ownerService.getMessMeals(id)
+          ownerService.getMessMeals(id),
+          reviewService.getReviewsByMessId(id)
         ]);
         
         setMess(messResponse.mess || messResponse.data);
         setMeals(mealsResponse.meals || mealsResponse.data || []);
+        setReviews(reviewsResponse.reviews || []);
       } catch (err) {
         console.error('Error fetching mess details:', err);
         setError('Failed to load mess details');
@@ -41,6 +51,86 @@ const MessDetailPage = () => {
       fetchMessDetails();
     }
   }, [id]);
+
+  const handleReviewFieldChange = (field, value) => {
+    setReviewForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const resetReviewForm = () => {
+    setReviewForm({ rating: 5, comment: '' });
+    setEditingReviewId(null);
+  };
+
+  const handleReviewSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!user?.id || !mess?._id) {
+      showError('You must be logged in to submit a review.');
+      return;
+    }
+
+    try {
+      setReviewSubmitting(true);
+      const payload = {
+        user: user.id,
+        mess: mess._id,
+        rating: Number(reviewForm.rating),
+        comment: reviewForm.comment.trim(),
+      };
+
+      const response = editingReviewId
+        ? await reviewService.updateReview(editingReviewId, {
+            rating: payload.rating,
+            comment: payload.comment,
+          })
+        : await reviewService.createReview(payload);
+
+      const savedReview = response.review;
+
+      setReviews((prev) => {
+        if (editingReviewId) {
+          return prev.map((review) =>
+            review._id === editingReviewId ? savedReview : review,
+          );
+        }
+
+        return [savedReview, ...prev];
+      });
+
+      showSuccess(editingReviewId ? 'Review updated.' : 'Review added.');
+      resetReviewForm();
+    } catch (err) {
+      console.error('Error saving review:', err);
+      showError(err?.message || 'Failed to save review.');
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
+
+  const handleReviewEdit = (review) => {
+    setEditingReviewId(review._id);
+    setReviewForm({
+      rating: review.rating,
+      comment: review.comment || '',
+    });
+    setActiveTab('reviews');
+  };
+
+  const handleReviewDelete = async (reviewId) => {
+    try {
+      await reviewService.deleteReview(reviewId);
+      setReviews((prev) => prev.filter((review) => review._id !== reviewId));
+      showSuccess('Review deleted.');
+      if (editingReviewId === reviewId) {
+        resetReviewForm();
+      }
+    } catch (err) {
+      console.error('Error deleting review:', err);
+      showError(err?.message || 'Failed to delete review.');
+    }
+  };
+
+  const currentUserReview = reviews.find((review) => review.user?._id === user?.id);
 
   if (loading) {
     return (
@@ -86,7 +176,7 @@ const MessDetailPage = () => {
         <Card className="overflow-hidden">
           {/* Tab Headers */}
           <div className="flex border-b" style={{ borderColor: '#E5E7EB' }}>
-            {['menu', 'about'].map(tab => (
+            {['menu', 'about', 'reviews'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -147,6 +237,160 @@ const MessDetailPage = () => {
                     <p style={{ color: '#6B7280' }}>Phone: {mess.phone}</p>
                     {mess.area && <p style={{ color: '#6B7280' }}>Area: {mess.area}</p>}
                   </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'reviews' && (
+              <div className="space-y-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-bold mb-2" style={{ color: '#111827' }}>
+                      Reviews
+                    </h2>
+                    <p style={{ color: '#6B7280' }}>
+                      {reviews.length === 0
+                        ? 'No reviews yet. Be the first to share feedback.'
+                        : `${reviews.length} review${reviews.length > 1 ? 's' : ''} for ${mess.name}`}
+                    </p>
+                  </div>
+                  {currentUserReview && !editingReviewId && (
+                    <button
+                      onClick={() => handleReviewEdit(currentUserReview)}
+                      className="px-4 py-2 rounded-lg font-medium"
+                      style={{ backgroundColor: '#EEF2FF', color: '#4338CA' }}
+                    >
+                      Edit Your Review
+                    </button>
+                  )}
+                </div>
+
+                {user?.role === 'CUSTOMER' && (!currentUserReview || editingReviewId) && (
+                  <Card className="p-6">
+                    <h3 className="text-xl font-bold mb-4" style={{ color: '#111827' }}>
+                      {editingReviewId ? 'Update Your Review' : 'Write a Review'}
+                    </h3>
+                    <form onSubmit={handleReviewSubmit} className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2" style={{ color: '#111827' }}>
+                          Rating
+                        </label>
+                        <div className="flex gap-2">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => handleReviewFieldChange('rating', star)}
+                              className="w-10 h-10 rounded-lg font-bold transition-all"
+                              style={{
+                                backgroundColor: reviewForm.rating >= star ? '#F59E0B' : '#F3F4F6',
+                                color: reviewForm.rating >= star ? '#FFFFFF' : '#6B7280',
+                              }}
+                            >
+                              {star}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2" style={{ color: '#111827' }}>
+                          Comment
+                        </label>
+                        <textarea
+                          value={reviewForm.comment}
+                          onChange={(event) => handleReviewFieldChange('comment', event.target.value)}
+                          rows={4}
+                          className="w-full rounded-lg border px-4 py-3 focus:outline-none focus:ring-2"
+                          style={{ borderColor: '#D1D5DB', color: '#111827' }}
+                          placeholder="Share your experience with this mess"
+                        />
+                      </div>
+
+                      <div className="flex gap-3">
+                        <button
+                          type="submit"
+                          disabled={reviewSubmitting}
+                          className="px-5 py-3 rounded-lg font-semibold disabled:opacity-50"
+                          style={{ backgroundColor: '#3B82F6', color: '#FFFFFF' }}
+                        >
+                          {reviewSubmitting ? 'Saving...' : editingReviewId ? 'Update Review' : 'Submit Review'}
+                        </button>
+                        {editingReviewId && (
+                          <button
+                            type="button"
+                            onClick={resetReviewForm}
+                            className="px-5 py-3 rounded-lg font-semibold"
+                            style={{ backgroundColor: '#F3F4F6', color: '#374151' }}
+                          >
+                            Cancel
+                          </button>
+                        )}
+                      </div>
+                    </form>
+                  </Card>
+                )}
+
+                <div className="space-y-4">
+                  {reviews.map((review) => {
+                    const ownsReview = review.user?._id === user?.id;
+
+                    return (
+                      <Card key={review._id} className="p-5">
+                        <div className="flex items-start justify-between gap-4 mb-3">
+                          <div>
+                            <h3 className="font-bold" style={{ color: '#111827' }}>
+                              {review.user?.name || 'Anonymous User'}
+                            </h3>
+                            <p className="text-sm" style={{ color: '#6B7280' }}>
+                              {new Date(review.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold" style={{ color: '#F59E0B' }}>
+                              {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                            </p>
+                            <p className="text-sm" style={{ color: '#6B7280' }}>
+                              {review.rating}/5
+                            </p>
+                          </div>
+                        </div>
+
+                        {review.comment && (
+                          <p className="mb-3" style={{ color: '#374151' }}>
+                            {review.comment}
+                          </p>
+                        )}
+
+                        {ownsReview && (
+                          <div className="flex gap-3">
+                            <button
+                              onClick={() => handleReviewEdit(review)}
+                              className="px-4 py-2 rounded-lg text-sm font-medium"
+                              style={{ backgroundColor: '#EEF2FF', color: '#4338CA' }}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleReviewDelete(review._id)}
+                              className="px-4 py-2 rounded-lg text-sm font-medium"
+                              style={{ backgroundColor: '#FEE2E2', color: '#B91C1C' }}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </Card>
+                    );
+                  })}
+
+                  {reviews.length === 0 && (
+                    <Card className="p-6">
+                      <p style={{ color: '#6B7280' }}>
+                        No reviews available for this mess yet.
+                      </p>
+                    </Card>
+                  )}
                 </div>
               </div>
             )}

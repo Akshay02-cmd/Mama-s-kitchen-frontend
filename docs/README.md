@@ -14,12 +14,16 @@ Read in this order if you are new:
 
 1. [../README.md](../README.md)
 2. [ARCHITECTURE.md](ARCHITECTURE.md)
-3. [ROUTING.md](ROUTING.md)
+3. [AUTHENTICATION.md](AUTHENTICATION.md)
+4. [ROUTING.md](ROUTING.md)
 
 ## Documentation Map
 
 - [ARCHITECTURE.md](ARCHITECTURE.md)
   Explains the app shell, page structure, services, contexts, and data flow.
+
+- [AUTHENTICATION.md](AUTHENTICATION.md)
+  Explains auth context, local storage, cookie support, route guards, and 401 handling.
 
 - [ROUTING.md](ROUTING.md)
   Explains public, protected, owner, customer, and mess-specific routes.
@@ -41,6 +45,7 @@ Project-specific notes that new developers should understand early:
 ### I want to understand the overall app
 
 - Read [ARCHITECTURE.md](ARCHITECTURE.md)
+- Read [AUTHENTICATION.md](AUTHENTICATION.md)
 
 ### I want to add a page or route
 
@@ -49,6 +54,7 @@ Project-specific notes that new developers should understand early:
 
 ### I want to change auth behavior
 
+- Read [AUTHENTICATION.md](AUTHENTICATION.md)
 - Inspect src/context/AuthContext.jsx
 - Inspect src/components/shared/ProtectedRoute.jsx
 - Inspect src/services/auth.service.js and src/services/api/apiClient.js

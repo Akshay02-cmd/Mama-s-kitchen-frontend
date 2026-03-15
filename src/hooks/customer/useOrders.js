@@ -18,8 +18,8 @@ export const useOrders = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await orderService.getMyOrders();
-      setOrders(data);
+      const data = await orderService.getUserOrders();
+      setOrders(data.orders || []);
     } catch (err) {
       setError(err.message || 'Failed to fetch orders');
       console.error('Error fetching orders:', err);
@@ -41,8 +41,8 @@ export const useOrders = () => {
 
   // Cancel order
   const cancelOrder = useCallback(async (orderId) => {
-    await orderService.cancelOrder(orderId);
-    await fetchOrders();
+    setError('Customer-side order cancellation is not supported in the current API flow.');
+    return orderId;
   }, [fetchOrders]);
 
   // Initial fetch

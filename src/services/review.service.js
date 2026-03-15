@@ -69,9 +69,17 @@ export const deleteReview = async (reviewId) => {
  * @returns {Promise<Object>} List of reviews for the mess
  */
 export const getReviewsByMessId = async (messId) => {
-  // This might need a backend endpoint or filter
-  const response = await apiClient.get(`${API_ENDPOINTS.REVIEWS.BASE}?messId=${messId}`);
-  return response.data;
+  try {
+    const response = await apiClient.get(API_ENDPOINTS.REVIEWS.BASE, {
+      params: { mess: messId },
+    });
+    return response.data;
+  } catch (error) {
+    if (error?.status === 404) {
+      return { success: true, reviews: [] };
+    }
+    throw error;
+  }
 };
 
 /**
@@ -80,8 +88,9 @@ export const getReviewsByMessId = async (messId) => {
  * @returns {Promise<Object>} List of reviews for the meal
  */
 export const getReviewsByMealId = async (mealId) => {
-  // This might need a backend endpoint or filter
-  const response = await apiClient.get(`${API_ENDPOINTS.REVIEWS.BASE}?mealId=${mealId}`);
+  const response = await apiClient.get(API_ENDPOINTS.REVIEWS.BASE, {
+    params: { meal: mealId },
+  });
   return response.data;
 };
 
