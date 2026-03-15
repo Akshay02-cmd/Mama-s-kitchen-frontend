@@ -59,7 +59,7 @@ const MessDetailPage = () => {
         <div className="text-center p-8">
           <h3 className="text-xl font-bold mb-2" style={{ color: '#111827' }}>{error || 'Mess not found'}</h3>
           <p className="mb-4" style={{ color: '#6B7280' }}>The mess you're looking for doesn't exist</p>
-          <a href="/messes" className="text-blue-600 hover:underline">← Back to All Messes</a>
+          <a href="/mess" className="text-blue-600 hover:underline">← Back to All Messes</a>
         </div>
       </div>
     );
@@ -68,7 +68,7 @@ const MessDetailPage = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Breadcrumb backTo="/messes" backText="← Back to All Messes" />
+        <Breadcrumb backTo="/mess" backText="← Back to All Messes" />
 
         {/* Header */}
         <Card className="overflow-hidden mb-6">

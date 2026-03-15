@@ -1,15 +1,18 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { LayoutDashboard, ShoppingBag, UtensilsCrossed, Store } from "lucide-react";
 import logo from "../../assets/logo.png";
 
 const MessSidebar = () => {
   const location = useLocation();
+  const { messId } = useParams();
+
+  const basePath = messId ? `/mess/${messId}` : "/mess";
 
   const navItems = [
-    { path: "/mess/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-    { path: "/mess/orders", icon: ShoppingBag, label: "Orders" },
-    { path: "/mess/create-meal", icon: UtensilsCrossed, label: "Create Meal" },
-    { path: "/mess/profile", icon: Store, label: "Profile" },
+    { path: `${basePath}/dashboard`, icon: LayoutDashboard, label: "Dashboard" },
+    { path: `${basePath}/orders`, icon: ShoppingBag, label: "Orders" },
+    { path: `${basePath}/create-meal`, icon: UtensilsCrossed, label: "Create Meal" },
+    { path: `${basePath}/profile`, icon: Store, label: "Profile" },
   ];
 
   const isActive = (path) => location.pathname === path;

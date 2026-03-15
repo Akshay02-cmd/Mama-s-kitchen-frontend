@@ -9,14 +9,23 @@ export const register = async (userData) => {
 export const login = async (credentials) => {
   const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, credentials);
   
+  console.log('[AuthService] Login response:', { 
+    success: response.data?.success,
+    hasToken: !!response.data?.token,
+    hasUser: !!response.data?.user,
+    user: response.data?.user 
+  });
+  
   // Store token if provided in response (for bearer token auth)
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
+    console.log('[AuthService] Token stored in localStorage');
   }
   
   // Store user data if provided
   if (response.data.user) {
     localStorage.setItem('user', JSON.stringify(response.data.user));
+    console.log('[AuthService] User stored in localStorage:', response.data.user);
   }
   
   return response.data;

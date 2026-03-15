@@ -85,7 +85,7 @@ const OwnerDashboard = () => {
   const MessCard = ({ mess }) => (
     <div className="p-6 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer"
       style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}
-      onClick={() => navigate(`/owner/mess/${mess._id}`)}>
+      onClick={() => navigate(`/mess/${mess._id}/dashboard`)}>
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-lg flex items-center justify-center"

@@ -9,7 +9,7 @@ import orderService from '../../services/order.service';
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { meal, quantity = 1 } = location.state || {};
+  const { meal, quantity = 1, selectedExtras = [] } = location.state || {};
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -23,17 +23,19 @@ const CheckoutPage = () => {
   // Prepare cart items - must have valid meal data
   const cartItems = meal ? [{
     mealId: meal,
-    quantity
+    quantity,
+    selectedExtras,
   }] : [];
 
   // If no cart items, redirect back
   if (!cartItems || cartItems.length === 0) {
-    navigate('/messes');
+    navigate('/mess');
     return null;
   }
 
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.mealId.price * item.quantity), 0);
-  const deliveryFee = 0; // Free delivery
+  const extrasTotal = selectedExtras.reduce((s, e) => s + e.price, 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + ((item.mealId.price + extrasTotal) * item.quantity), 0);
+  const deliveryFee = 0;
   const total = subtotal + deliveryFee;
 
   const handleSubmit = async (e) => {
@@ -42,12 +44,16 @@ const CheckoutPage = () => {
     setError(null);
 
     try {
-      // Prepare order data
       const orderData = {
         items: cartItems.map(item => ({
           mealId: item.mealId._id,
           quantity: item.quantity,
-          price: item.mealId.price
+          price: item.mealId.price,
+          selectedExtras: (item.selectedExtras || []).map(e => ({
+            extraId: e.extraId,
+            name: e.name,
+            price: e.price,
+          })),
         })),
         deliveryAddress: formData.deliveryAddress,
         deliveryPhone: formData.phone,
@@ -57,13 +63,8 @@ const CheckoutPage = () => {
         status: 'PLACED'
       };
 
-      // Create order via API
       await orderService.createOrder(orderData);
-      
-      // Success - navigate to orders page
-      navigate('/orders', { 
-        state: { message: 'Order placed successfully!' }
-      });
+      navigate('/orders', { state: { message: 'Order placed successfully!' } });
     } catch (err) {
       console.error('Error placing order:', err);
       setError(err.response?.data?.message || 'Failed to place order. Please try again.');
@@ -73,10 +74,7 @@ const CheckoutPage = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
@@ -187,12 +185,28 @@ const CheckoutPage = () => {
                 </h2>
                 <div className="space-y-4">
                   {cartItems.map((item, index) => (
-                    <OrderItem 
-                      key={index} 
-                      item={item} 
-                      index={index} 
-                      isLast={index === cartItems.length - 1} 
-                    />
+                    <div key={index}>
+                      <OrderItem 
+                        item={item} 
+                        index={index} 
+                        isLast={index === cartItems.length - 1} 
+                      />
+                      {/* Selected extras */}
+                      {(item.selectedExtras || []).length > 0 && (
+                        <div
+                          className="mt-2 ml-2 pl-3 rounded-lg py-2 space-y-1"
+                          style={{ backgroundColor: '#FFF7ED', border: '1px solid #FED7AA' }}
+                        >
+                          <p className="text-xs font-semibold mb-1" style={{ color: '#C2410C' }}>Extras added:</p>
+                          {item.selectedExtras.map((extra, ei) => (
+                            <div key={ei} className="flex justify-between text-xs" style={{ color: '#92400E' }}>
+                              <span>+ {extra.name}</span>
+                              <span>₹{extra.price}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </Card>
@@ -205,8 +219,26 @@ const CheckoutPage = () => {
                   Order Summary
                 </h2>
                 
-                <div className="mb-4">
+                <div className="mb-2">
                   <OrderSummary subtotal={subtotal} />
+                </div>
+
+                {/* Extras breakdown */}
+                {selectedExtras.length > 0 && (
+                  <div className="mb-4 pt-2 border-t" style={{ borderColor: '#E5E7EB' }}>
+                    <p className="text-xs font-semibold mb-1" style={{ color: '#C2410C' }}>Extras:</p>
+                    {selectedExtras.map((e, i) => (
+                      <div key={i} className="flex justify-between text-xs py-0.5" style={{ color: '#6B7280' }}>
+                        <span>{e.name} × {quantity}</span>
+                        <span>₹{e.price * quantity}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex justify-between font-bold text-base pt-2 border-t mb-5" style={{ borderColor: '#E5E7EB', color: '#111827' }}>
+                  <span>Total</span>
+                  <span>₹{total}</span>
                 </div>
 
                 <button
@@ -215,7 +247,7 @@ const CheckoutPage = () => {
                   className="w-full py-3 rounded-lg font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ backgroundColor: '#8B5CF6', color: '#FFFFFF' }}
                 >
-                  {loading ? 'Placing Order...' : 'Place Order'}
+                  {loading ? 'Placing Order...' : `Place Order — ₹${total}`}
                 </button>
 
                 <p className="text-xs text-center mt-4" style={{ color: '#6B7280' }}>

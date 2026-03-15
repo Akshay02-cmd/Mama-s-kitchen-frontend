@@ -41,11 +41,8 @@ export const getMealById = async (mealId) => {
  * @returns {Promise<Object>} Created meal data
  */
 export const createMeal = async (mealData) => {
-  // Backend route structure: POST /menu/:mealid
-  // This is unusual - typically POST would be to /menu/ without ID
-  // If backend requires mealid, it should be provided in mealData
-  const mealId = mealData.mealid || 'new'; // Using 'new' as fallback
-  const response = await apiClient.post(API_ENDPOINTS.MEALS.BY_ID(mealId), mealData);
+  // Backend: POST /menu/:mealid  (mealid param is unused by controller — use a placeholder)
+  const response = await apiClient.post(API_ENDPOINTS.MEALS.BY_ID('create'), mealData);
   return response.data;
 };
 

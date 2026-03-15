@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Package, Clock, CheckCircle, XCircle, Eye } from 'lucide-react';
 import { useAuth } from '../../hooks/shared';
 import MessSidebar from '../../components/shared/MessSidebar';
@@ -9,6 +9,7 @@ import orderService from '../../services/order.service';
 const MessOrdersDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { messId: routeMessId } = useParams();
   const [activeTab, setActiveTab] = useState('new');
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,12 +32,21 @@ const MessOrdersDashboard = () => {
           return;
         }
         
-        // Use the first mess (can be extended to support multiple messes)
-        const firstMess = messes[0];
-        setMessId(firstMess._id);
+        // Resolve selected mess from route param, fallback to first mess.
+        const selectedMess = routeMessId
+          ? messes.find((m) => m._id === routeMessId)
+          : messes[0];
+
+        if (!selectedMess) {
+          setError('Selected mess not found for this owner.');
+          setLoading(false);
+          return;
+        }
+
+        setMessId(selectedMess._id);
         
         // Fetch orders for this mess
-        const ordersResponse = await ownerService.getMessOrders(firstMess._id);
+        const ordersResponse = await ownerService.getMessOrders(selectedMess._id);
         setOrders(ordersResponse.orders || []);
       } catch (err) {
         console.error('Error fetching mess orders:', err);
@@ -49,7 +59,7 @@ const MessOrdersDashboard = () => {
     if (user) {
       fetchMessAndOrders();
     }
-  }, [user]);
+  }, [user, routeMessId]);
 
   const filteredOrders = orders.filter((order) => {
     if (activeTab === 'new') return order.status === 'PLACED' || order.status === 'PENDING';

@@ -7,7 +7,9 @@ export const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     // Initialize state from localStorage
-    return authService.getStoredUser();
+    const storedUser = authService.getStoredUser();
+    console.log('[AuthContext] Initializing with user:', storedUser);
+    return storedUser;
   });
   const [loading, setLoading] = useState(false);
   const [profileComplete, setProfileComplete] = useState(false);
@@ -63,8 +65,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     const response = await authService.login(credentials);
+    console.log('[AuthContext] Login response:', { success: response.success, user: response.user, hasToken: !!response.token });
     if (response.success && response.user) {
       setUser(response.user);
+      console.log('[AuthContext] User state updated:', response.user);
     }
     return response;
   };

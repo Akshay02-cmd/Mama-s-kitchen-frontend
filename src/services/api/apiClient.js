@@ -34,11 +34,13 @@ apiClient.interceptors.request.use(
     
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    // Log request in development
-    if (import.meta.env.DEV) {
-      console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
+      if (import.meta.env.DEV) {
+        console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url} - Token: ${token.substring(0, 20)}...`);
+      }
+    } else {
+      if (import.meta.env.DEV) {
+        console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url} - No token`);
+      }
     }
 
     return config;
@@ -95,17 +97,26 @@ apiClient.interceptors.response.use(
 
       // 401 Unauthorized - Token expired or invalid
       if (status === 401) {
-        // Clear authentication data
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        
-        // Don't redirect during login/register - let those pages handle it
         const url = error.config?.url || '';
         const isAuthEndpoint = url.includes('/auth/login') || url.includes('/auth/register');
+        const isProfileEndpoint = url.includes('/profile/');
         
-        if (!isAuthEndpoint && window.location.pathname !== '/login') {
-          // Redirect to login page for all other 401 errors
-          window.location.href = '/login';
+        // Don't clear auth on profile endpoints during initial checks
+        // Profile might not exist yet (404 expected, but sometimes 401 occurs)
+        if (!isProfileEndpoint) {
+          // Clear authentication data
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          
+          // Don't redirect during login/register - let those pages handle it
+          if (!isAuthEndpoint && window.location.pathname !== '/login') {
+            // Redirect to login page for all other 401 errors
+            window.location.href = '/login';
+          }
+        } else {
+          // For profile endpoints, let the calling code handle 401
+          // Don't automatically logout - could be profile doesn't exist yet
+          console.log('[API] 401 on profile endpoint - not clearing auth');
         }
       }
 

@@ -19,6 +19,12 @@ const CustomerProfilePage = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
+      if (!user) {
+        console.log('No user found, skipping profile fetch');
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         // Fetch profile based on user's role
@@ -27,23 +33,26 @@ const CustomerProfilePage = () => {
           : await profileService.getCustomerProfile();
         setProfile(response.profile);
       } catch (err) {
-        console.error('Error fetching profile:', err);
-        
-        // Check if error is 401 (unauthorized/token expired)
-        if (err.response?.status === 401) {
-          // Token expired - redirect to login
-          console.log('Session expired. Redirecting to login...');
-          navigate('/login');
-          return;
-        }
+        console.error('Error fetching profile:', err, {
+          status: err.response?.status,
+          data: err.response?.data,
+          message: err.message
+        });
         
         // Check if error is 404 (profile not found)
-        if (err.response?.status === 404) {
+        if (err.response?.status === 404 || err.status === 404) {
           // Profile doesn't exist - show complete profile option
+          console.log('Profile not found (404) - showing complete profile prompt');
           setProfile(null);
-        } else {
-          // Other errors - redirect to login to be safe
+        } else if (err.response?.status === 401 || err.status === 401) {
+          // Genuine authentication error - token might be expired
+          console.log('Authentication error (401) - redirecting to login');
+          logout();
           navigate('/login');
+        } else {
+          // Other errors - show complete profile option instead of redirecting
+          console.log('Error fetching profile, showing complete profile option');
+          setProfile(null);
         }
       } finally {
         setLoading(false);
@@ -51,7 +60,7 @@ const CustomerProfilePage = () => {
     };
 
     fetchProfile();
-  }, [navigate]);
+  }, [navigate, user, logout]);
 
   const handleLogout = async () => {
     try {

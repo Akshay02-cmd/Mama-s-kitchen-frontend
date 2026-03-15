@@ -23,10 +23,26 @@ const MessRoutes = () => {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/mess/:messId/dashboard" 
+        element={
+          <ProtectedRoute>
+            <MessOrdersDashboard />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Mess Orders - Alternative route to dashboard */}
       <Route 
         path="/mess/orders" 
+        element={
+          <ProtectedRoute>
+            <MessOrdersDashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/mess/:messId/orders" 
         element={
           <ProtectedRoute>
             <MessOrdersDashboard />
@@ -43,10 +59,26 @@ const MessRoutes = () => {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/mess/:messId/create-meal" 
+        element={
+          <ProtectedRoute>
+            <CreateMealPage />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Mess Profile - View and edit mess details */}
       <Route 
         path="/mess/profile" 
+        element={
+          <ProtectedRoute>
+            <MessProfilePage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/mess/:messId/profile" 
         element={
           <ProtectedRoute>
             <MessProfilePage />
