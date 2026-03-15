@@ -1,407 +1,218 @@
-# 🍽️ Mama's Kitchen - Frontend
+# Mama's Kitchen Frontend
 
-[![React](https://img.shields.io/badge/React-19.2-blue.svg)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-7.2-646CFF.svg)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-38B2AC.svg)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-ISC-yellow.svg)](LICENSE)
+Mama's Kitchen Frontend is the React application for the Mama's Kitchen platform. It provides the user interface for customers to browse messes and meals, customize orders with extras, place orders, and manage profiles, while owners can manage their mess workflow and review business activity.
 
-**Mama's Kitchen Frontend** is a modern, responsive web application built with React that connects customers with local home-based caterers and mess services in Nashik, India. Built with Vite for blazing-fast development and Tailwind CSS for beautiful, responsive design.
+The app is built with React, React Router, Vite, and Axios, and it integrates with the backend API running on localhost:5000 in development.
 
----
+## What This Project Is
 
-## 📋 Table of Contents
+This frontend is a role-based food ordering interface for two main users:
 
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [Environment Variables](#-environment-variables)
-- [Available Scripts](#-available-scripts)
-- [Pages & Routes](#-pages--routes)
-- [Components](#-components)
-- [Styling](#-styling)
-- [Backend Integration](#-backend-integration)
-- [Development](#-development)
-- [Build & Deployment](#-build--deployment)
-- [Contributing](#-contributing)
+- CUSTOMER: browses messes and meals, selects extras, checks out, and tracks orders
+- OWNER: signs in, views owned messes, opens a specific mess dashboard, creates meals, and manages orders
 
----
+Current product flow:
 
-## ✨ Features
+- Owners may have multiple mess records in some backend logic, but the active UI flow is designed around selecting one mess and operating that mess dashboard.
+- Meals support optional extras.
+- Checkout sends selected extras to the backend as part of each order item.
 
-### Current Implementation
+## Current Feature Set
 
-- ✅ **Modern UI/UX**: Beautiful, responsive design with Tailwind CSS
-- ✅ **Fast Development**: Vite-powered with Hot Module Replacement (HMR)
-- ✅ **Responsive Design**: Mobile-first approach, works on all devices
-- ✅ **React Router**: Client-side routing with React Router DOM v7
-- ✅ **Component Library**: Reusable, modular components
-- ✅ **Icon System**: Lucide React icons for consistent iconography
-- ✅ **Authentication UI**: Login and signup pages
-- ✅ **Landing Pages**: Home, About, Meals, and Contact pages
-- ✅ **SEO Friendly**: Proper meta tags and semantic HTML
+- Authentication screens for login and signup
+- Auth state stored through context plus localStorage-backed user session
+- Customer browsing flow for messes and meals
+- Meal detail modal with extras selection
+- Checkout flow including selected extras
+- Customer order history pages
+- Customer and owner profile pages
+- Owner dashboard and mess-specific dashboard routing
+- Create meal UI with extras management
+- Shared notifications, route protection, and common layout components
 
-### Planned Features
+## Tech Stack
 
-- 🔜 **State Management**: Context API or Redux for global state
-- 🔜 **API Integration**: Connect to Mama's Kitchen backend
-- 🔜 **User Dashboard**: Customer and Owner dashboards
-- 🔜 **Order Management**: Shopping cart and order placement
-- 🔜 **Real-time Search**: Search and filter meals
-- 🔜 **Payment Integration**: Razorpay payment gateway
-- 🔜 **Reviews & Ratings**: Customer feedback system
+| Layer | Technology |
+| --- | --- |
+| UI library | React 19 |
+| Build tool | Vite 7 via Rolldown |
+| Routing | React Router DOM 7 |
+| HTTP client | Axios |
+| Styling | Tailwind CSS 4 + CSS variables |
+| Icons | lucide-react |
+| Linting | ESLint 9 |
 
----
+## Folder Structure
 
-## 🛠️ Tech Stack
+```text
+src/
+  App.jsx                    Application shell and route mounting
+  main.jsx                   React bootstrap
+  index.css                  Global styles and tokens
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **React** | 19.2.0 | UI library |
-| **Vite** | 7.2.5 (Rolldown) | Build tool & dev server |
-| **React Router DOM** | 7.11.0 | Client-side routing |
-| **Tailwind CSS** | 4.1.18 | Utility-first CSS framework |
-| **Lucide React** | 0.562.0 | Icon library |
-| **ESLint** | 9.39.1 | Code linting |
-| **PropTypes** | 15.8.1 | Runtime type checking |
-
----
-
-## 📁 Project Structure
-
-```
-Mama-s-kitchen-frontend/
-│
-├── public/                    # Static assets
-│
-├── src/
-│   ├── assets/               # Images, fonts, etc.
-│   │
-│   ├── components/           # Reusable components
-│   │   ├── about/           # About page components
-│   │   ├── auth/            # Authentication components
-│   │   ├── common/          # Common/shared components
-│   │   ├── contact/         # Contact page components
-│   │   └── meals/           # Meals page components
-│   │
-│   ├── context/             # React Context providers
-│   ├── pages/               # Page components
-│   ├── routes/              # Route configurations
-│   │
-│   ├── App.jsx              # Main app component
-│   ├── index.css            # Global styles
-│   └── main.jsx             # Application entry point
-│
-├── .gitignore              # Git ignore rules
-├── eslint.config.js        # ESLint configuration
-├── index.html              # HTML entry point
-├── package.json            # Dependencies and scripts
-├── README.md               # This file
-└── vite.config.js          # Vite configuration
+  assets/                    Static images and UI assets
+  components/                Reusable UI grouped by feature and shared usage
+  context/                   Auth, theme, and notification providers
+  hooks/                     Shared and feature-specific hooks
+  pages/                     Route-level screens
+  routes/                    Route configuration modules
+  services/                  API service wrappers
+  utils/                     Logging and helper utilities
 ```
 
----
+## Main User Flows
 
-## 🚀 Getting Started
+### Customer flow
+
+1. Register or log in as CUSTOMER.
+2. Browse messes or meals.
+3. Open meal details.
+4. Select quantity and optional extras.
+5. Continue to checkout.
+6. Place order.
+7. Track order history.
+
+### Owner flow
+
+1. Register or log in as OWNER.
+2. Open owner dashboard.
+3. View owned mess cards.
+4. Click one mess card.
+5. Land on that specific mess dashboard route.
+6. Manage orders, meals, and mess-specific pages from the sidebar.
+
+## Important Product Notes
+
+### One owner, one active mess workflow
+
+The current documentation, seed data, and UI flow are written around one-owner-one-mess usage. Some backend aggregation code can still handle multiple messes, but that is not the primary product workflow today.
+
+### Extras support
+
+Meals can display optional extras. These extras are selected in the meal detail modal and passed through checkout into the order payload.
+
+### Auth behavior
+
+- The frontend stores token and user in localStorage.
+- Axios also sends credentials for cookie support.
+- Profile-related 401 handling is intentionally softer than generic auth failures so profile checks do not immediately destroy the session.
+
+## Local Setup
 
 ### Prerequisites
 
-- **Node.js** v18.0.0 or higher
-- **npm** v9.0.0 or higher
-- **Git**
+- Node.js 18+
+- npm 9+
+- Backend server running locally
 
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Akshay02-cmd/Mama-s-kitchen-frontend.git
-   cd Mama-s-kitchen-frontend
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start development server**
-   ```bash
-   npm run dev
-   ```
-
-4. **Open browser**
-   ```
-   Navigate to http://localhost:5173
-   ```
-
----
-
-## 🔐 Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-# API Configuration
-VITE_API_BASE_URL=http://localhost:5000
-
-# Application Settings
-VITE_APP_NAME=Mama's Kitchen
-```
-
-**Note:** All Vite environment variables must be prefixed with `VITE_`
-
----
-
-## 📜 Available Scripts
+### Install
 
 ```bash
-# Start development server
+npm install
+```
+
+### Environment Variables
+
+Create a .env file in the frontend project root:
+
+```env
+VITE_API_BASE_URL=http://localhost:5000
+```
+
+### Run Development Server
+
+```bash
 npm run dev
+```
 
-# Build for production
+Default Vite URL:
+
+```text
+http://localhost:5173
+```
+
+## Scripts
+
+```bash
+npm run dev
 npm run build
-
-# Preview production build
 npm run preview
-
-# Run ESLint
 npm run lint
 ```
 
----
+## Key Route Groups
 
-## 🗺️ Pages & Routes
+### Shared routes
 
-| Route | Component | Description |
-|-------|-----------|-------------|
-| `/` | Home.jsx | Landing page with hero and features |
-| `/about` | AboutPage.jsx | About us and how it works |
-| `/meals` | Meals.jsx | Browse available meals |
-| `/contact` | Contact.jsx | Contact form and information |
-| `/login` | Login.jsx | User login page |
-| `/signup` | Signup.jsx | User registration page |
+- /login
+- /signup
+- /contact
 
----
+### Customer routes
 
-## 🧩 Components
+- /
+- /home
+- /meals
+- /meals/:id
+- /mess
+- /mess/:id
+- /orders
+- /orders/:id
+- /checkout
+- /profile
+- /profile/edit
 
-### Common Components
-- **Header.jsx** - Navigation bar
-- **Footer.jsx** - Site footer
+### Owner routes
 
-### Authentication Components
-- **AuthLayout.jsx** - Auth page wrapper
-- **FormInput.jsx** - Form input field
-- **Button.jsx** - Reusable button
-- **Divider.jsx** - OR divider
-- **SocialLoginButton.jsx** - Social login buttons
+- /owner/dashboard
+- /owner/create-mess
+- /owner/complete-profile
 
-### Meal Components
-- **MealCard.jsx** - Individual meal card
-- **MealFilters.jsx** - Meal filtering
-- **MealsHeader.jsx** - Meals page header
+### Mess management routes
 
-### About Components
-- **HeroSection.jsx** - Hero banner
-- **FeatureCard.jsx** - Feature display
-- **HowItWokrs.jsx** - Process steps
+- /mess/dashboard
+- /mess/orders
+- /mess/create-meal
+- /mess/profile
+- /mess/:messId/dashboard
+- /mess/:messId/orders
+- /mess/:messId/create-meal
+- /mess/:messId/profile
 
----
+## Service Layer Overview
 
-## 🎨 Styling
+The frontend talks to the backend through service modules in src/services.
 
-### Tailwind CSS
+Examples:
 
-This project uses **Tailwind CSS v4** configured in `vite.config.js`.
+- auth.service.js handles login, logout, register, and local storage helpers
+- meal.service.js handles meal endpoints
+- order.service.js handles order CRUD and status APIs
+- owner.service.js handles owner dashboard and mess-specific owner APIs
 
-**Primary Colors:**
-- Amber: `amber-500` (brand color)
-- Orange: `orange-500` (accents)
-- Gray: `gray-900` (text)
+This pattern keeps pages focused on UI and interaction while service files centralize HTTP details.
 
-**Responsive Breakpoints:**
-```
-sm:  640px
-md:  768px
-lg:  1024px
-xl:  1280px
-2xl: 1536px
-```
+## Beginner Walkthrough
 
----
+If you are new to the frontend, follow this order:
 
-## 🔌 Backend Integration
+1. Read this README for product and setup context.
+2. Read docs/README.md for the docs map.
+3. Read docs/ARCHITECTURE.md to understand how the app is organized.
+4. Read docs/ROUTING.md to understand route ownership and guards.
+5. Start the frontend and backend together.
+6. Log in using seeded customer and owner accounts.
 
-To connect with the backend API:
+## Related Documentation
 
-1. Set `VITE_API_BASE_URL` in `.env`
-2. Create API service (see backend docs)
-3. Use axios for HTTP requests
+- [docs/README.md](docs/README.md)
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- [docs/ROUTING.md](docs/ROUTING.md)
 
-**Backend Repository:** [Mama's Kitchen Backend](https://github.com/Akshay02-cmd/Mama-s-kitchen-backend)
+## Integration Notes
 
-**API Documentation:** See backend `API_DOCUMENTATION.md`
+This frontend expects the backend to expose the route groups documented in the backend README and Swagger docs. If the backend contract changes, service files and route-level data flows in this app should be updated together.
 
----
+## Status
 
-## 💻 Development
-
-### Code Style
-- Use functional components with hooks
-- Use PropTypes for type checking
-- Follow ESLint rules
-- Use meaningful variable names
-
-### Component Structure
-```jsx
-import PropTypes from 'prop-types';
-
-const MyComponent = ({ prop1 }) => {
-  return <div>{prop1}</div>;
-};
-
-MyComponent.propTypes = {
-  prop1: PropTypes.string.isRequired
-};
-
-export default MyComponent;
-```
-
----
-
-## 🏗️ Build & Deployment
-
-### Production Build
-```bash
-npm run build
-# Output: dist/
-```
-
-### Deployment Options
-- **Vercel** (Recommended)
-- **Netlify**
-- **GitHub Pages**
-
----
-
-## 🤝 Contribution Workflow (Frontend Repository)
-
-This repository follows a **controlled, enterprise-style Git workflow** to ensure stability, accountability, and clean integration.
-
-### 🔐 Branch Structure
-
-* **main** → Production-ready code (protected)
-* **develop** → Integration branch (protected)
-* **feature/*** → Temporary branches for individual tasks
-
-Direct pushes to `main` or `develop` are **not allowed**.
-
----
-
-### 👤 Roles & Responsibilities
-
-**Project Owner (Akshay Patil)**
-* Owns architecture and final integration
-* Reviews and merges all Pull Requests
-* Controls releases to `main`
-
-**Collaborators**
-* Work only on assigned frontend tasks
-* Create feature branches
-* Submit Pull Requests for review
-
----
-
-### 🔁 Standard Workflow for Collaborators
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Akshay02-cmd/Mama-s-kitchen-frontend.git
-   cd Mama-s-kitchen-frontend
-   ```
-
-2. **Switch to develop branch:**
-   ```bash
-   git checkout develop
-   ```
-
-3. **Create a feature branch:**
-   ```bash
-   git checkout -b feature/<task-name>
-   ```
-   Example: `feature/meal-card-redesign`
-
-4. **Make changes and commit:**
-   ```bash
-   git add .
-   git commit -m "Add: Brief description of changes"
-   ```
-
-5. **Push your branch:**
-   ```bash
-   git push origin feature/<task-name>
-   ```
-
-6. **Open a Pull Request on GitHub:**
-   * **From:** `feature/<task-name>`
-   * **To:** `develop`
-   * Include clear description of changes
-   * Add screenshots for UI changes
-
----
-
-### 📌 Important Rules
-
-* ✅ One task = one feature branch
-* ✅ Work only on assigned frontend tasks
-* ✅ Follow existing code style and component structure
-* ✅ Test changes locally before pushing
-* ❌ No backend or API logic changes
-* ❌ No direct push to `main` or `develop`
-* ❌ No modifications to build configurations without approval
-
----
-
-### ✅ Review & Merge Process
-
-1. All Pull Requests are reviewed by the Project Owner
-2. Approved changes are merged into `develop`
-3. Stable features are promoted from `develop` to `main`
-4. PRs without clear descriptions or screenshots (for UI) may be rejected
-
----
-
-### 💡 Commit Message Format
-
-Follow this format for clear commit history:
-
-```
-Add: New feature or component
-Fix: Bug fix
-Update: Modification to existing feature
-Refactor: Code restructuring
-Style: UI/CSS changes
-Docs: Documentation updates
-```
-
-**Examples:**
-* `Add: Meal card hover effect`
-* `Fix: Login form validation error`
-* `Update: Header navigation styling`
-
----
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/Akshay02-cmd/Mama-s-kitchen-frontend/issues)
-- **Backend**: [Mama's Kitchen Backend](https://github.com/Akshay02-cmd/Mama-s-kitchen-backend)
-
----
-
-## 👥 Authors
-
-- **Akshay Patil** - [@Akshay02-cmd](https://github.com/Akshay02-cmd)
-- **TechRedy IT Solutions**
-
----
-
-**Made with ❤️ in Nashik, India**
+The frontend is actively evolving. Core customer and owner workflows are present, but some parts still reflect an in-progress product, so documentation is intentionally explicit about current behavior and current constraints.

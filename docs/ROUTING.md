@@ -1,610 +1,199 @@
-# Routing Documentation
+# Frontend Routing
 
 ## Overview
 
-The frontend uses **React Router v7.11** for client-side routing. Routes are organized by user role and functionality to maintain clear separation of concerns.
-
-## Route Structure
-
-```
-/                           → Home (Public/Customer)
-/login                      → Login (Public)
-/signup                     → Signup (Public)
-/contact                    → Contact (Protected)
-
-/meals                      → Meals List (Protected)
-/meals/:id                  → Meal Detail (Protected)
-/mess                       → Mess List (Protected)
-/mess/:id                   → Mess Detail (Protected)
-
-/orders                     → My Orders (Protected, Profile Required)
-/orders/:id                 → Order Detail (Protected, Profile Required)
-/checkout                   → Checkout (Protected, Profile Required)
-
-/profile                    → Customer Profile (Protected)
-/profile/edit               → Edit Profile (Protected)
-
-/owner/dashboard            → Owner Dashboard (Protected, Owner Role)
-/owner/complete-profile     → Complete Owner Profile (Protected, Owner Role)
-/owner/create-mess          → Create Mess (Protected, Owner Role)
-
-*                           → 404 Not Found
-```
-
-## Route Organization
-
-Routes are split into four main configuration files:
-
-### 1. SharedRoutes.jsx
-
-**Purpose**: Routes accessible to all users
-
-**File Location**: `src/routes/SharedRoutes.jsx`
-
-**Routes**:
-- `/login` - Login page (public)
-- `/signup` - Registration page (public)
-- `/contact` - Contact support (protected, any role)
-
-**Code Structure**:
-```jsx
-const SharedRoutes = () => {
-  return (
-    <>
-      {/* Public routes */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      
-      {/* Protected routes */}
-      <Route 
-        path="/contact" 
-        element={
-          <ProtectedRoute>
-            <Contact />
-          </ProtectedRoute>
-        } 
-      />
-    </>
-  );
-};
-```
+Routing is built with React Router and is organized by role and feature responsibility.
 
----
+The route setup is intentionally split into four files so that each part of the app is easier to reason about:
 
-### 2. CustomerRoutes.jsx
+- SharedRoutes.jsx
+- CustomerRoutes.jsx
+- OwnerRoutes.jsx
+- MessRoutes.jsx
 
-**Purpose**: Routes for customer users
+## Full Route Map
 
-**File Location**: `src/routes/CustomerRoutes.jsx`
-
-**Public Routes**:
-- `/` - Home page
-- `/home` - Home page (alias)
-
-**Protected Routes** (require authentication):
-- `/meals` - Browse all meals
-- `/meals/:id` - View meal details
-- `/mess` - Browse all messes
-- `/mess/:id` - View mess details
-- `/profile` - Customer profile
-- `/profile/edit` - Edit profile
-
-**Profile-Required Routes** (require complete profile):
-- `/orders` - Order history
-- `/orders/:id` - Order details
-- `/checkout` - Place order
+### Public and shared
 
-**Code Example**:
-```jsx
-{/* Profile-required route */}
-<Route 
-  path="/checkout" 
-  element={
-    <ProtectedRoute requireProfileComplete={true}>
-      <CheckoutPage />
-    </ProtectedRoute>
-  } 
-/>
-```
+- /login
+- /signup
 
----
+### Shared protected
 
-### 3. OwnerRoutes.jsx
+- /contact
 
-**Purpose**: Routes for mess owners
+### Customer-facing
 
-**File Location**: `src/routes/OwnerRoutes.jsx`
+- /
+- /home
+- /meals
+- /meals/:id
+- /mess
+- /mess/:id
+- /orders
+- /orders/:id
+- /checkout
+- /profile
+- /profile/edit
 
-**All Routes** (require OWNER role):
-- `/owner/complete-profile` - Complete business profile
-- `/owner/dashboard` - Owner dashboard
-- `/owner/create-mess` - Create new mess
+### Owner-facing overview
 
-**Code Example**:
-```jsx
-<Route 
-  path="/owner/dashboard" 
-  element={
-    <ProtectedRoute requireRole="OWNER">
-      <OwnerDashboard />
-    </ProtectedRoute>
-  } 
-/>
-```
+- /owner/dashboard
+- /owner/create-mess
+- /owner/complete-profile
 
----
+### Mess management
 
-### 4. MessRoutes.jsx
+- /mess/dashboard
+- /mess/orders
+- /mess/create-meal
+- /mess/profile
+- /mess/:messId/dashboard
+- /mess/:messId/orders
+- /mess/:messId/create-meal
+- /mess/:messId/profile
 
-**Purpose**: Routes for mess management (future)
+### Fallback
 
-**File Location**: `src/routes/MessRoutes.jsx`
+- *
 
-**Planned Routes**:
-- `/mess/manage/:id` - Manage specific mess
-- `/mess/:messId/meals` - Manage mess meals
-- `/mess/:messId/orders` - View mess orders
-- `/mess/:messId/reviews` - View mess reviews
+## Route Intent by Group
 
----
+### SharedRoutes
 
-## Protection Levels
+Use this file for pages that are not tightly coupled to a single role domain.
 
-### 1. Public Routes
+Current examples:
 
-No authentication required. Anyone can access.
+- login
+- signup
+- contact
 
-```jsx
-<Route path="/login" element={<Login />} />
-```
+### CustomerRoutes
 
-**Examples**:
-- `/login`
-- `/signup`
-- `/` (home page)
+Use this file for customer browsing and ordering features.
 
----
+Key idea:
 
-### 2. Protected Routes
+- customers browse public content after authentication
+- checkout and orders live here because they are customer-driven workflows
 
-Requires user to be logged in (any role).
+### OwnerRoutes
 
-```jsx
-<Route 
-  path="/profile" 
-  element={
-    <ProtectedRoute>
-      <CustomerProfilePage />
-    </ProtectedRoute>
-  } 
-/>
-```
-
-**Examples**:
-- `/meals`
-- `/mess`
-- `/profile`
-- `/contact`
-
----
-
-### 3. Role-Based Routes
-
-Requires specific user role.
-
-```jsx
-<Route 
-  path="/owner/dashboard" 
-  element={
-    <ProtectedRoute requireRole="OWNER">
-      <OwnerDashboard />
-    </ProtectedRoute>
-  } 
-/>
-```
+Use this file for owner-level overview pages.
 
-**Owner-Only Routes**:
-- `/owner/*`
-
-**Customer-Only Routes**:
-- `/orders` (implicitly customer-only as owners don't place orders)
-- `/checkout`
-
----
-
-### 4. Profile-Complete Routes
-
-Requires user to have completed their profile.
-
-```jsx
-<Route 
-  path="/checkout" 
-  element={
-    <ProtectedRoute requireProfileComplete={true}>
-      <CheckoutPage />
-    </ProtectedRoute>
-  } 
-/>
-```
+Examples:
 
-**Examples**:
-- `/checkout`
-- `/orders`
-- `/orders/:id`
+- owner dashboard
+- create mess
+- owner profile completion
 
-**Reason**: These features require user's address and contact information.
+### MessRoutes
 
----
-
-## ProtectedRoute Component
+Use this file for pages that operate on a specific mess management context.
 
-**File**: `src/components/shared/ProtectedRoute.jsx`
-
-**Props**:
-- `children` - Component to render if authorized
-- `requireRole` - Required user role (optional)
-- `requireProfileComplete` - Whether profile must be complete (optional)
+Examples:
 
-**Logic**:
+- mess dashboard
+- mess orders
+- create meal
+- mess profile
 
-```jsx
-const ProtectedRoute = ({ 
-  children, 
-  requireRole, 
-  requireProfileComplete 
-}) => {
-  const { user, profileComplete, checkProfileCompletion } = useAuth();
-  const navigate = useNavigate();
+This route group now supports both generic and mess-specific paths.
 
-  useEffect(() => {
-    // Not logged in
-    if (!user) {
-      navigate('/login');
-      return;
-    }
+## Current Owner to Mess Flow
 
-    // Wrong role
-    if (requireRole && user.role !== requireRole) {
-      navigate('/');
-      return;
-    }
+The current intended owner flow is:
 
-    // Profile incomplete
-    if (requireProfileComplete) {
-      checkProfileCompletion().then(isComplete => {
-        if (!isComplete) {
-          navigate('/profile/edit');
-        }
-      });
-    }
-  }, [user, requireRole, requireProfileComplete]);
+1. Owner logs in.
+2. Owner opens /owner/dashboard.
+3. Owner sees owned mess cards.
+4. Clicking a card routes to /mess/:messId/dashboard.
+5. The sidebar keeps navigation inside the same mess scope.
 
-  return user ? children : null;
-};
-```
+That flow is important because it reflects the current product decision to operate one selected mess at a time, even if backend aggregation can still see more than one mess.
 
-**Flow**:
-1. Check if user is logged in
-   - If not → redirect to `/login`
-2. Check if user has required role
-   - If not → redirect to `/` (home)
-3. Check if profile is complete (if required)
-   - If not → redirect to `/profile/edit`
-4. If all checks pass → render children
+## Route Protection
 
----
+Routes are wrapped by ProtectedRoute where needed.
 
-## Route Parameters
+ProtectedRoute currently handles:
 
-### Dynamic Segments
+- loading state while auth state resolves
+- redirect to /login when user is not authenticated
+- simple role-based redirects when requireRole is present
 
-```jsx
-<Route path="/meals/:id" element={<MealDetailPage />} />
-```
+Important current detail:
 
-**Access in Component**:
-```jsx
-import { useParams } from 'react-router-dom';
+- requireProfileComplete exists in route definitions but is not the main enforcement logic inside ProtectedRoute today
 
-const MealDetailPage = () => {
-  const { id } = useParams();
-  // Use id to fetch meal data
-};
-```
+So if you are adding a feature that truly depends on completed profile data, check the page flow and auth context behavior rather than assuming the route wrapper alone enforces it.
 
-**Examples**:
-- `/meals/abc123` → `id = "abc123"`
-- `/orders/xyz789` → `id = "xyz789"`
-- `/mess/def456` → `id = "def456"`
+## Mess-Aware URLs
 
----
+The mess management area now supports parameterized URLs.
 
-## Query Parameters
+Examples:
 
-**Not currently used but supported**
+- /mess/123/dashboard
+- /mess/123/orders
+- /mess/123/create-meal
+- /mess/123/profile
 
-**Example Usage**:
-```jsx
-// URL: /meals?type=lunch&veg=true
+Benefits:
 
-import { useSearchParams } from 'react-router-dom';
+- explicit selected mess context in the URL
+- easier deep linking
+- sidebar links can stay scoped to the selected mess
+- owner workflow is clearer for future scaling
 
-const MealsPage = () => {
-  const [searchParams] = useSearchParams();
-  const type = searchParams.get('type');   // "lunch"
-  const veg = searchParams.get('veg');     // "true"
-};
-```
+## Navigation Patterns
 
-**Planned Use**:
-- `/meals?search=paneer` - Search meals
-- `/mess?area=nashik` - Filter by area
-- `/orders?status=delivered` - Filter orders
+### Owner dashboard to mess dashboard
 
----
+Owner mess cards navigate to a selected mess dashboard route.
 
-## Navigation
+### Sidebar navigation
 
-### Programmatic Navigation
+Mess sidebar reads messId from route params and builds links using that selected context when available.
 
-```jsx
-import { useNavigate } from 'react-router-dom';
+### Checkout navigation
 
-const Component = () => {
-  const navigate = useNavigate();
+Meal detail modal navigates to checkout using route state, passing:
 
-  const handleClick = () => {
-    navigate('/meals');
-  };
+- meal
+- quantity
+- selectedExtras
 
-  const goBack = () => {
-    navigate(-1);
-  };
+That means checkout depends on prior navigation state. If the page is refreshed without that state, it falls back out of the checkout flow.
 
-  const replaceHistory = () => {
-    navigate('/home', { replace: true });
-  };
-};
-```
+## Guidelines for Adding New Routes
 
-### Link Navigation
+When adding a route, ask these questions first:
 
-```jsx
-import { Link } from 'react-router-dom';
+1. Is it shared, customer, owner, or mess-specific?
+2. Does it require authentication?
+3. Does it require a specific role?
+4. Does it need a URL param such as messId or mealId?
+5. Will sidebar or navigation links need to preserve that param?
 
-<Link to="/meals">View Meals</Link>
-<Link to={`/meals/${meal._id}`}>View Details</Link>
-```
+If the route acts on a selected mess, prefer placing it in MessRoutes and using a messId path segment.
 
-### NavLink (Active State)
+## Common Routing Pitfalls
 
-```jsx
-import { NavLink } from 'react-router-dom';
+### Using the wrong list path
 
-<NavLink 
-  to="/meals"
-  className={({ isActive }) => 
-    isActive ? 'active-link' : 'link'
-  }
->
-  Meals
-</NavLink>
-```
+Customer mess browsing lives at /mess, not /messes.
 
----
+### Losing mess context
 
-## Redirect Patterns
+If you navigate from a selected mess page to a generic /mess/... route, you can accidentally drop the messId context. Use mess-aware links when operating inside the mess dashboard area.
 
-### After Login
+### Assuming profile-complete enforcement is centralized
 
-```jsx
-// Store intended destination before redirect to login
-localStorage.setItem('redirectAfterLogin', location.pathname);
+Do not rely only on requireProfileComplete in the route config. Check actual page and auth flow behavior.
 
-// After successful login
-const redirect = localStorage.getItem('redirectAfterLogin') || '/';
-localStorage.removeItem('redirectAfterLogin');
-navigate(redirect);
-```
+## Recommended Reading After This File
 
-### After Registration
-
-```jsx
-// Customer → Home
-if (user.role === 'CUSTOMER') {
-  navigate('/');
-}
-
-// Owner → Complete Profile
-if (user.role === 'OWNER') {
-  navigate('/owner/complete-profile');
-}
-```
-
-### After Logout
-
-```jsx
-navigate('/');  // Always redirect to home
-```
-
----
-
-## Route Guards
-
-### Authentication Guard
-
-Implemented in `ProtectedRoute` component.
-
-**Check**: Is user logged in?  
-**Redirect**: `/login` if not
-
-### Authorization Guard
-
-**Check**: Does user have required role?  
-**Redirect**: `/` (home) if not
-
-### Profile Completeness Guard
-
-**Check**: Has user completed their profile?  
-**Redirect**: `/profile/edit` if not
-
----
-
-## 404 Handling
-
-**Fallback Route**:
-```jsx
-<Route path="*" element={<NotFound />} />
-```
-
-**Component**: Renders custom 404 page
-
-**Displayed When**:
-- Invalid URL paths
-- Deleted resources
-- Unauthorized access attempts
-
----
-
-## Nested Routes (Future)
-
-**Planned Structure**:
-```jsx
-<Route path="/owner" element={<OwnerLayout />}>
-  <Route index element={<OwnerDashboard />} />
-  <Route path="mess/:id" element={<MessManagement />}>
-    <Route path="meals" element={<MealManagement />} />
-    <Route path="orders" element={<OrderManagement />} />
-  </Route>
-</Route>
-```
-
----
-
-## Route Loading States
-
-**Current**: No loading indicators
-
-**Planned**:
-```jsx
-import { lazy, Suspense } from 'react';
-
-const MealsPage = lazy(() => import('./pages/customer/MealsListPage'));
-
-<Suspense fallback={<LoadingSpinner />}>
-  <Route path="/meals" element={<MealsPage />} />
-</Suspense>
-```
-
----
-
-## Route Transitions (Planned)
-
-Using Framer Motion or React Transition Group:
-
-```jsx
-<AnimatePresence mode="wait">
-  <Routes location={location} key={location.pathname}>
-    {/* routes */}
-  </Routes>
-</AnimatePresence>
-```
-
----
-
-## Error Boundaries
-
-Wrapped around route components:
-
-```jsx
-<ErrorBoundary>
-  <Routes>
-    {/* routes */}
-  </Routes>
-</ErrorBoundary>
-```
-
-**Catches**:
-- Component render errors
-- Page crash errors
-- Data loading errors
-
----
-
-## Best Practices
-
-1. **Lazy Loading**: Implement code splitting for better performance
-2. **Layout Routes**: Use layout routes for common page structures
-3. **Error Handling**: Wrap routes in error boundaries
-4. **Type Safety**: Add route type definitions (TypeScript planned)
-5. **SEO**: Add meta tags for each route (future)
-6. **Analytics**: Track page views on route change (planned)
-7. **Breadcrumbs**: Show current location in navigation (planned)
-
----
-
-## Route Configuration
-
-All routes exported from `src/routes/index.js`:
-
-```javascript
-export { default as CustomerRoutes } from './CustomerRoutes';
-export { default as OwnerRoutes } from './OwnerRoutes';
-export { default as MessRoutes } from './MessRoutes';
-export { default as SharedRoutes } from './SharedRoutes';
-```
-
-**Imported in App.jsx**:
-```jsx
-import { 
-  CustomerRoutes, 
-  OwnerRoutes, 
-  MessRoutes, 
-  SharedRoutes 
-} from "./routes";
-```
-
----
-
-## Testing Routes
-
-**Unit Tests (Planned)**:
-```jsx
-describe('ProtectedRoute', () => {
-  it('redirects to login when not authenticated', () => {
-    // test implementation
-  });
-
-  it('redirects home when wrong role', () => {
-    // test implementation
-  });
-});
-```
-
-**E2E Tests (Planned)**:
-```javascript
-describe('Customer Navigation', () => {
-  it('can browse meals and view details', () => {
-    cy.visit('/meals');
-    cy.get('.meal-card').first().click();
-    cy.url().should('include', '/meals/');
-  });
-});
-```
-
----
-
-## Future Enhancements
-
-1. **Route Prefetching**: Preload data for better UX
-2. **Route Transitions**: Smooth page transitions
-3. **Scroll Restoration**: Remember scroll position
-4. **Route-based Code Splitting**: Automatic lazy loading
-5. **Meta Tags**: Dynamic meta tags per route
-6. **Breadcrumbs**: Navigation breadcrumb trail
-7. **Route Aliases**: Multiple paths to same component
-8. **Route Middleware**: Additional route guards
-
----
-
-**Last Updated**: February 9, 2026
+- [ARCHITECTURE.md](ARCHITECTURE.md)
+- [../README.md](../README.md)

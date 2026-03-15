@@ -2,801 +2,221 @@
 
 ## Overview
 
-Mama's Kitchen frontend is a modern React application built with **Vite** for fast development and optimized production builds. The application follows a **component-based architecture** with clear separation of concerns.
+The frontend is a React single-page application organized around route-level pages, reusable components, context providers, and a small service layer for backend API communication.
 
-## Technology Stack
+The app uses a pragmatic architecture rather than a heavy framework structure:
 
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| **React** | 19.2.0 | UI library for building components |
-| **Vite** | 7.2.5 (Rolldown) | Build tool with fast HMR |
-| **React Router** | 7.11.0 | Client-side routing |
-| **Tailwind CSS** | 4.1.18 | Utility-first CSS framework |
-| **Axios** | 1.13.4 | HTTP client for API calls |
-| **Lucide React** | 0.562.0 | Icon library |
-| **PropTypes** | 15.8.1 | Runtime type checking |
+1. App.jsx defines the page shell and mounts route groups.
+2. Routes are split by domain and role.
+3. Pages orchestrate data fetching and UI composition.
+4. Components render reusable feature UI.
+5. Services wrap backend endpoints.
+6. Context providers expose auth, theme, and notification state.
 
-## Architecture Diagram
+## High-Level Flow
 
-```
-┌────────────────────────────────────────┐
-│           Browser/Client               │
-└────────────────┬───────────────────────┘
-                 │
-┌────────────────▼───────────────────────┐
-│          main.jsx (Entry)              │
-│  - ReactDOM.createRoot()               │
-│  - BrowserRouter wrapper               │
-└────────────────┬───────────────────────┘
-                 │
-┌────────────────▼───────────────────────┐
-│          App.jsx (Root)                │
-│  - Context Providers                   │
-│  - Layout Components                   │
-│  - Route Configuration                 │
-└────────────────┬───────────────────────┘
-                 │
-      ┌──────────┼──────────┐
-      │          │          │
-┌─────▼─────┐ ┌──▼──────┐ ┌▼──────────┐
-│  Context  │ │ Layout  │ │  Routes   │
-│ Providers │ │ Header  │ │           │
-│           │ │ Footer  │ │ Customer  │
-│ - Auth    │ │ Error   │ │ Owner     │
-│ - Theme   │ │ Notif.  │ │ Mess      │
-│ - Notif.  │ └─────────┘ │ Shared    │
-└───────────┘             └─────┬─────┘
-                                │
-                    ┌───────────┼───────────┐
-                    │           │           │
-             ┌──────▼──┐  ┌─────▼────┐  ┌──▼──────┐
-             │  Pages  │  │Components│  │ Services│
-             │         │  │          │  │         │
-             │ Home    │  │ Meal Card│  │ Auth    │
-             │ Orders  │  │ Filters  │  │ Meal    │
-             │ Profile │  │ Forms    │  │ Order   │
-             └─────────┘  └──────────┘  └───┬─────┘
-                                            │
-                                 ┌──────────▼─────────┐
-                                 │   API Client       │
-                                 │   (Axios)          │
-                                 └──────────┬─────────┘
-                                            │
-                                 ┌──────────▼─────────┐
-                                 │   Backend API      │
-                                 │ http://localhost:5000│
-                                 └────────────────────┘
+```text
+Browser
+  -> main.jsx
+  -> App.jsx
+  -> route group
+  -> page component
+  -> service call
+  -> axios client
+  -> backend API
 ```
 
-## Project Structure
+## Directory Responsibilities
 
-```
+```text
 src/
-├── main.jsx                    # Application entry point
-├── App.jsx                     # Root component
-├── index.css                   # Global styles & Tailwind imports
-│
-├── assets/                     # Static assets
-│   ├── images/
-│   ├── icons/
-│   └── fonts/
-│
-├── components/                 # Reusable components
-│   ├── customer/              # Customer-specific components
-│   │   ├── FoodPreferences.jsx
-│   │   ├── MealCard.jsx
-│   │   ├── MealFilters.jsx
-│   │   ├── MessCard.jsx
-│   │   ├── OrderCard.jsx
-│   │   ├── ProfileCard.jsx
-│   │   └── index.js
-│   │
-│   ├── owner/                 # Owner-specific components
-│   │   ├── MessForm.jsx
-│   │   ├── MealForm.jsx
-│   │   ├── OrderList.jsx
-│   │   └── index.js
-│   │
-│   └── shared/                # Shared components
-│       ├── Header.jsx
-│       ├── Footer.jsx
-│       ├── AuthLayout.jsx
-│       ├── Button.jsx
-│       ├── Input.jsx
-│       ├── Modal.jsx
-│       ├── ErrorBoundary.jsx
-│       ├── NotificationContainer.jsx
-│       ├── ProtectedRoute.jsx
-│       └── index.js
-│
-├── context/                   # React Context providers
-│   ├── AuthContext.jsx       # Authentication state
-│   ├── ThemeContext.jsx      # Theme management
-│   ├── NotificationContext.jsx # Notification system
-│   └── index.js
-│
-├── hooks/                     # Custom React hooks
-│   ├── useAuth.js            # Auth hook
-│   ├── useTheme.js           # Theme hook
-│   ├── index.js
-│   │
-│   ├── customer/             # Customer-specific hooks
-│   │   ├── useMeals.js
-│   │   ├── useOrders.js
-│   │   └── index.js
-│   │
-│   ├── owner/                # Owner-specific hooks
-│   │   ├── useMess.js
-│   │   └── index.js
-│   │
-│   └── shared/               # Shared hooks
-│       ├── useApi.js
-│       └── index.js
-│
-├── pages/                     # Page components
-│   ├── customer/             # Customer pages
-│   │   ├── Home.jsx
-│   │   ├── MealsListPage.jsx
-│   │   ├── MealDetailPage.jsx
-│   │   ├── MessListPage.jsx
-│   │   ├── MessDetailPage.jsx
-│   │   ├── MyOrdersPage.jsx
-│   │   ├── OrderDetailPage.jsx
-│   │   ├── CheckoutPage.jsx
-│   │   ├── CustomerProfilePage.jsx
-│   │   └── EditProfilePage.jsx
-│   │
-│   ├── owner/                # Owner pages
-│   │   ├── OwnerDashboard.jsx
-│   │   ├── CreateMessPage.jsx
-│   │   └── OwnerProfileCompletePage.jsx
-│   │
-│   ├── mess/                 # Mess management pages
-│   │
-│   └── shared/               # Shared pages
-│       ├── Login.jsx
-│       ├── Signup.jsx
-│       ├── Contact.jsx
-│       └── NotFound.jsx
-│
-├── routes/                    # Route configurations
-│   ├── CustomerRoutes.jsx
-│   ├── OwnerRoutes.jsx
-│   ├── MessRoutes.jsx
-│   ├── SharedRoutes.jsx
-│   └── index.js
-│
-├── services/                  # API service layer
-│   ├── auth.service.js
-│   ├── meal.service.js
-│   ├── mess.service.js
-│   ├── order.service.js
-│   ├── profile.service.js
-│   ├── review.service.js
-│   ├── user.service.js
-│   ├── contact.service.js
-│   ├── index.js
-│   │
-│   └── api/                  # API configuration
-│       ├── apiClient.js      # Axios instance
-│       ├── constants.js      # API endpoints
-│       └── interceptors.js   # Request/response interceptors
-│
-└── utils/                     # Utility functions
-    ├── logger.js             # Logging utility
-    ├── formatters.js         # Data formatting
-    ├── validators.js         # Client-side validation
-    └── helpers.js            # Helper functions
+  main.jsx
+    Bootstraps React and router.
+
+  App.jsx
+    Renders shared layout, route groups, error boundary, notifications.
+
+  components/
+    Reusable UI pieces. Split by customer, owner, and shared concerns.
+
+  pages/
+    Route-level screens. Pages coordinate data and compose components.
+
+  routes/
+    Route configuration modules: SharedRoutes, CustomerRoutes, OwnerRoutes, MessRoutes.
+
+  services/
+    HTTP abstraction over backend endpoints.
+
+  context/
+    Auth, theme, and notification providers.
+
+  hooks/
+    Thin convenience hooks that read contexts or feature-specific behavior.
+
+  utils/
+    Logging and small helpers.
 ```
 
-## Core Components
-
-### 1. Application Entry Point
-
-**File**: `main.jsx`
-
-```jsx
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import App from './App.jsx';
-import './index.css';
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>
-);
-```
-
-**Responsibilities**:
-- Mount React app to DOM
-- Wrap with BrowserRouter
-- Enable StrictMode for development warnings
-
-### 2. Root Component
-
-**File**: `App.jsx`
-
-```jsx
-import { Routes, Route } from "react-router-dom";
-import { CustomerRoutes, OwnerRoutes, MessRoutes, SharedRoutes } from "./routes";
-import Header from "./components/shared/Header.jsx";
-import Footer from "./components/shared/Footer.jsx";
-import ErrorBoundary from "./components/shared/ErrorBoundary.jsx";
-import NotificationContainer from "./components/shared/NotificationContainer.jsx";
-
-const App = () => {
-  return (
-    <ErrorBoundary>
-      <div className="App min-h-screen flex flex-col">
-        <Header />
-        <NotificationContainer />
-        <main className="flex-1 pt-20">
-          <Routes>
-            {SharedRoutes()}
-            {CustomerRoutes()}
-            {OwnerRoutes()}
-            {MessRoutes()}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </ErrorBoundary>
-  );
-};
-```
-
-**Responsibilities**:
-- Define application layout
-- Mount context providers
-- Configure routing
-- Global error handling
-
-## Design Patterns
-
-### 1. Component Composition
-
-Components are built using composition over inheritance:
-
-```jsx
-// Composite components
-<Page>
-  <Header />
-  <Content>
-    <Filters />
-    <List>
-      <Card />
-      <Card />
-    </List>
-  </Content>
-  <Footer />
-</Page>
-```
-
-### 2. Container/Presentational Pattern
-
-**Container Components** (Smart):
-- Manage state
-- Handle business logic
-- Make API calls
-- Pass data to presentational components
-
-```jsx
-// Container
-const MealsListPage = () => {
-  const [meals, setMeals] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    fetchMeals();
-  }, []);
-
-  return <MealsList meals={meals} loading={loading} />;
-};
-```
-
-**Presentational Components** (Dumb):
-- Receive data via props
-- Display data
-- Emit events via callbacks
-- No business logic
-
-```jsx
-// Presentational
-const MealsList = ({ meals, loading }) => {
-  if (loading) return <Spinner />;
-  
-  return (
-    <div>
-      {meals.map(meal => <MealCard key={meal._id} meal={meal} />)}
-    </div>
-  );
-};
-```
-
-### 3. Custom Hooks Pattern
-
-Extract reusable logic into custom hooks:
-
-```jsx
-// Custom hook
-const useMeals = () => {
-  const [meals, setMeals] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const fetchMeals = async (filters) => {
-    setLoading(true);
-    try {
-      const data = await mealService.getAllMeals(filters);
-      setMeals(data.meals);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { meals, loading, error, fetchMeals };
-};
-
-// Usage in component
-const MealsPage = () => {
-  const { meals, loading, error, fetchMeals } = useMeals();
-  
-  useEffect(() => {
-    fetchMeals();
-  }, []);
-
-  // ... render
-};
-```
-
-### 4. Context Provider Pattern
-
-Global state management using Context API:
-
-```jsx
-// Context Provider
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-
-  const login = async (credentials) => {
-    const response = await authService.login(credentials);
-    setUser(response.user);
-  };
-
-  const logout = async () => {
-    await authService.logout();
-    setUser(null);
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-// Usage
-const Profile = () => {
-  const { user, logout } = useAuth();
-  // ... render
-};
-```
-
-### 5. Protected Route Pattern
-
-Route guards for authentication and authorization:
-
-```jsx
-const ProtectedRoute = ({ children, requireRole, requireProfileComplete }) => {
-  const { user, profileComplete, checkProfileCompletion } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    } else if (requireRole && user.role !== requireRole) {
-      navigate('/');
-    } else if (requireProfileComplete) {
-      checkProfileCompletion().then(isComplete => {
-        if (!isComplete) {
-          navigate('/profile/complete');
-        }
-      });
-    }
-  }, [user]);
-
-  return user ? children : null;
-};
-```
-
-## State Management
-
-### 1. Local State (useState)
-
-For component-specific state:
-
-```jsx
-const [showModal, setShowModal] = useState(false);
-const [selectedMeal, setSelectedMeal] = useState(null);
-```
-
-### 2. Context API
-
-For global application state:
-
-```jsx
-// AuthContext - User authentication state
-// ThemeContext - Application theme
-// NotificationContext - Toast notifications
-```
-
-### 3. URL State (React Router)
-
-For shareable state:
-
-```jsx
-// Query parameters
-/meals?type=lunch&veg=true
-
-// URL params
-/meals/:id
-```
-
-### 4. Server State (API)
-
-For data from backend:
-
-```jsx
-// Fetched and cached in components
-const [meals, setMeals] = useState([]);
-```
-
-## Routing Architecture
-
-### Route Organization
-
-Routes are organized by user role:
-
-1. **Shared Routes** (`/login`, `/signup`, `/contact`)
-2. **Customer Routes** (`/meals`, `/orders`, `/profile`)
-3. **Owner Routes** (`/owner/dashboard`, `/owner/create-mess`)
-4. **Mess Routes** (Mess-specific management)
-
-### Route Protection Levels
-
-1. **Public** - Accessible to all
-2. **Authenticated** - Requires login
-3. **Role-Based** - Requires specific role
-4. **Profile-Complete** - Requires completed profile
-
-### Lazy Loading (Planned)
-
-```jsx
-const MealsListPage = lazy(() => import('./pages/customer/MealsListPage'));
-
-<Suspense fallback={<Spinner />}>
-  <Route path="/meals" element={<MealsListPage />} />
-</Suspense>
-```
-
-## API Integration
-
-### Service Layer
-
-All API calls go through service modules:
-
-```
-Component → Custom Hook → Service → API Client → Backend
-```
-
-### Axios Configuration
-
-```jsx
-// apiClient.js
-const apiClient = axios.create({
-  baseURL: 'http://localhost:5000',
-  withCredentials: true,  // Include cookies
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
-
-// Request interceptor
-apiClient.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-// Response interceptor
-apiClient.interceptors.response.use(
-  response => response,
-  error => {
-    if (error.response?.status === 401) {
-      // Redirect to login
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
-```
-
-## Styling Architecture
-
-### Tailwind CSS
-
-Utility-first approach with custom theme:
-
-```javascript
-// tailwind.config.js
-export default {
-  theme: {
-    extend: {
-      colors: {
-        primary: {...},
-        secondary: {...}
-      },
-      spacing: {...},
-      fontSize: {...}
-    }
-  }
-};
-```
-
-### CSS Custom Properties
-
-```css
-/* index.css */
-:root {
-  --primary-500: #FF6B35;
-  --secondary-500: #004E89;
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #F7F7F7;
-  --text-primary: #1A1A1A;
-  --text-secondary: #6B7280;
-}
-```
-
-### Component Styles
-
-```jsx
-// Inline Tailwind classes
-<div className="flex items-center justify-between p-4 bg-white rounded-lg shadow">
-  <h2 className="text-xl font-semibold text-gray-900">Title</h2>
-</div>
-
-// Dynamic classes
-<button 
-  className={`px-4 py-2 rounded ${
-    variant === 'primary' ? 'bg-blue-500' : 'bg-gray-500'
-  }`}
->
-  Click Me
-</button>
-```
-
-## Error Handling
-
-### Error Boundary
-
-Catches React errors:
-
-```jsx
-class ErrorBoundary extends Component {
-  state = { hasError: false };
-
-  static getDerivedStateFromError(error) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    console.error('Error:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return <ErrorFallback />;
-    }
-    return this.props.children;
-  }
-}
-```
-
-### API Error Handling
-
-```jsx
-try {
-  const data = await mealService.getMeals();
-  setMeals(data.meals);
-} catch (error) {
-  if (error.response) {
-    // Server error response
-    setError(error.response.data.error);
-  } else if (error.request) {
-    // Network error
-    setError('Network error, please try again');
-  } else {
-    // Other errors
-    setError('An error occurred');
-  }
-}
-```
-
-### Form Validation
-
-```jsx
-const validateForm = (values) => {
-  const errors = {};
-
-  if (!values.email) {
-    errors.email = 'Email is required';
-  } else if (!/\S+@\S+\.\S+/.test(values.email)) {
-    errors.email = 'Invalid email format';
-  }
-
-  if (!values.password || values.password.length < 6) {
-    errors.password = 'Password must be at least 6 characters';
-  }
-
-  return errors;
-};
-```
-
-## Performance Optimization
-
-### 1. React.memo
-
-Prevent unnecessary re-renders:
-
-```jsx
-const MealCard = React.memo(({ meal, onSelect }) => {
-  return (
-    <div onClick={() => onSelect(meal)}>
-      {meal.name}
-    </div>
-  );
-});
-```
-
-### 2. useMemo
-
-Memoize expensive calculations:
-
-```jsx
-const filteredMeals = useMemo(() => {
-  return meals.filter(meal => 
-    meal.is_Veg === filters.isVeg &&
-    meal.mealType === filters.type
-  );
-}, [meals, filters]);
-```
-
-### 3. useCallback
-
-Memoize callback functions:
-
-```jsx
-const handleSelect = useCallback((meal) => {
-  setSelected(meal);
-}, []);
-```
-
-### 4. Code Splitting (Planned)
-
-```jsx
-const AdminPanel = lazy(() => import('./pages/AdminPanel'));
-```
-
-## Accessibility
-
-### ARIA Labels
-
-```jsx
-<button aria-label="Close modal" onClick={onClose}>
-  <X />
-</button>
-```
-
-### Keyboard Navigation
-
-```jsx
-<div 
-  role="button"
-  tabIndex="0"
-  onKeyPress={(e) => e.key === 'Enter' && onClick()}
->
-  Clickable Div
-</div>
-```
-
-### Semantic HTML
-
-```jsx
-<nav>
-  <ul>
-    <li><Link to="/home">Home</Link></li>
-  </ul>
-</nav>
-
-<main>
-  <article>
-    <h1>Page Title</h1>
-    <section>Content</section>
-  </article>
-</main>
-```
-
-## Development Workflow
-
-### Hot Module Replacement (HMR)
-
-Vite provides instant updates during development:
-
-```bash
-npm run dev  # Starts dev server with HMR
-```
-
-### Build Process
-
-```bash
-npm run build   # Production build
-npm run preview # Preview production build
-```
-
-### Linting
-
-```bash
-npm run lint    # ESLint checking
-```
-
-## Testing Strategy (Planned)
-
-### Unit Tests
-- Component rendering
-- Utility functions
-- Custom hooks
-
-### Integration Tests
-- Page workflows
-- API integration
-- Context providers
-
-### E2E Tests
-- User journeys
-- Critical paths
-- Cross-browser testing
-
-## Best Practices
-
-1. **Component Organization** - One component per file
-2. **PropTypes** - Define prop types for all components
-3. **Export Patterns** - Named exports for utilities, default for components
-4. **File Naming** - PascalCase for components, camelCase for utilities
-5. **State Lifting** - Keep state at the appropriate level
-6. **Effect Cleanup** - Clean up subscriptions in useEffect
-7. **Key Props** - Always use unique keys in lists
-8. **Error Boundaries** - Wrap major sections
-9. **Loading States** - Show loading indicators
-10. **Responsive Design** - Mobile-first approach
-
-## Future Enhancements
-
-1. **State Management**: Redux or Zustand
-2. **Testing**: Jest + React Testing Library
-3. **TypeScript**: Type safety
-4. **PWA**: Offline functionality
-5. **Performance Monitoring**: Analytics integration
-6. **Internationalization**: Multi-language support
-7. **Dark Mode**: Theme switching
-8. **Animation**: Framer Motion
-9. **Form Library**: React Hook Form
-10. **Data Tables**: Advanced filtering and sorting
+## Application Shell
+
+The application shell is defined in App.jsx.
+
+It is responsible for:
+
+- rendering the shared header and footer
+- mounting notification UI
+- rendering routes
+- wrapping the app in an error boundary
+
+This means most pages only need to care about their own content and data, not global layout.
+
+## Route Organization
+
+The app is intentionally split into four route modules:
+
+- SharedRoutes: login, signup, shared access pages
+- CustomerRoutes: customer-facing browsing, checkout, orders, profiles
+- OwnerRoutes: owner-level overview actions such as owner dashboard and create mess
+- MessRoutes: mess-specific operational pages such as dashboard, orders, create meal, and mess profile
+
+That split makes it easier to reason about access and feature boundaries.
+
+## State Management Model
+
+The app does not use Redux or another heavy state library. State is split by responsibility.
+
+### Context state
+
+- AuthContext for logged-in user and auth actions
+- ThemeContext for theme preferences
+- NotificationContext for user-facing notifications
+
+### Page-local state
+
+Pages and feature components use useState for UI-specific interaction such as filters, modal state, selected extras, and loading flags.
+
+### Server state
+
+Data from the backend is fetched imperatively in pages and stored locally in component state.
+
+## Auth Architecture
+
+AuthContext is the frontend source of truth for whether a user is logged in.
+
+Important behavior:
+
+- user is initialized from localStorage
+- login stores token and user via auth service
+- logout clears frontend state and backend cookie session
+- isAuthenticated is derived from user presence
+
+ProtectedRoute uses that context to guard route access.
+
+### Important current behavior
+
+ProtectedRoute still accepts requireProfileComplete, but profile completion is not centrally enforced inside ProtectedRoute today. Some profile-completion behavior is instead handled during login and page flows. New contributors should know this because the prop exists in route definitions but is not the main enforcement mechanism right now.
+
+## API Layer
+
+The API layer is organized in two levels.
+
+### api/apiClient.js
+
+Shared Axios instance with:
+
+- baseURL from VITE_API_BASE_URL
+- withCredentials enabled
+- request interceptor for bearer token header
+- response interceptor for centralized auth and error handling
+
+### service files
+
+Each service groups related endpoints.
+
+Examples:
+
+- auth.service.js
+- profile.service.js
+- mess.service.js
+- meal.service.js
+- order.service.js
+- owner.service.js
+
+This separation keeps HTTP details out of page components.
+
+## Feature Architecture
+
+### Customer features
+
+Customer pages focus on discovery and ordering.
+
+Key pieces:
+
+- Mess list and mess detail
+- Meal list and meal detail modal
+- Checkout page
+- Order history and order details
+- Customer profile and edit profile pages
+
+### Owner features
+
+Owner flow is intentionally split into two layers:
+
+- owner-level overview pages
+- mess-specific operational pages
+
+Owner dashboard shows mess cards. Clicking a mess card routes into a selected mess dashboard URL. From there, the mess sidebar keeps navigation scoped to that mess.
+
+### Extras flow
+
+Extras are a cross-feature concern and one of the most important recent product additions.
+
+The frontend behavior is:
+
+1. Meal data includes extras.
+2. Meal detail modal lets the user select extras.
+3. Checkout receives selected extras through route state.
+4. Order payload includes selectedExtras per item.
+
+This is why these files are closely related:
+
+- components/customer/MealCard.jsx
+- components/customer/MealDetailModal.jsx
+- pages/customer/CheckoutPage.jsx
+- services/order.service.js
+
+## Design System Approach
+
+The UI uses a combination of:
+
+- Tailwind utility classes
+- inline style objects for project-specific palette values
+- CSS variables from global styles
+
+This is not a formal design system yet, but it is consistent enough to follow an existing visual language.
+
+## How to Add a New Feature Safely
+
+Recommended order:
+
+1. Define or confirm backend contract.
+2. Add or update service wrapper.
+3. Build page state and effect logic.
+4. Add or update reusable components.
+5. Wire route if needed.
+6. Validate auth/role behavior.
+7. Update documentation.
+
+## Mental Model for New Developers
+
+When something breaks, debug by ownership:
+
+- route not reachable: routes/
+- redirect issue: ProtectedRoute or auth state
+- wrong request payload: page or service file
+- wrong response handling: page logic or service mapping
+- wrong UI state: local page/component state
+- wrong header/token behavior: apiClient or auth service
+
+That framing makes this frontend much easier to work with.
