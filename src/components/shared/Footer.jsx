@@ -14,7 +14,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div>
             <h3 className="text-lg font-bold mb-3"
-              style={{ color: '#FFFFFF' }}>Mama's Kitchen</h3>
+              style={{ color: '#FFFFFF' }}>Mumas Kitchen</h3>
             <p className="text-sm mb-3"
               style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
               Home-style food made with love.
@@ -83,7 +83,7 @@ const Footer = () => {
           style={{ borderColor: 'rgba(255, 255, 255, 0.2)' }}>
           <p className="text-xs"
             style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-            © 2026 Mama's Kitchen. All rights reserved. Crafted with ❤️ for food lovers.
+            © 2026 Mumas Kitchen. All rights reserved. Crafted with ❤️ for food lovers.
           </p>
         </div>
       </div>

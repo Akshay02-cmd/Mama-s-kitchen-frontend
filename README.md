@@ -1,6 +1,6 @@
-# Mama's Kitchen Frontend
+# Mumas Kitchen Frontend
 
-Mama's Kitchen Frontend is the React application for the Mama's Kitchen platform. It provides the user interface for customers to browse messes and meals, customize orders with extras, place orders, and manage profiles, while owners can manage their mess workflow and review business activity.
+Mumas Kitchen Frontend is the React application for the Mumas Kitchen platform. It provides the user interface for customers to browse messes and meals, customize orders with extras, place orders, and manage profiles, while owners can manage their mess workflow and review business activity.
 
 The app is built with React, React Router, Vite, and Axios, and it integrates with the backend API running on localhost:5000 in development.
 

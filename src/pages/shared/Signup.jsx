@@ -126,7 +126,7 @@ const Signup = () => {
 
   return (
     <AuthLayout
-      title="Join Mama's Kitchen"
+      title="Join Mumas Kitchen"
       subtitle="Create your account and start enjoying homemade meals"
     >
       <form onSubmit={handleSubmit} className="space-y-5">

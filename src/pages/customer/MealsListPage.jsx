@@ -35,7 +35,7 @@ const MealsListPage = () => {
             averageRating: meal.averageRating || 4.0,
             totalReviews: meal.totalReviews || 0,
             // Ensure messId is an object
-            messId: meal.messId || { name: 'Mama\'s Kitchen Central', _id: meal.messId }
+            messId: meal.messId || { name: 'Mumas Kitchen Central', _id: meal.messId }
           }));
           setMeals(transformedMeals);
         } else {

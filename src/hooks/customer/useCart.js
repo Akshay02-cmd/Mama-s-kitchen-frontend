@@ -8,7 +8,7 @@ import { useLocalStorage } from '../shared/useLocalStorage';
  * @returns {Object} Cart items, total, and cart operations
  */
 export const useCart = () => {
-  const [cart, setCart] = useLocalStorage('mama-kitchen-cart', []);
+  const [cart, setCart] = useLocalStorage('mumas-kitchen-cart', []);
 
   // Add item to cart
   const addToCart = useCallback((meal, quantity = 1) => {

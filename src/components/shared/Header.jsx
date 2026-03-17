@@ -62,10 +62,10 @@ const Header = () => {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <img src={logo} alt="Mama's Kitchen Logo" className="w-10 h-10 rounded-lg" />
+            <img src={logo} alt="Mumas Kitchen Logo" className="w-10 h-10 rounded-lg" />
             <div>
               <h1 className="text-lg font-bold" style={{ color: '#111827' }}>
-                Mamma's Kitchen
+                Mumas Kitchen
               </h1>
             </div>
           </div>
