@@ -118,7 +118,7 @@ const MessOrdersDashboard = () => {
         className="p-6 rounded-xl shadow-sm hover:shadow-md transition-all mb-4"
         style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
         {/* Order Header */}
-        <div className="flex items-start justify-between mb-4">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h3 className="font-bold text-lg mb-1" style={{ color: '#111827' }}>
               Order #{order._id.slice(-6)}
@@ -163,7 +163,7 @@ const MessOrdersDashboard = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           {(order.status === 'PLACED' || order.status === 'PENDING') && (
             <button
               onClick={() => handleStatusUpdate(order._id, 'PREPARING')}
@@ -186,7 +186,7 @@ const MessOrdersDashboard = () => {
             onClick={() =>
               navigate(messId ? `/mess/${messId}/orders/${order._id}` : `/mess/orders/${order._id}`)
             }
-            className="py-2 px-4 rounded-lg font-medium transition-all flex items-center gap-2"
+            className="flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium transition-all sm:justify-start"
             style={{ backgroundColor: '#F3F4F6', color: '#6B7280', border: '1px solid #E5E7EB' }}>
             <Eye className="w-4 h-4" />
             View
@@ -200,7 +200,7 @@ const MessOrdersDashboard = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <MessSidebar />
-        <div className="flex-1 md:ml-64 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: '#8B5CF6' }}></div>
             <p style={{ color: '#6B7280' }}>Loading orders...</p>
@@ -214,7 +214,7 @@ const MessOrdersDashboard = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <MessSidebar />
-        <div className="flex-1 md:ml-64 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
           <div className="text-center p-8">
             <XCircle className="w-16 h-16 mx-auto mb-4" style={{ color: '#EF4444' }} />
             <h3 className="text-xl font-bold mb-2" style={{ color: '#111827' }}>{error}</h3>
@@ -234,11 +234,11 @@ const MessOrdersDashboard = () => {
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <MessSidebar />
-      <div className="flex-1 md:ml-64 p-8">
+      <div className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2" style={{ color: '#111827' }}>
+          <h1 className="mb-2 text-2xl font-bold sm:text-3xl" style={{ color: '#111827' }}>
             Orders Dashboard
           </h1>
           <p style={{ color: '#6B7280' }}>
@@ -247,7 +247,7 @@ const MessOrdersDashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
           <div className="p-6 rounded-xl shadow-sm" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
             <div className="flex items-center justify-between mb-2">
               <span style={{ color: '#6B7280' }}>New Orders</span>
@@ -278,7 +278,7 @@ const MessOrdersDashboard = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b" style={{ borderColor: '#E5E7EB' }}>
+        <div className="no-scrollbar mb-6 flex gap-2 overflow-x-auto border-b" style={{ borderColor: '#E5E7EB' }}>
           {[
             { key: 'new', label: 'New Orders', count: orders.filter((o) => o.status === 'PLACED' || o.status === 'PENDING').length },
             { key: 'preparing', label: 'Preparing', count: orders.filter((o) => o.status === 'PREPARING').length },
@@ -287,7 +287,7 @@ const MessOrdersDashboard = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className="px-6 py-3 font-medium transition-all relative"
+              className="relative whitespace-nowrap px-4 py-3 font-medium transition-all sm:px-6"
               style={{
                 color: activeTab === tab.key ? '#8B5CF6' : '#6B7280',
                 borderBottom: activeTab === tab.key ? '2px solid #8B5CF6' : '2px solid transparent',

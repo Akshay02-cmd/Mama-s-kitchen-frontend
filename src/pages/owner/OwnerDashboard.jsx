@@ -105,7 +105,7 @@ const OwnerDashboard = () => {
         </span>
       </div>
       
-      <div className="grid grid-cols-2 gap-4 pt-4 border-t" style={{ borderColor: '#E5E7EB' }}>
+      <div className="grid grid-cols-1 gap-4 pt-4 border-t sm:grid-cols-2" style={{ borderColor: '#E5E7EB' }}>
         <div>
           <p className="text-sm mb-1" style={{ color: '#6B7280' }}>Total Orders</p>
           <p className="text-xl font-bold" style={{ color: '#111827' }}>{mess.totalOrders}</p>
@@ -122,7 +122,7 @@ const OwnerDashboard = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <Sidebar />
-        <div className="flex-1 md:ml-64 p-8">
+        <div className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#8B5CF6' }}></div>
           </div>
@@ -135,11 +135,11 @@ const OwnerDashboard = () => {
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <Sidebar />
       
-      <div className="flex-1 md:ml-64 p-8">
+      <div className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2" style={{ color: '#111827' }}>
+            <h1 className="mb-2 text-2xl font-bold sm:text-3xl" style={{ color: '#111827' }}>
               Owner Dashboard
             </h1>
             <p style={{ color: '#6B7280' }}>
@@ -148,7 +148,7 @@ const OwnerDashboard = () => {
           </div>
           <button
             onClick={() => navigate('/owner/create-mess')}
-            className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all hover:shadow-md"
+            className="flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium transition-all hover:shadow-md sm:w-auto"
             style={{ backgroundColor: '#8B5CF6', color: '#FFFFFF' }}>
             <Plus className="w-5 h-5" />
             Create New Mess

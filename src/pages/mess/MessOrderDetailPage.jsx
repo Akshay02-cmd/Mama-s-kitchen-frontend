@@ -63,7 +63,7 @@ const MessOrderDetailPage = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <MessSidebar />
-        <div className="flex-1 md:ml-64 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#8B5CF6' }}></div>
         </div>
       </div>
@@ -74,7 +74,7 @@ const MessOrderDetailPage = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <MessSidebar />
-        <div className="flex-1 md:ml-64 flex items-center justify-center p-8">
+        <div className="flex-1 flex items-center justify-center p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
           <Card className="p-8 text-center max-w-lg w-full">
             <h2 className="text-2xl font-bold mb-3" style={{ color: '#111827' }}>
               {error || 'Order not found'}
@@ -97,9 +97,9 @@ const MessOrderDetailPage = () => {
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <MessSidebar />
-      <div className="flex-1 md:ml-64 p-8">
+      <div className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
         <div className="max-w-5xl mx-auto space-y-6">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <button
                 onClick={() => navigate(backPath)}
@@ -108,7 +108,7 @@ const MessOrderDetailPage = () => {
               >
                 ← Back to Orders
               </button>
-              <h1 className="text-3xl font-bold" style={{ color: '#111827' }}>
+              <h1 className="text-2xl font-bold sm:text-3xl" style={{ color: '#111827' }}>
                 Order #{order._id.slice(-6)}
               </h1>
               <p style={{ color: '#6B7280' }}>
@@ -120,7 +120,7 @@ const MessOrderDetailPage = () => {
               <button
                 onClick={handleStatusUpdate}
                 disabled={updating}
-                className="px-5 py-3 rounded-lg font-semibold disabled:opacity-50"
+                className="w-full rounded-lg px-5 py-3 font-semibold disabled:opacity-50 sm:w-auto"
                 style={{ backgroundColor: '#8B5CF6', color: '#FFFFFF' }}
               >
                 {updating ? 'Updating...' : `Mark ${nextStatus}`}

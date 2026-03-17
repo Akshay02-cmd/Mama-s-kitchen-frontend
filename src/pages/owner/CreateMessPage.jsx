@@ -132,11 +132,11 @@ const CreateMessPage = () => {
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <Sidebar />
       
-      <div className="flex-1 md:ml-64 p-8">
+      <div className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2" style={{ color: '#111827' }}>
+            <h1 className="mb-2 text-2xl font-bold sm:text-3xl" style={{ color: '#111827' }}>
               Create New Mess
             </h1>
             <p style={{ color: '#6B7280' }}>
@@ -145,7 +145,7 @@ const CreateMessPage = () => {
           </div>
 
           {/* Form Card */}
-          <div className="rounded-xl p-8 shadow-lg"
+          <div className="rounded-xl p-5 shadow-lg sm:p-8"
             style={{ 
               backgroundColor: '#FFFFFF',
               border: '1px solid #E5E7EB'
@@ -386,7 +386,7 @@ const CreateMessPage = () => {
               )}
 
               {/* Action Buttons */}
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col gap-4 pt-4 sm:flex-row">
                 <button
                   type="button"
                   onClick={() => navigate('/owner/dashboard')}

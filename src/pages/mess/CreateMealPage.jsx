@@ -93,16 +93,16 @@ const CreateMealPage = () => {
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <MessSidebar />
-      <div className="flex-1 md:ml-64 p-8">
+      <div className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2" style={{ color: '#111827' }}>Create New Meal</h1>
+            <h1 className="mb-2 text-2xl font-bold sm:text-3xl" style={{ color: '#111827' }}>Create New Meal</h1>
             <p style={{ color: '#6B7280' }}>Add a new meal with optional extras to your menu</p>
           </div>
 
           {/* Form Card */}
-          <div className="rounded-xl p-8 shadow-lg" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
+          <div className="rounded-xl p-5 shadow-lg sm:p-8" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
             <form onSubmit={handleSubmit} className="space-y-6">
 
               {/* Image Upload */}
@@ -287,7 +287,7 @@ const CreateMealPage = () => {
                 )}
 
                 {/* Add new extra */}
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row">
                   <input
                     type="text"
                     value={newExtra.name}
@@ -303,7 +303,7 @@ const CreateMealPage = () => {
                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addExtra())}
                     placeholder="Rs Price"
                     min="0" step="1"
-                    className="w-28 px-3 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2"
+                    className="w-full px-3 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2 sm:w-28"
                     style={{ borderColor: '#E5E7EB', color: '#111827', backgroundColor: '#FFFFFF' }} />
                   <button
                     type="button" onClick={addExtra}
@@ -325,7 +325,7 @@ const CreateMealPage = () => {
               )}
 
               {/* Action Buttons */}
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col gap-4 pt-4 sm:flex-row">
                 <button
                   type="button" onClick={() => navigate('/mess/dashboard')}
                   className="flex-1 py-3 px-4 rounded-lg font-medium transition-all"

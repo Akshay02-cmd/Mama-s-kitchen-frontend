@@ -125,7 +125,7 @@ const MessProfilePage = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <MessSidebar />
-        <div className="flex-1 md:ml-64 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: '#8B5CF6' }}></div>
             <p style={{ color: '#6B7280' }}>Loading profile...</p>
@@ -139,7 +139,7 @@ const MessProfilePage = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <MessSidebar />
-        <div className="flex-1 md:ml-64 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
           <div className="text-center p-8">
             <Store className="w-16 h-16 mx-auto mb-4" style={{ color: '#EF4444' }} />
             <h3 className="text-xl font-bold mb-2" style={{ color: '#111827' }}>{error || 'No mess found'}</h3>
@@ -159,12 +159,12 @@ const MessProfilePage = () => {
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <MessSidebar />
-      <div className="flex-1 md:ml-64 p-8">
+      <div className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2" style={{ color: '#111827' }}>
+            <h1 className="mb-2 text-2xl font-bold sm:text-3xl" style={{ color: '#111827' }}>
               Mess Profile
             </h1>
             <p style={{ color: '#6B7280' }}>
@@ -173,7 +173,7 @@ const MessProfilePage = () => {
           </div>
           <button
             onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all"
+            className="flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium transition-all sm:w-auto"
             style={{ backgroundColor: '#8B5CF6', color: '#FFFFFF' }}>
             <Edit className="w-5 h-5" />
             Edit Profile
@@ -181,7 +181,7 @@ const MessProfilePage = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
           <div className="p-6 rounded-xl shadow-sm" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
             <p className="text-sm mb-2" style={{ color: '#6B7280' }}>Total Orders</p>
             <p className="text-3xl font-bold" style={{ color: '#111827' }}>{stats.totalOrders}</p>
@@ -201,14 +201,14 @@ const MessProfilePage = () => {
         </div>
 
         {/* Profile Details */}
-        <div className="rounded-xl p-8 shadow-lg mb-6" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
-          <div className="flex items-start gap-6 mb-6">
+        <div className="mb-6 rounded-xl p-5 shadow-lg sm:p-8" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
+          <div className="mb-6 flex flex-col items-start gap-6 sm:flex-row">
             <div className="w-20 h-20 rounded-lg flex items-center justify-center shrink-0"
               style={{ backgroundColor: '#8B5CF6' }}>
               <Store className="w-10 h-10 text-white" />
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
+              <div className="mb-2 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
                 {isEditing ? (
                   <input
                     value={formData.name}
@@ -285,7 +285,7 @@ const MessProfilePage = () => {
                   Mess is active and visible to customers
                 </label>
               </div>
-              <div className="md:col-span-2 flex gap-3">
+              <div className="md:col-span-2 flex flex-col gap-3 sm:flex-row">
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
