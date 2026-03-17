@@ -214,7 +214,7 @@ const CheckoutPage = () => {
 
             {/* Sidebar - Order Summary */}
             <div>
-              <Card className="p-6 sticky top-24">
+              <Card className="p-6 lg:sticky lg:top-24">
                 <h2 className="text-xl font-bold mb-4" style={{ color: '#111827' }}>
                   Order Summary
                 </h2>

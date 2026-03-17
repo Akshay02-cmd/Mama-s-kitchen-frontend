@@ -108,9 +108,9 @@ const MealsListPage = () => {
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <Sidebar />
       
-      <main className="flex-1 md:ml-64 p-4 md:p-8">
+      <main className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
         <h1 
-          className="text-3xl font-bold mb-6"
+          className="mb-6 text-2xl font-bold sm:text-3xl"
           style={{ color: '#111827' }}
         >
           Our Meals
@@ -147,11 +147,11 @@ const MealsListPage = () => {
             ) : (
               <>
                 {/* Results info */}
-                <div className="flex items-center justify-between mb-6">
+                <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <p style={{ color: '#6B7280' }}>
                     <span className="font-bold" style={{ color: '#111827' }}>{filteredMeals.length}</span> meal{filteredMeals.length !== 1 ? 's' : ''} found
                   </p>
-                  <div className="flex items-center gap-3 px-4 py-2 rounded-lg"
+                  <div className="flex w-full items-center gap-3 rounded-lg px-4 py-2 sm:w-auto"
                     style={{ 
                       backgroundColor: '#FFFFFF',
                       border: '1px solid #E5E7EB'
@@ -167,7 +167,7 @@ const MealsListPage = () => {
                         setItemsPerPage(Number(e.target.value));
                         setCurrentPage(1);
                       }}
-                      className="px-3 py-1 rounded border font-medium cursor-pointer"
+                      className="min-w-0 flex-1 rounded border px-3 py-1 font-medium cursor-pointer sm:flex-none"
                       style={{ 
                         backgroundColor: '#FFFFFF',
                         borderColor: '#D1D5DB',

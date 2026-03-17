@@ -97,6 +97,15 @@ html, body {
 
 
 @layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   @keyframes fade-in {
     from {
       opacity: 0;

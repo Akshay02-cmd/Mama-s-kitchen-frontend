@@ -41,7 +41,7 @@ const Pagination = ({
   if (totalPages <= 1) return null;
 
   return (
-    <div className={`flex items-center justify-between bg-white rounded-2xl shadow-md px-8 py-6 border border-gray-100 ${className}`}>
+    <div className={`flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white px-4 py-5 shadow-md sm:px-6 lg:flex-row lg:items-center lg:justify-between ${className}`}>
       {/* Results info */}
       <div className="text-sm font-medium" style={{ color: 'var(--gray-700)' }}>
         Showing <span className="font-bold text-base" style={{ color: 'var(--primary-600)' }}>{startItem}</span> to{' '}
@@ -50,12 +50,12 @@ const Pagination = ({
       </div>
 
       {/* Page buttons */}
-      <div className="flex items-center gap-2">
+      <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between lg:w-auto lg:justify-end">
         {/* Previous button */}
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-md transform hover:-translate-x-1"
+          className="w-full rounded-xl px-5 py-2.5 font-semibold transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 hover:shadow-md sm:w-auto"
           style={{
             backgroundColor: currentPage === 1 ? 'var(--gray-100)' : 'var(--white)',
             color: currentPage === 1 ? 'var(--gray-400)' : 'var(--gray-700)',
@@ -98,7 +98,7 @@ const Pagination = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-md transform hover:translate-x-1"
+          className="w-full rounded-xl px-5 py-2.5 font-semibold transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 hover:shadow-md sm:w-auto"
           style={{
             backgroundColor: currentPage === totalPages ? 'var(--gray-100)' : 'var(--white)',
             color: currentPage === totalPages ? 'var(--gray-400)' : 'var(--gray-700)',

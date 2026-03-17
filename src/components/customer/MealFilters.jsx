@@ -4,10 +4,10 @@ const MealFilters = ({ filters, onFilterChange }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-      <div className="flex items-center gap-3 mb-6">
+    <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-xl sm:p-8">
+      <div className="mb-6 flex items-center gap-3">
         <div className="w-1 h-8 rounded-full" style={{ backgroundColor: 'var(--primary-600)' }}></div>
-        <h2 className="text-2xl font-bold" style={{ color: 'var(--gray-900)' }}>
+        <h2 className="text-xl font-bold sm:text-2xl" style={{ color: 'var(--gray-900)' }}>
           Filter Meals
         </h2>
       </div>
@@ -101,7 +101,7 @@ const MealFilters = ({ filters, onFilterChange }) => {
         <div className="mt-6 pt-6 border-t border-gray-100">
           <button
             onClick={() => onFilterChange({ search: '', category: 'all', dietaryType: 'all', priceRange: 'all' })}
-            className="px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+            className="w-full rounded-xl px-6 py-3 font-semibold shadow-md transition-all duration-300 hover:shadow-lg sm:w-auto"
             style={{ 
               backgroundColor: 'var(--primary-600)', 
               color: 'var(--white)' 

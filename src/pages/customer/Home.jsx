@@ -70,11 +70,11 @@ const Home = () => {
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-1 md:ml-64 p-4 md:p-8">
+      <main className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
         {/* Header */}
         <div className="mb-8">
           <h1 
-            className="text-3xl font-bold mb-6"
+            className="mb-6 text-2xl font-bold sm:text-3xl"
             style={{ color: '#111827' }}
           >
             Dashboard
@@ -119,7 +119,7 @@ const Home = () => {
             {/* Today's Lunch */}
             <section className="mb-10">
               <h2 
-                className="text-2xl font-bold mb-4"
+                className="mb-4 text-xl font-bold sm:text-2xl"
                 style={{ color: '#111827' }}
               >
                 Today's Lunch
@@ -138,7 +138,7 @@ const Home = () => {
             {/* Tomorrow's Dinner */}
             <section>
               <h2 
-                className="text-2xl font-bold mb-4"
+                className="mb-4 text-xl font-bold sm:text-2xl"
                 style={{ color: '#111827' }}
               >
                 Tomorrow's Dinner

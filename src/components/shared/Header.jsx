@@ -58,12 +58,12 @@ const Header = () => {
         backgroundColor: '#FFFFFF',
         borderColor: '#E5E7EB'
       }}>
-      <div className="max-w-full px-6 lg:px-8">
+      <div className="max-w-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="Mumas Kitchen Logo" className="w-10 h-10 rounded-lg" />
-            <div>
+          <div className="flex min-w-0 items-center gap-3">
+            <img src={logo} alt="Mumas Kitchen Logo" className="h-10 w-10 shrink-0 rounded-lg" />
+            <div className="hidden min-w-0 sm:block">
               <h1 className="text-lg font-bold" style={{ color: '#111827' }}>
                 Mumas Kitchen
               </h1>
@@ -76,7 +76,7 @@ const Header = () => {
           </div>
 
           {/* Right side actions */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {/* Notifications - Click to see demo */}
             {isAuthenticated && (
               <button 
@@ -107,7 +107,7 @@ const Header = () => {
             ) : (
               <Link
                 to="/login"
-                className="px-4 py-2 rounded-lg font-medium transition-all"
+                className="rounded-lg px-3 py-2 text-sm font-medium transition-all sm:px-4 sm:text-base"
                 style={{
                   backgroundColor: '#3B82F6',
                   color: '#FFFFFF'

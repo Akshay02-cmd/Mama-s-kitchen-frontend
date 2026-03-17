@@ -6,11 +6,9 @@ const Footer = () => {
     <footer className="text-white w-full mt-auto border-t overflow-hidden"
       style={{ 
         background: 'linear-gradient(to bottom, #6D28D9, #5B21B6)',
-        borderColor: 'rgba(139, 92, 246, 0.2)',
-        marginLeft: 0,
-        paddingLeft: window.innerWidth >= 768 ? '256px' : '0'
+        borderColor: 'rgba(139, 92, 246, 0.2)'
       }}>
-      <div className="px-4 sm:px-6 py-6">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div>
             <h3 className="text-lg font-bold mb-3"
@@ -20,15 +18,15 @@ const Footer = () => {
               Home-style food made with love.
             </p>
             <div className="flex gap-2">
-              <a href="#" className="w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
+              <a href="https://www.facebook.com/mummas.kitchen_nashik" className="w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}>
                 <Facebook className="w-4 h-4" style={{ color: '#FFFFFF' }} />
               </a>
-              <a href="#" className="w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
+              <a href="https://www.instagram.com/mummas.kitchen_nashik" className="w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}>
                 <Instagram className="w-4 h-4" style={{ color: '#FFFFFF' }} />
               </a>
-              <a href="#" className="w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
+              <a href="https://twitter.com/mummas_kitchen" className="w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}>
                 <Twitter className="w-4 h-4" style={{ color: '#FFFFFF' }} />
               </a>
@@ -57,21 +55,21 @@ const Footer = () => {
               style={{ color: '#FFFFFF' }}>Contact</h3>
             <div className="space-y-2"
               style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-              <a href="mailto:hello@mamaskitchen.com" className="flex items-center gap-3 transition group"
+              <a href="mailto:hello@mamaskitchen.com" className="flex items-start gap-3 transition group break-all"
                 onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
                 onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)'}>
                 <Mail className="h-5 w-5"
                   style={{ color: '#FFFFFF' }} />
                 <span className="text-sm">hello@mamaskitchen.com</span>
               </a>
-              <a href="tel:+15551234567" className="flex items-center gap-3 transition group"
+              <a href="tel:+15551234567" className="flex items-start gap-3 transition group"
                 onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
                 onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)'}>
                 <Phone className="h-5 w-5"
                   style={{ color: '#FFFFFF' }} />
                 <span className="text-sm">+1 (555) 123-4567</span>
               </a>
-              <div className="flex items-center gap-3">
+              <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 shrink-0"
                   style={{ color: '#FFFFFF' }} />
                 <span className="text-sm">123 Kitchen Street, Nashik</span>

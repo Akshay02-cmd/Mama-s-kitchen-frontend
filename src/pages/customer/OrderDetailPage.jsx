@@ -71,9 +71,9 @@ const OrderDetailPage = () => {
 
         {/* Order Header */}
         <Card className="p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold" style={{ color: '#111827' }}>
+              <h1 className="text-2xl font-bold sm:text-3xl" style={{ color: '#111827' }}>
                 Order Details
               </h1>
               <p className="text-sm mt-1" style={{ color: '#6B7280' }}>
@@ -81,7 +81,7 @@ const OrderDetailPage = () => {
               </p>
             </div>
             <span 
-              className="px-6 py-3 rounded-full font-bold text-lg"
+              className="inline-flex w-fit rounded-full px-4 py-2 text-base font-bold sm:px-6 sm:py-3 sm:text-lg"
               style={{ 
                 backgroundColor: statusStyle.color,
                 color: '#FFFFFF'
@@ -91,7 +91,7 @@ const OrderDetailPage = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t" style={{ borderColor: '#E5E7EB' }}>
+          <div className="mt-4 grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-2" style={{ borderColor: '#E5E7EB' }}>
             <div>
               <p className="text-sm font-medium" style={{ color: '#6B7280' }}>Order Placed</p>
               <p className="font-semibold" style={{ color: '#111827' }}>

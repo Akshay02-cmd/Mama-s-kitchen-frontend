@@ -6,9 +6,9 @@ const Contact = () => {
       <ContactHeader />
 
       {/* Contact Content */}
-      <section className="py-20 px-6">
+      <section className="px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16">
+          <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
             <ContactForm />
             <ContactInfo />
           </div>

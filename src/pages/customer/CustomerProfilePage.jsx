@@ -76,7 +76,7 @@ const CustomerProfilePage = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <Sidebar />
-        <main className="flex-1 md:ml-64 p-4 md:p-8">
+        <main className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
           <div className="flex items-center justify-center h-64">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
@@ -89,7 +89,7 @@ const CustomerProfilePage = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <Sidebar />
-        <main className="flex-1 md:ml-64 p-4 md:p-8">
+        <main className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
           <div className="max-w-2xl mx-auto">
             <div className="bg-white rounded-lg shadow-sm p-8 text-center">
               <div className="mb-6">
@@ -135,10 +135,10 @@ const CustomerProfilePage = () => {
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <Sidebar />
-      <main className="flex-1 md:ml-64 p-4 md:p-8">
+      <main className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
         <div className="mb-6">
           <h1 
-            className="text-3xl font-bold"
+            className="text-2xl font-bold sm:text-3xl"
             style={{ color: '#111827' }}
           >
             My Profile
