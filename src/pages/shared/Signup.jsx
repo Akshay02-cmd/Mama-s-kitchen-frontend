@@ -18,7 +18,6 @@ const Signup = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "CUSTOMER",
     agreeToTerms: false,
   });
   const [errors, setErrors] = useState({});
@@ -87,19 +86,14 @@ const Signup = () => {
       name: formData.name,
       email: formData.email,
       password: formData.password,
-      role: formData.role,
+      role: "CUSTOMER",
     };
 
     try {
       const response = await register(apiData);
       if (response.success) {
-        // Always redirect to complete profile after signup
         // New users need to complete their profile
-        if (formData.role === 'OWNER') {
-          navigate('/owner/complete-profile', { replace: true });
-        } else {
-          navigate('/profile/edit', { replace: true, state: { requiresCompletion: true } });
-        }
+        navigate('/profile/edit', { replace: true, state: { requiresCompletion: true } });
       }
     } catch (error) {
       console.error("Registration error:", error);
@@ -126,7 +120,7 @@ const Signup = () => {
 
   return (
     <AuthLayout
-      title="Join Mumas Kitchen"
+      title="Join Mumma's Kitchen"
       subtitle="Create your account and start enjoying homemade meals"
     >
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -155,26 +149,6 @@ const Signup = () => {
           icon={Mail}
           required
         />
-
-        <div>
-          <label
-            htmlFor="role"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Account Type
-          </label>
-          <select
-            id="role"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-            aria-label="Select your account type"
-          >
-            <option value="CUSTOMER">Customer</option>
-            <option value="OWNER">Mess Owner</option>
-          </select>
-        </div>
 
         <FormInput
           id="password"

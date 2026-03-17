@@ -158,7 +158,7 @@ const Login = () => {
   return (
     <AuthLayout
       title="Welcome Back!"
-      subtitle="Log in to access your Mumas Kitchen account"
+      subtitle="Log in to access your Mumma's Kitchen account"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <FormInput
