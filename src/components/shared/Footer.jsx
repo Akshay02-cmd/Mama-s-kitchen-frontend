@@ -1,9 +1,26 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
+  const { pathname } = useLocation();
+
+  const usesDesktopSidebar =
+    pathname === "/home" ||
+    pathname === "/meals" ||
+    pathname === "/orders" ||
+    pathname === "/profile" ||
+    pathname === "/owner/dashboard" ||
+    pathname === "/owner/create-mess" ||
+    pathname === "/mess/dashboard" ||
+    pathname === "/mess/orders" ||
+    pathname === "/mess/create-meal" ||
+    pathname === "/mess/profile" ||
+    /^\/mess\/[^/]+\/(dashboard|orders|create-meal|profile)$/.test(pathname) ||
+    /^\/mess\/[^/]+\/orders\/[^/]+$/.test(pathname);
+
   return (
-    <footer className="text-white w-full mt-auto border-t overflow-hidden"
+    <footer
+      className={`mt-auto overflow-hidden border-t text-white ${usesDesktopSidebar ? 'w-full md:ml-64 md:w-[calc(100%-16rem)]' : 'w-full'}`}
       style={{ 
         background: 'linear-gradient(to bottom, #6D28D9, #5B21B6)',
         borderColor: 'rgba(139, 92, 246, 0.2)'
