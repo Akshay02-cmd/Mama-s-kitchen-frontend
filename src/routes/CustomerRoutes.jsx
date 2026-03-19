@@ -1,5 +1,6 @@
-import { Route } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "../components/shared/ProtectedRoute.jsx";
+import { useAuth } from "../hooks/shared";
 
 // Customer Pages
 import Home from "../pages/customer/Home.jsx";
@@ -13,6 +14,21 @@ import MessDetailPage from "../pages/customer/MessDetailPage.jsx";
 import CustomerProfilePage from "../pages/customer/CustomerProfilePage.jsx";
 import EditProfilePage from "../pages/customer/EditProfilePage.jsx";
 
+const CustomerHomeGuard = ({ children }) => {
+  const { user, isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return null;
+  }
+
+  // Owners should not browse customer meal discovery pages.
+  if (isAuthenticated && user?.role === "OWNER") {
+    return <Navigate to="/owner/dashboard" replace />;
+  }
+
+  return children;
+};
+
 /**
  * Customer Routes
  * Routes accessible to authenticated customers
@@ -21,14 +37,28 @@ const CustomerRoutes = () => {
   return (
     <>
       {/* Public Home Routes - Accessible without authentication */}
-      <Route path="/" element={<Home />} />
-      <Route path="/home" element={<Home />} />
+      <Route
+        path="/"
+        element={
+          <CustomerHomeGuard>
+            <Home />
+          </CustomerHomeGuard>
+        }
+      />
+      <Route
+        path="/home"
+        element={
+          <CustomerHomeGuard>
+            <Home />
+          </CustomerHomeGuard>
+        }
+      />
 
       {/* Meals Routes - Protected, require authentication */}
       <Route 
         path="/meals" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireRole="CUSTOMER">
             <MealsListPage />
           </ProtectedRoute>
         } 
@@ -36,7 +66,7 @@ const CustomerRoutes = () => {
       <Route 
         path="/meals/:id" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireRole="CUSTOMER">
             <MealDetailPage />
           </ProtectedRoute>
         } 
@@ -46,7 +76,7 @@ const CustomerRoutes = () => {
       <Route 
         path="/orders" 
         element={
-          <ProtectedRoute requireProfileComplete={true}>
+          <ProtectedRoute requireRole="CUSTOMER" requireProfileComplete={true}>
             <MyOrdersPage />
           </ProtectedRoute>
         } 
@@ -54,7 +84,7 @@ const CustomerRoutes = () => {
       <Route 
         path="/orders/:id" 
         element={
-          <ProtectedRoute requireProfileComplete={true}>
+          <ProtectedRoute requireRole="CUSTOMER" requireProfileComplete={true}>
             <OrderDetailPage />
           </ProtectedRoute>
         } 
@@ -62,7 +92,7 @@ const CustomerRoutes = () => {
       <Route 
         path="/checkout" 
         element={
-          <ProtectedRoute requireProfileComplete={true}>
+          <ProtectedRoute requireRole="CUSTOMER" requireProfileComplete={true}>
             <CheckoutPage />
           </ProtectedRoute>
         } 
@@ -72,7 +102,7 @@ const CustomerRoutes = () => {
       <Route 
         path="/mess" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireRole="CUSTOMER">
             <MessListPage />
           </ProtectedRoute>
         } 
@@ -80,7 +110,7 @@ const CustomerRoutes = () => {
       <Route 
         path="/mess/:id" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireRole="CUSTOMER">
             <MessDetailPage />
           </ProtectedRoute>
         } 
