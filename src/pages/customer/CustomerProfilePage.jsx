@@ -32,6 +32,10 @@ const CustomerProfilePage = () => {
           ? await profileService.getOwnerProfile()
           : await profileService.getCustomerProfile();
         setProfile(response.profile);
+
+        if (response.profile?.profileImage) {
+          localStorage.setItem('profileImage', response.profile.profileImage);
+        }
       } catch (err) {
         console.error('Error fetching profile:', err, {
           status: err.response?.status,

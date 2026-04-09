@@ -3,6 +3,16 @@ import { API_ENDPOINTS } from './api/constants.js';
 
 export const register = async (userData) => {
   const response = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, userData);
+
+  // Mirror login behavior so newly registered users are immediately authenticated.
+  if (response.data?.token) {
+    localStorage.setItem('token', response.data.token);
+  }
+
+  if (response.data?.user) {
+    localStorage.setItem('user', JSON.stringify(response.data.user));
+  }
+
   return response.data;
 };
 
@@ -37,6 +47,7 @@ export const logout = async () => {
   // Clear local storage
   localStorage.removeItem('token');
   localStorage.removeItem('user');
+  localStorage.removeItem('profileImage');
   
   return response.data;
 };
@@ -64,6 +75,7 @@ export const isAuthenticated = () => {
 export const clearAuth = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
+  localStorage.removeItem('profileImage');
 };
 
 const authService = {

@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/shared';
 import * as profileService from '../../services/profile.service';
+import { uploadImage } from '../../services/upload.service';
 import Breadcrumb from '../../components/shared/Breadcrumb';
 import Card from '../../components/shared/Card';
+import { ImagePlus, X } from 'lucide-react';
 
 const EditProfilePage = () => {
   const navigate = useNavigate();
@@ -15,6 +17,8 @@ const EditProfilePage = () => {
     phone: '',
     address: '',
   });
+  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [profileImagePreview, setProfileImagePreview] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -38,6 +42,7 @@ const EditProfilePage = () => {
             phone: response.profile.phone || '',
             address: response.profile.address || '',
           });
+          setProfileImagePreview(response.profile.profileImage || '');
           setIsNewProfile(false);
         }
       } catch (err) {
@@ -63,6 +68,18 @@ const EditProfilePage = () => {
     if (error) setError('');
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setProfileImageFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -84,9 +101,16 @@ const EditProfilePage = () => {
       setSaving(true);
       setError('');
 
+      let profileImage = profileImagePreview;
+      if (profileImageFile) {
+        const uploadResponse = await uploadImage(profileImageFile, 'mummas-kitchen/profiles');
+        profileImage = uploadResponse?.image?.url || profileImage;
+      }
+
       const profileData = {
         phone: cleanPhone,
         address: formData.address,
+        ...(profileImage ? { profileImage } : {}),
       };
 
       if (user.role === 'CUSTOMER') {
@@ -105,6 +129,10 @@ const EditProfilePage = () => {
 
       // Update profile completion status
       updateProfileStatus(true);
+
+      if (profileImage) {
+        localStorage.setItem('profileImage', profileImage);
+      }
       
       // Navigate based on whether this was required
       if (requiresCompletion && location.state?.from) {
@@ -167,6 +195,42 @@ const EditProfilePage = () => {
               <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--gray-900)' }}>
                 {user.role === 'CUSTOMER' ? 'Customer' : 'Business'} Information
               </h2>
+
+              <div className="mb-5">
+                <label className="block mb-2 font-medium" style={{ color: 'var(--gray-900)' }}>
+                  Profile Image
+                </label>
+                {profileImagePreview ? (
+                  <div className="relative w-28 h-28">
+                    <img
+                      src={profileImagePreview}
+                      alt="Profile preview"
+                      className="w-28 h-28 rounded-full object-cover border"
+                      style={{ borderColor: 'var(--gray-500)' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setProfileImagePreview('');
+                        setProfileImageFile(null);
+                      }}
+                      className="absolute -top-2 -right-2 p-1 rounded-full"
+                      style={{ backgroundColor: '#111827', color: '#FFFFFF' }}
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <label
+                    className="flex w-full items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed cursor-pointer"
+                    style={{ borderColor: 'var(--gray-500)', color: 'var(--gray-700)' }}
+                  >
+                    <ImagePlus size={18} />
+                    Upload profile image
+                    <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                  </label>
+                )}
+              </div>
               
               <div className="space-y-4">
                 <div>

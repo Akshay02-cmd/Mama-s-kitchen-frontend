@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, Phone, MapPin, Save } from 'lucide-react';
+import { Building2, Phone, MapPin, Save, ImagePlus, X } from 'lucide-react';
 import { useAuth } from '../../hooks/shared';
 import * as profileService from '../../services/profile.service';
+import { uploadImage } from '../../services/upload.service';
 
 const OwnerProfileCompletePage = () => {
   const { user, updateProfileStatus } = useAuth();
@@ -13,6 +14,8 @@ const OwnerProfileCompletePage = () => {
     phone: '',
     address: '',
   });
+  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [profileImagePreview, setProfileImagePreview] = useState('');
   const [errors, setErrors] = useState({});
   const [profileExists, setProfileExists] = useState(false); // Track if profile already exists
 
@@ -39,6 +42,7 @@ const OwnerProfileCompletePage = () => {
               phone: response.profile.phone || '',
               address: response.profile.address || '',
             });
+            setProfileImagePreview(response.profile.profileImage || '');
           }
         }
       } catch (err) {
@@ -99,6 +103,18 @@ const OwnerProfileCompletePage = () => {
     }
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setProfileImageFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -108,12 +124,19 @@ const OwnerProfileCompletePage = () => {
     setError(null);
 
     try {
+      let profileImage = profileImagePreview;
+      if (profileImageFile) {
+        const uploadResponse = await uploadImage(profileImageFile, 'mummas-kitchen/profiles');
+        profileImage = uploadResponse?.image?.url || profileImage;
+      }
+
       // Clean phone number (remove spaces, dashes, etc., and get last 10 digits)
       const cleanPhone = formData.phone.replace(/[\s\-\+\(\)]/g, '').slice(-10);
       
       const profileData = {
         phone: cleanPhone,
         address: formData.address.trim(),
+        ...(profileImage ? { profileImage } : {}),
       };
 
       // Use UPDATE if profile exists, CREATE if it doesn't
@@ -125,6 +148,10 @@ const OwnerProfileCompletePage = () => {
       
       // Update profile completion status
       updateProfileStatus(true);
+
+      if (profileImage) {
+        localStorage.setItem('profileImage', profileImage);
+      }
       
       // Redirect to owner dashboard
       navigate('/owner/dashboard');
@@ -166,6 +193,43 @@ const OwnerProfileCompletePage = () => {
             border: '1px solid #E5E7EB'
           }}>
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: '#111827' }}>
+                Profile Image
+              </label>
+
+              {profileImagePreview ? (
+                <div className="relative w-28 h-28">
+                  <img
+                    src={profileImagePreview}
+                    alt="Profile preview"
+                    className="w-28 h-28 rounded-full object-cover border"
+                    style={{ borderColor: '#E5E7EB' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProfileImagePreview('');
+                      setProfileImageFile(null);
+                    }}
+                    className="absolute -top-2 -right-2 p-1 rounded-full"
+                    style={{ backgroundColor: '#111827', color: '#FFFFFF' }}
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <label
+                  className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg border-2 border-dashed cursor-pointer"
+                  style={{ borderColor: '#E5E7EB', color: '#6B7280' }}
+                >
+                  <ImagePlus className="w-5 h-5" />
+                  Upload profile image
+                  <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                </label>
+              )}
+            </div>
+
             {/* Phone Number */}
             <div>
               <label htmlFor="phone" className="block text-sm font-medium mb-2" style={{ color: '#111827' }}>
