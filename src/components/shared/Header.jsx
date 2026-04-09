@@ -8,6 +8,7 @@ import defaultProfilePic from "../../assets/DefaulProfile.jpg";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
+  const profileImage = localStorage.getItem('profileImage');
   const { showSuccess, showError, showWarning, showInfo } = useNotification();
   const navigate = useNavigate();
   const [notificationIndex, setNotificationIndex] = useState(0);
@@ -98,7 +99,7 @@ const Header = () => {
                 <div className="w-9 h-9 rounded-full overflow-hidden border-2"
                   style={{ borderColor: '#E5E7EB' }}>
                   <img
-                    src={defaultProfilePic}
+                    src={profileImage || defaultProfilePic}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />

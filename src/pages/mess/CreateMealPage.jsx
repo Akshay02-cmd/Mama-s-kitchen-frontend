@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { UtensilsCrossed, DollarSign, ImagePlus, Save, X, Plus, Trash2, Package } from 'lucide-react';
 import MessSidebar from '../../components/shared/MessSidebar';
 import { createMeal } from '../../services/meal.service';
+import { uploadImage } from '../../services/upload.service';
 
 const CreateMealPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -60,6 +62,7 @@ const CreateMealPage = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result);
       reader.readAsDataURL(file);
@@ -72,9 +75,17 @@ const CreateMealPage = () => {
     setLoading(true);
     setError(null);
     try {
+      let imageUrl = '';
+
+      if (imageFile) {
+        const uploadResponse = await uploadImage(imageFile, 'mummas-kitchen/meals');
+        imageUrl = uploadResponse?.image?.url || '';
+      }
+
       const payload = {
         name: formData.name.trim(),
         description: formData.description.trim(),
+        ...(imageUrl ? { image: imageUrl } : {}),
         price: Number(formData.price),
         mealType: formData.mealType,
         is_Veg: formData.is_Veg === true || formData.is_Veg === 'true',
@@ -115,7 +126,10 @@ const CreateMealPage = () => {
                     <img src={imagePreview} alt="Preview" className="w-full h-64 object-cover rounded-lg" />
                     <button
                       type="button"
-                      onClick={() => setImagePreview(null)}
+                      onClick={() => {
+                        setImagePreview(null);
+                        setImageFile(null);
+                      }}
                       className="absolute top-2 right-2 p-2 rounded-full"
                       style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: '#FFFFFF' }}>
                       <X className="w-5 h-5" />

@@ -34,6 +34,11 @@ export const API_ENDPOINTS = {
     BY_ID: (id) => `/menu/${id}`,
   },
 
+  // Uploads
+  UPLOADS: {
+    IMAGE: '/uploads/image',
+  },
+
   // Owner
   OWNER: {
     DASHBOARD_STATS: '/owner/dashboard/stats',
