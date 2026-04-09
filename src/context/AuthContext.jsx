@@ -8,7 +8,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     // Initialize state from localStorage
     const storedUser = authService.getStoredUser();
-    console.log('[AuthContext] Initializing with user:', storedUser);
+    if (import.meta.env.DEV) {
+      console.log('[AuthContext] Initializing from localStorage');
+    }
     return storedUser;
   });
   const [loading, setLoading] = useState(false);
@@ -47,7 +49,9 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       // Profile doesn't exist yet - user needs to complete it
-      console.log('Profile not found - needs completion');
+      if (import.meta.env.DEV) {
+        console.log('Profile not found - needs completion');
+      }
       setProfileComplete(false);
       return false;
     } finally {
@@ -65,10 +69,11 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     const response = await authService.login(credentials);
-    console.log('[AuthContext] Login response:', { success: response.success, user: response.user, hasToken: !!response.token });
+    if (import.meta.env.DEV) {
+      console.log('[AuthContext] Login successful');
+    }
     if (response.success && response.user) {
       setUser(response.user);
-      console.log('[AuthContext] User state updated:', response.user);
     }
     return response;
   };

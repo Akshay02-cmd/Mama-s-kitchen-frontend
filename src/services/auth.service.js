@@ -19,23 +19,28 @@ export const register = async (userData) => {
 export const login = async (credentials) => {
   const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, credentials);
   
-  console.log('[AuthService] Login response:', { 
-    success: response.data?.success,
-    hasToken: !!response.data?.token,
-    hasUser: !!response.data?.user,
-    user: response.data?.user 
-  });
+  if (import.meta.env.DEV) {
+    console.log('[AuthService] Login response:', { 
+      success: response.data?.success,
+      hasToken: !!response.data?.token,
+      hasUser: !!response.data?.user
+    });
+  }
   
   // Store token if provided in response (for bearer token auth)
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
-    console.log('[AuthService] Token stored in localStorage');
+    if (import.meta.env.DEV) {
+      console.log('[AuthService] Token stored in localStorage');
+    }
   }
   
   // Store user data if provided
   if (response.data.user) {
     localStorage.setItem('user', JSON.stringify(response.data.user));
-    console.log('[AuthService] User stored in localStorage:', response.data.user);
+    if (import.meta.env.DEV) {
+      console.log('[AuthService] User stored in localStorage');
+    }
   }
   
   return response.data;
@@ -59,7 +64,9 @@ export const getStoredUser = () => {
   try {
     return JSON.parse(userStr);
   } catch (error) {
-    console.error('Error parsing user data:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error parsing user data:', error);
+    }
     return null;
   }
 };
