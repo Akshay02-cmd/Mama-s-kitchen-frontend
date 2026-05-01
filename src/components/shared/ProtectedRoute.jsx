@@ -53,6 +53,3 @@ const ProtectedRoute = ({ children, requireProfileComplete = false, requireRole 
 };
 
 export default ProtectedRoute;
-
-
-
