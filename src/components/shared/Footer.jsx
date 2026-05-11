@@ -20,7 +20,7 @@ const Footer = () => {
 
   return (
     <footer
-      className={`mt-auto overflow-hidden border-t text-white ${usesDesktopSidebar ? 'w-full md:ml-64 md:w-[calc(100%-16rem)]' : 'w-full'}`}
+      className={`mt-auto overflow-hidden border-t text-white ${usesDesktopSidebar ? 'w-full md:ml-64 md:w-auto' : 'w-full'}`}
       style={{ 
         background: 'linear-gradient(to bottom, #6D28D9, #5B21B6)',
         borderColor: 'rgba(139, 92, 246, 0.2)'
