@@ -1,5 +1,5 @@
-import apiClient from './api/apiClient.js';
-import { API_ENDPOINTS } from './api/constants.js';
+import apiClient from './api/apiClient.ts';
+import { API_ENDPOINTS } from './api/constants.ts';
 
 /**
  * Contact Service

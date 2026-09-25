@@ -18,7 +18,6 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    role: "CUSTOMER",
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -103,7 +102,7 @@ const Login = () => {
             // Profile complete - redirect normally
             console.log('Profile complete, redirecting to dashboard');
             if (response.user?.role === 'OWNER') {
-              navigate('/owner/dashboard', { replace: true });
+              navigate('/mess/dashboard', { replace: true });
             } else {
               const redirectPath = from === "/login" ? "/" : from;
               navigate(redirectPath, { replace: true });
@@ -125,7 +124,7 @@ const Login = () => {
             // Other errors (like 401) shouldn't happen after login, but redirect to dashboard anyway
             console.log('Error checking profile, redirecting to dashboard');
             if (response.user?.role === 'OWNER') {
-              navigate('/owner/dashboard', { replace: true });
+              navigate('/mess/dashboard', { replace: true });
             } else {
               const redirectPath = from === "/login" ? "/" : from;
               navigate(redirectPath, { replace: true });
@@ -139,7 +138,7 @@ const Login = () => {
       
       // More specific error messages
       if (error.status === 401) {
-        errorMessage = error.message || "Invalid email, password, or account type. Please check and try again.";
+        errorMessage = error.message || "Invalid email or password. Please check and try again.";
       } else if (error.message) {
         errorMessage = error.message;
       } else if (error.response?.data?.message) {
@@ -173,26 +172,6 @@ const Login = () => {
           icon={Mail}
           required
         />
-
-        <div>
-          <label
-            htmlFor="role"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Account Type
-          </label>
-          <select
-            id="role"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-            aria-label="Select your account type"
-          >
-            <option value="CUSTOMER">Customer</option>
-            <option value="OWNER">Mess Owner</option>
-          </select>
-        </div>
 
         <FormInput
           id="password"

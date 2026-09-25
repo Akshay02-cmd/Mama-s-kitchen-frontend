@@ -6,7 +6,7 @@ import PersonalInfo from '../../components/customer/PersonalInfo';
 import FoodPreferences from '../../components/customer/FoodPreferences';
 import QuickActions from '../../components/customer/QuickActions';
 import { useAuth, useNotification } from '../../hooks/shared';
-import Sidebar from '../../components/shared/Sidebar.jsx';
+import Sidebar from '../../components/shared/Sidebar.tsx';
 import profileService from '../../services/profile.service';
 import { LogOut } from 'lucide-react';
 
@@ -98,7 +98,7 @@ const CustomerProfilePage = () => {
             <div className="bg-white rounded-lg shadow-sm p-8 text-center">
               <div className="mb-6">
                 <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-4xl">👤</span>
+                  <span className="text-4xl">ðŸ‘¤</span>
                 </div>
                 <h2 className="text-2xl font-bold mb-2" style={{ color: '#111827' }}>
                   Complete Your Profile

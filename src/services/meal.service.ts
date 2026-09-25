@@ -1,5 +1,5 @@
-import apiClient from './api/apiClient.js';
-import { API_ENDPOINTS } from './api/constants.js';
+import apiClient from './api/apiClient.ts';
+import { API_ENDPOINTS } from './api/constants.ts';
 
 /**
  * Meal Service
@@ -41,7 +41,7 @@ export const getMealById = async (mealId) => {
  * @returns {Promise<Object>} Created meal data
  */
 export const createMeal = async (mealData) => {
-  // Backend: POST /menu/:mealid  (mealid param is unused by controller — use a placeholder)
+  // Backend: POST /menu/:mealid  (mealid param is unused by controller â€” use a placeholder)
   const response = await apiClient.post(API_ENDPOINTS.MEALS.BY_ID('create'), mealData);
   return response.data;
 };

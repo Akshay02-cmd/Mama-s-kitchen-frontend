@@ -1,10 +1,9 @@
 import { Route } from "react-router-dom";
-import ProtectedRoute from "../components/shared/ProtectedRoute.jsx";
+import ProtectedRoute from "../components/shared/ProtectedRoute.tsx";
 
 // Owner Pages
-import OwnerProfileCompletePage from "../pages/owner/OwnerProfileCompletePage.jsx";
-import OwnerDashboard from "../pages/owner/OwnerDashboard.jsx";
-import CreateMessPage from "../pages/owner/CreateMessPage.jsx";
+import OwnerProfileCompletePage from "../pages/owner/OwnerProfileCompletePage.tsx";
+import OwnerDashboard from "../pages/owner/OwnerDashboard.tsx";
 
 /**
  * Owner Routes
@@ -14,14 +13,14 @@ import CreateMessPage from "../pages/owner/CreateMessPage.jsx";
 const OwnerRoutes = () => {
   return (
     <>
-      {/* Owner Profile Completion - First step after owner signup */}
-      <Route 
-        path="/owner/complete-profile" 
+      {/* Legacy operator profile completion for provisioned mess accounts */}
+      <Route
+        path="/owner/complete-profile"
         element={
           <ProtectedRoute requireRole="OWNER">
             <OwnerProfileCompletePage />
           </ProtectedRoute>
-        } 
+        }
       />
 
       {/* Owner Dashboard - Main owner landing page */}
@@ -34,15 +33,6 @@ const OwnerRoutes = () => {
         } 
       />
 
-      {/* Create Mess - Form to register a new mess */}
-      <Route 
-        path="/owner/create-mess" 
-        element={
-          <ProtectedRoute requireRole="OWNER">
-            <CreateMessPage />
-          </ProtectedRoute>
-        } 
-      />
     </>
   );
 };

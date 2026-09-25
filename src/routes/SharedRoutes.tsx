@@ -1,10 +1,10 @@
 import { Route } from "react-router-dom";
-import ProtectedRoute from "../components/shared/ProtectedRoute.jsx";
+import ProtectedRoute from "../components/shared/ProtectedRoute.tsx";
 
 // Shared Pages
-import Contact from "../pages/shared/Contact.jsx";
-import Login from "../pages/shared/Login.jsx";
-import Signup from "../pages/shared/Signup.jsx";
+import Contact from "../pages/shared/Contact.tsx";
+import Login from "../pages/shared/Login.tsx";
+import Signup from "../pages/shared/Signup.tsx";
 
 /**
  * Shared Routes

@@ -1,18 +1,18 @@
 import { Route, Navigate } from "react-router-dom";
-import ProtectedRoute from "../components/shared/ProtectedRoute.jsx";
+import ProtectedRoute from "../components/shared/ProtectedRoute.tsx";
 import { useAuth } from "../hooks/shared";
 
 // Customer Pages
-import Home from "../pages/customer/Home.jsx";
-import MealsListPage from "../pages/customer/MealsListPage.jsx";
-import MealDetailPage from "../pages/customer/MealDetailPage.jsx";
-import MyOrdersPage from "../pages/customer/MyOrdersPage.jsx";
-import OrderDetailPage from "../pages/customer/OrderDetailPage.jsx";
-import CheckoutPage from "../pages/customer/CheckoutPage.jsx";
-import MessListPage from "../pages/customer/MessListPage.jsx";
-import MessDetailPage from "../pages/customer/MessDetailPage.jsx";
-import CustomerProfilePage from "../pages/customer/CustomerProfilePage.jsx";
-import EditProfilePage from "../pages/customer/EditProfilePage.jsx";
+import Home from "../pages/customer/Home.tsx";
+import MealsListPage from "../pages/customer/MealsListPage.tsx";
+import MealDetailPage from "../pages/customer/MealDetailPage.tsx";
+import MyOrdersPage from "../pages/customer/MyOrdersPage.tsx";
+import OrderDetailPage from "../pages/customer/OrderDetailPage.tsx";
+import CheckoutPage from "../pages/customer/CheckoutPage.tsx";
+import MessListPage from "../pages/customer/MessListPage.tsx";
+import MessDetailPage from "../pages/customer/MessDetailPage.tsx";
+import CustomerProfilePage from "../pages/customer/CustomerProfilePage.tsx";
+import EditProfilePage from "../pages/customer/EditProfilePage.tsx";
 
 const CustomerHomeGuard = ({ children }) => {
   const { user, isAuthenticated, loading } = useAuth();

@@ -1,5 +1,5 @@
-import apiClient from './api/apiClient.js';
-import { API_ENDPOINTS } from './api/constants.js';
+import apiClient from './api/apiClient.ts';
+import { API_ENDPOINTS } from './api/constants.ts';
 
 export const register = async (userData) => {
   const response = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, userData);

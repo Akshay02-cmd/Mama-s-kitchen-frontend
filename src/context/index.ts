@@ -7,6 +7,6 @@
  * import { AuthProvider, AuthContext, ThemeProvider, ThemeContext } from './context';
  */
 
-export { AuthProvider, AuthContext } from './AuthContext.jsx';
-export { ThemeProvider, ThemeContext } from './ThemeContext.jsx';
-export { NotificationProvider, NotificationContext } from './NotificationContext.jsx';
+export { AuthProvider, AuthContext } from './AuthContext.tsx';
+export { ThemeProvider, ThemeContext } from './ThemeContext.tsx';
+export { NotificationProvider, NotificationContext } from './NotificationContext.tsx';

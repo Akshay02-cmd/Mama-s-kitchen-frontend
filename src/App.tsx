@@ -4,10 +4,10 @@ import { Routes, Route } from "react-router-dom";
 import { CustomerRoutes, OwnerRoutes, MessRoutes, SharedRoutes } from "./routes";
 
 // Shared Components
-import Header from "./components/shared/Header.jsx";
-import Footer from "./components/shared/Footer.jsx";
-import ErrorBoundary from "./components/shared/ErrorBoundary.jsx";
-import NotificationContainer from "./components/shared/NotificationContainer.jsx";
+import Header from "./components/shared/Header.tsx";
+import Footer from "./components/shared/Footer.tsx";
+import ErrorBoundary from "./components/shared/ErrorBoundary.tsx";
+import NotificationContainer from "./components/shared/NotificationContainer.tsx";
 
 // 404 Page Component
 const NotFound = () => {

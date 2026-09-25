@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import OrderCard from '../../components/customer/OrderCard';
-import Sidebar from '../../components/shared/Sidebar.jsx';
+import Sidebar from '../../components/shared/Sidebar.tsx';
 import orderService from '../../services/order.service';
 
 const statusConfig = {

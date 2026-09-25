@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { MealCard } from "../../components/customer";
 import MealDetailModal from "../../components/customer/MealDetailModal";
 import { getAllMeals } from "../../services/meal.service";
-import Sidebar from "../../components/shared/Sidebar.jsx";
+import Sidebar from "../../components/shared/Sidebar.tsx";
 import { Search } from "lucide-react";
 
 const Home = () => {
