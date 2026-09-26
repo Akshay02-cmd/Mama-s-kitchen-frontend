@@ -63,7 +63,7 @@ const MessOrderDetailPage = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <MessSidebar />
-        <div className="flex-1 flex items-center justify-center p-4 pt-20 lg:ml-64 lg:p-8 lg:pt-8">
+        <div className="flex-1 flex items-center justify-center p-4 pt-8 lg:p-8 lg:pt-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#8B5CF6' }}></div>
         </div>
       </div>
@@ -74,7 +74,7 @@ const MessOrderDetailPage = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <MessSidebar />
-        <div className="flex-1 flex items-center justify-center p-4 pt-20 lg:ml-64 lg:p-8 lg:pt-8">
+        <div className="flex-1 flex items-center justify-center p-4 pt-8 lg:p-8 lg:pt-8">
           <Card className="p-8 text-center max-w-lg w-full">
             <h2 className="text-2xl font-bold mb-3" style={{ color: '#111827' }}>
               {error || 'Order not found'}
@@ -97,7 +97,7 @@ const MessOrderDetailPage = () => {
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <MessSidebar />
-      <div className="flex-1 p-4 pt-20 lg:ml-64 lg:p-8 lg:pt-8">
+      <div className="flex-1 p-4 pt-8 lg:p-8 lg:pt-8">
         <div className="max-w-5xl mx-auto space-y-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>

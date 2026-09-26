@@ -125,7 +125,7 @@ const MessProfilePage = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <MessSidebar />
-        <div className="flex-1 flex items-center justify-center p-4 pt-20 lg:ml-64 lg:p-8 lg:pt-8">
+        <div className="flex-1 flex items-center justify-center p-4 pt-8 lg:p-8 lg:pt-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: '#8B5CF6' }}></div>
             <p style={{ color: '#6B7280' }}>Loading profile...</p>
@@ -139,7 +139,7 @@ const MessProfilePage = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <MessSidebar />
-        <div className="flex-1 flex items-center justify-center p-4 pt-20 lg:ml-64 lg:p-8 lg:pt-8">
+        <div className="flex-1 flex items-center justify-center p-4 pt-8 lg:p-8 lg:pt-8">
           <div className="text-center p-8">
             <Store className="w-16 h-16 mx-auto mb-4" style={{ color: '#EF4444' }} />
             <h3 className="text-xl font-bold mb-2" style={{ color: '#111827' }}>{error || 'No mess found'}</h3>
@@ -153,7 +153,7 @@ const MessProfilePage = () => {
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <MessSidebar />
-      <div className="flex-1 p-4 pt-20 lg:ml-64 lg:p-8 lg:pt-8">
+      <div className="flex-1 p-4 pt-8 lg:p-8 lg:pt-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
