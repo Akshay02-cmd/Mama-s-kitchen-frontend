@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap');
 @import 'tailwindcss';
 
 /* Prevent horizontal scrolling globally */
@@ -8,54 +9,54 @@ html, body {
 
 /* Light Mode (Default) */
 :root {
-  /* Primary Colors - Modern Purple/Violet */
-  --primary-50: #F5F3FF;
-  --primary-100: #EDE9FE;
-  --primary-200: #DDD6FE;
-  --primary-300: #C4B5FD;
-  --primary-400: #A78BFA;
-  --primary-500: #8B5CF6;    /* Main brand color - Vibrant Purple */
-  --primary-600: #7C3AED;
-  --primary-700: #6D28D9;
-  --primary-800: #5B21B6;
-  --primary-900: #4C1D95;
+  --primary-50: #fff7ed;
+  --primary-100: #ffedd5;
+  --primary-200: #fed7aa;
+  --primary-300: #fdba74;
+  --primary-400: #fb923c;
+  --primary-500: #ea580c;
+  --primary-600: #c2410c;
+  --primary-700: #9a3412;
+  --primary-800: #7c2d12;
+  --primary-900: #431407;
 
-  /* Secondary Colors - Elegant Blue */
-  --secondary-50: #EFF6FF;
-  --secondary-100: #DBEAFE;
-  --secondary-500: #3B82F6;  /* Sky Blue */
-  --secondary-600: #2563EB;
-  --secondary-700: #1D4ED8;
-  --secondary-800: #1E40AF;
+  --secondary-50: #f0fdf4;
+  --secondary-100: #dcfce7;
+  --secondary-500: #16a34a;
+  --secondary-600: #15803d;
+  --secondary-700: #166534;
+  --secondary-800: #14532d;
 
-  /* Accent - Teal/Cyan */
-  --accent-400: #2DD4BF;
-  --accent-500: #14B8A6;     /* Fresh Teal */
-  --accent-600: #0D9488;
+  --accent-400: #facc15;
+  --accent-500: #eab308;
+  --accent-600: #ca8a04;
 
   /* Background & Surface */
   --bg-primary: #FFFFFF;
-  --bg-secondary: #F9FAFB;
-  --bg-tertiary: #F3F4F6;
+  --bg-secondary: #fffaf5;
+  --bg-tertiary: #fff7ed;
   --surface: #FFFFFF;
   --surface-elevated: #FFFFFF;
 
   /* Text Colors */
-  --text-primary: #111827;
-  --text-secondary: #4B5563;
-  --text-tertiary: #6B7280;
-  --text-muted: #9CA3AF;
+  --text-primary: #29251f;
+  --text-secondary: #635d54;
+  --text-tertiary: #857d72;
+  --text-muted: #aaa196;
 
   /* Borders */
-  --border-light: #E5E7EB;
-  --border-medium: #D1D5DB;
-  --border-dark: #9CA3AF;
+  --border-light: #eee7df;
+  --border-medium: #ded3c7;
+  --border-dark: #b7aa9c;
 
   /* Semantic Colors */
   --success: #10B981;        /* Emerald Green */
   --warning: #F59E0B;        /* Amber */
   --error: #EF4444;          /* Red */
-  --info: #3B82F6;           /* Blue */
+  --info: #2563eb;
+
+  --font-body: 'DM Sans', 'Trebuchet MS', sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -65,10 +66,27 @@ html, body {
 }
 
 /* Smooth transitions */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  scroll-behavior: smooth;
+* { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
+
+button, a, input, textarea, select {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 3px solid rgba(234, 88, 12, 0.3);
+  outline-offset: 2px;
+}
+
+.font-display { font-family: var(--font-display); }
+.surface-shadow { box-shadow: 0 18px 45px rgba(91, 55, 24, 0.08); }
 
 /* Utility classes for theme-aware colors */
 .bg-primary {

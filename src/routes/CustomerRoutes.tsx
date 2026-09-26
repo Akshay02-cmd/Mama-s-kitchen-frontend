@@ -71,6 +71,22 @@ const CustomerRoutes = () => {
           </ProtectedRoute>
         } 
       />
+      <Route
+        path="/menu"
+        element={
+          <ProtectedRoute requireRole="CUSTOMER">
+            <MealsListPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/menu/:id"
+        element={
+          <ProtectedRoute requireRole="CUSTOMER">
+            <MealDetailPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Order Routes - Protected, require authentication and complete profile */}
       <Route 

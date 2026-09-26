@@ -1,9 +1,10 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { ArrowLeft, Utensils } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import MealCard from '../../components/customer/MealCard';
 import MealDetailModal from '../../components/customer/MealDetailModal';
 import MealFilters from '../../components/customer/MealFilters';
 import Pagination from '../../components/shared/Pagination';
-import Sidebar from '../../components/shared/Sidebar';
 import { getAllMeals } from '../../services/meal.service';
 
 const MealsListPage = () => {
@@ -11,39 +12,19 @@ const MealsListPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedMeal, setSelectedMeal] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filters, setFilters] = useState({ search: '', category: 'all', dietaryType: 'all', priceRange: 'all' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
 
   useEffect(() => {
     const fetchMeals = async () => {
       try {
-        setLoading(true);
         const response = await getAllMeals();
-        // Backend returns { meal: [...] } not { success: true, data: [...] }
         const mealsData = response.meal || response.data || [];
-        
-        if (mealsData && mealsData.length > 0) {
-          // Transform backend data to match frontend expectations
-          const transformedMeals = mealsData.map(meal => ({
-            ...meal,
-            // Backend uses is_Veg, frontend expects dietaryType
-            dietaryType: meal.is_Veg ? 'Veg' : 'Non-Veg',
-            // Backend uses mealType, map to category
-            category: meal.mealType ? meal.mealType.charAt(0).toUpperCase() + meal.mealType.slice(1) : 'Main Course',
-            // Backend uses is_Available, frontend expects isAvailable
-            isAvailable: meal.is_Available,
-            // Default ratings if not present
-            averageRating: meal.averageRating || 4.0,
-            totalReviews: meal.totalReviews || 0,
-            // Ensure messId is an object
-            messId: meal.messId || { name: "Mumma's Kitchen Central", _id: meal.messId }
-          }));
-          setMeals(transformedMeals);
-        } else {
-          setMeals([]);
-        }
-      } catch (err) {
-        console.error('Error fetching meals:', err);
-        setError('Failed to load meals. Please try again later.');
+        setMeals(mealsData.map((meal) => ({ ...meal, dietaryType: meal.is_Veg ? 'Veg' : 'Non-Veg', category: meal.mealType ? meal.mealType.charAt(0).toUpperCase() + meal.mealType.slice(1) : 'Main Course', isAvailable: meal.is_Available, averageRating: meal.averageRating || 4, totalReviews: meal.totalReviews || 0, messId: meal.messId || { name: "Mumma's Kitchen", _id: meal.messId } })));
+      } catch (fetchError) {
+        console.error('Error fetching meals:', fetchError);
+        setError('We could not load the menu. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -51,164 +32,27 @@ const MealsListPage = () => {
     fetchMeals();
   }, []);
 
-  const [filters, setFilters] = useState({
-    search: '',
-    category: 'all',
-    dietaryType: 'all',
-    priceRange: 'all'
-  });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(12);
-
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-    setCurrentPage(1); // Reset to first page when filters change
-  };
-
-  const filteredMeals = useMemo(() => {
-    return meals.filter(meal => {
-      const matchesSearch = meal.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-                           meal.description.toLowerCase().includes(filters.search.toLowerCase());
-      const matchesCategory = filters.category === 'all' || meal.category === filters.category;
-      const matchesDiet = filters.dietaryType === 'all' || meal.dietaryType === filters.dietaryType;
-      
-      let matchesPrice = true;
-      if (filters.priceRange === 'low') matchesPrice = meal.price < 100;
-      else if (filters.priceRange === 'medium') matchesPrice = meal.price >= 100 && meal.price < 150;
-      else if (filters.priceRange === 'high') matchesPrice = meal.price >= 150;
-
-      return matchesSearch && matchesCategory && matchesDiet && matchesPrice;
-    });
-  }, [filters, meals]);
-
-  // Pagination calculations
+  const handleFilterChange = (newFilters) => { setFilters(newFilters); setCurrentPage(1); };
+  const filteredMeals = useMemo(() => meals.filter((meal) => {
+    const search = filters.search.toLowerCase();
+    const matchesSearch = meal.name.toLowerCase().includes(search) || (meal.description || '').toLowerCase().includes(search);
+    const matchesCategory = filters.category === 'all' || meal.category === filters.category;
+    const matchesDiet = filters.dietaryType === 'all' || meal.dietaryType === filters.dietaryType;
+    const matchesPrice = filters.priceRange === 'all' || (filters.priceRange === 'low' && meal.price < 100) || (filters.priceRange === 'medium' && meal.price >= 100 && meal.price < 150) || (filters.priceRange === 'high' && meal.price >= 150);
+    return matchesSearch && matchesCategory && matchesDiet && matchesPrice;
+  }), [filters, meals]);
   const totalPages = Math.ceil(filteredMeals.length / itemsPerPage);
-  const paginatedMeals = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredMeals.slice(startIndex, endIndex);
-  }, [filteredMeals, currentPage, itemsPerPage]);
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleMealClick = (meal) => {
-    setSelectedMeal(meal);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedMeal(null);
-  };
+  const paginatedMeals = useMemo(() => filteredMeals.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [filteredMeals, currentPage, itemsPerPage]);
 
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
-      <Sidebar />
-      
-      <main className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
-        <h1 
-          className="mb-6 text-2xl font-bold sm:text-3xl"
-          style={{ color: '#111827' }}
-        >
-          Our Meals
-        </h1>
-
-        {/* Filters */}
-        <div className="mb-6">
-          <MealFilters filters={filters} onFilterChange={handleFilterChange} />
-        </div>
-
-        {/* Loading and Error States */}
-        {loading && (
-          <div className="text-center py-20">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p className="mt-4" style={{ color: '#6B7280' }}>Loading meals...</p>
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center py-20">
-            <p style={{ color: '#EF4444' }}>{error}</p>
-          </div>
-        )}
-
-        {/* Meals Grid */}
-        {!loading && !error && (
-          <div>
-            {filteredMeals.length === 0 ? (
-              <div className="text-center py-20">
-                <p className="text-xl" style={{ color: '#6B7280' }}>
-                  No meals found. Try adjusting your filters.
-                </p>
-              </div>
-            ) : (
-              <>
-                {/* Results info */}
-                <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p style={{ color: '#6B7280' }}>
-                    <span className="font-bold" style={{ color: '#111827' }}>{filteredMeals.length}</span> meal{filteredMeals.length !== 1 ? 's' : ''} found
-                  </p>
-                  <div className="flex w-full items-center gap-3 rounded-lg px-4 py-2 sm:w-auto"
-                    style={{ 
-                      backgroundColor: '#FFFFFF',
-                      border: '1px solid #E5E7EB'
-                    }}>
-                    <label htmlFor="itemsPerPage" className="text-sm font-medium"
-                      style={{ color: '#6B7280' }}>
-                      Show:
-                    </label>
-                    <select
-                      id="itemsPerPage"
-                      value={itemsPerPage}
-                      onChange={(e) => {
-                        setItemsPerPage(Number(e.target.value));
-                        setCurrentPage(1);
-                      }}
-                      className="min-w-0 flex-1 rounded border px-3 py-1 font-medium cursor-pointer sm:flex-none"
-                      style={{ 
-                        backgroundColor: '#FFFFFF',
-                        borderColor: '#D1D5DB',
-                        color: '#111827'
-                      }}
-                    >
-                      <option value={6}>6</option>
-                      <option value={12}>12</option>
-                      <option value={24}>24</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Meals grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                  {paginatedMeals.map(meal => (
-                    <MealCard key={meal._id} meal={meal} showAddToCart={true} onCardClick={handleMealClick} />
-                  ))}
-                </div>
-
-                {/* Pagination */}
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                  totalItems={filteredMeals.length}
-                  itemsPerPage={itemsPerPage}
-                />
-              </>
-            )}
-          </div>
-        )}
-      </main>
-
-      {/* Meal Detail Modal */}
-      <MealDetailModal 
-        meal={selectedMeal}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
-    </div>
+    <div className="min-h-screen bg-[#fffaf5]"><div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+      <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div><Link to="/" className="mb-5 inline-flex items-center gap-2 text-sm font-bold text-orange-700 hover:text-orange-800"><ArrowLeft className="h-4 w-4" /> Back home</Link><p className="text-sm font-bold uppercase tracking-[0.16em] text-orange-600">Mumma's Kitchen</p><h1 className="font-display mt-2 text-5xl text-stone-950">The full menu</h1><p className="mt-2 max-w-xl text-stone-600">Comforting classics and fresh specials, prepared in one kitchen.</p></div><div className="flex items-center gap-2 rounded-xl bg-orange-100 px-3 py-2 text-sm font-bold text-orange-800"><Utensils className="h-4 w-4" /> {filteredMeals.length} dishes</div></div>
+      <MealFilters filters={filters} onFilterChange={handleFilterChange} />
+      {loading && <div className="grid gap-5 py-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{[1, 2, 3, 4, 5, 6].map((item) => <div key={item} className="h-80 animate-pulse rounded-2xl bg-orange-100" />)}</div>}
+      {error && <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700">{error}</div>}
+      {!loading && !error && filteredMeals.length === 0 && <div className="mt-8 rounded-2xl border border-dashed border-orange-200 bg-white p-12 text-center text-stone-600">No dishes match these filters. Try a different craving.</div>}
+      {!loading && !error && filteredMeals.length > 0 && <><div className="my-6 flex flex-col gap-3 text-sm text-stone-500 sm:flex-row sm:items-center sm:justify-between"><span>Showing <strong className="text-stone-900">{paginatedMeals.length}</strong> of <strong className="text-stone-900">{filteredMeals.length}</strong> dishes</span><label className="flex items-center gap-2">Per page<select value={itemsPerPage} onChange={(event) => { setItemsPerPage(Number(event.target.value)); setCurrentPage(1); }} className="rounded-lg border bg-white px-2 py-1.5 text-stone-700" style={{ borderColor: 'var(--border-light)' }}><option value={6}>6</option><option value={12}>12</option><option value={24}>24</option></select></label></div><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{paginatedMeals.map((meal) => <MealCard key={meal._id} meal={meal} showAddToCart onCardClick={setSelectedMeal} />)}</div><Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => { setCurrentPage(page); window.scrollTo({ top: 0, behavior: 'smooth' }); }} totalItems={filteredMeals.length} itemsPerPage={itemsPerPage} className="mt-8" /></>}
+    </div><MealDetailModal meal={selectedMeal} isOpen={Boolean(selectedMeal)} onClose={() => setSelectedMeal(null)} /></div>
   );
 };
 

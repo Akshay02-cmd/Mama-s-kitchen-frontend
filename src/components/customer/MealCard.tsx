@@ -1,137 +1,39 @@
 import { memo } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Plus } from 'lucide-react';
+import { Plus, Star } from 'lucide-react';
 
-const mealTypeColors = {
-  breakfast: { bg: 'FFF7ED', accent: 'F97316', label: 'Breakfast' },
-  lunch:     { bg: 'F0FDF4', accent: '10B981', label: 'Lunch' },
-  dinner:    { bg: 'EEF2FF', accent: '6366F1', label: 'Dinner' },
-  snack:     { bg: 'FDF2F8', accent: 'EC4899', label: 'Snack' },
-};
+const mealTypeLabels = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', snack: 'Snack' };
 
 const MealCard = memo(({ meal, showAddToCart = false, onCardClick }) => {
   const navigate = useNavigate();
-
   const typeKey = meal.mealType?.toLowerCase() || meal.category?.toLowerCase() || 'lunch';
-  const colors = mealTypeColors[typeKey] || mealTypeColors.lunch;
+  const available = meal.is_Available !== false && meal.isAvailable !== false;
+  const availableExtras = (meal.extras || []).filter((extra) => extra.is_Available !== false);
 
-  const availableExtras = (meal.extras || []).filter((e) => e.is_Available !== false);
-
-  const handleOrderNow = (e) => {
-    e.stopPropagation();
+  const handleOrderNow = (event) => {
+    event.stopPropagation();
     navigate('/checkout', { state: { meal, quantity: 1 } });
   };
 
   return (
-    <div
-      className="rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer group"
-      style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}
-      onClick={() => onCardClick && onCardClick(meal)}
-    >
-      {/* Image */}
-      <div className="relative overflow-hidden h-44">
-        <img
-          src={meal.image || `https://placehold.co/400x280/${colors.accent.replace('#','')}/FFFFFF?text=${encodeURIComponent(meal.name.substring(0, 18))}`}
-          alt={meal.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          onError={(e) => {
-            e.target.style.display = 'none';
-            e.target.parentElement.style.background = `linear-gradient(135deg, #${colors.accent} 0%, #${colors.accent}bb 100%)`;
-          }}
-        />
-        {/* Meal type badge */}
-        <span
-          className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-xs font-semibold"
-          style={{ backgroundColor: `#${colors.bg}`, color: `#${colors.accent}` }}
-        >
-          {colors.label}
-        </span>
-        {/* Veg / Non-veg dot */}
-        <span
-          className="absolute top-2 right-2 w-6 h-6 rounded-sm flex items-center justify-center"
-          style={{ backgroundColor: '#FFFFFF', border: `2px solid ${meal.is_Veg ? '#16A34A' : '#DC2626'}` }}
-          title={meal.is_Veg ? 'Vegetarian' : 'Non-Vegetarian'}
-        >
-          <span
-            className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: meal.is_Veg ? '#16A34A' : '#DC2626' }}
-          />
-        </span>
+    <article className="group overflow-hidden rounded-2xl border bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl" style={{ borderColor: 'var(--border-light)' }} onClick={() => onCardClick?.(meal)}>
+      <div className="relative aspect-4/3 overflow-hidden bg-orange-100">
+        <img src={meal.image || `https://placehold.co/800x600/ea580c/ffffff?text=${encodeURIComponent(meal.name)}`} alt={meal.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onError={(event) => { event.currentTarget.src = 'https://placehold.co/800x600/fed7aa/9a3412?text=Mumma%27s+Kitchen'; }} />
+        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-bold text-orange-700 backdrop-blur">{mealTypeLabels[typeKey] || "Today's special"}</span>
+        {!available && <span className="absolute inset-x-3 bottom-3 rounded-lg bg-stone-950/75 px-3 py-2 text-center text-xs font-bold text-white">Currently unavailable</span>}
       </div>
-
-      {/* Content */}
       <div className="p-4">
-        {/* Name */}
-        <h3 className="font-semibold text-base mb-1 truncate" style={{ color: '#111827' }}>
-          {meal.name}
-        </h3>
-
-        {/* Mess name */}
-        <div className="flex items-center gap-1 mb-3">
-          <MapPin className="w-3.5 h-3.5 shrink-0" style={{ color: '#10B981' }} />
-          <span className="text-xs truncate" style={{ color: '#6B7280' }}>
-            {typeof meal.messId === 'object' ? meal.messId.name : 'Mess Kitchen'}
-          </span>
-        </div>
-
-        {/* Extras pill */}
-        {availableExtras.length > 0 && (
-          <div className="flex items-center gap-1 mb-3">
-            <span
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
-              style={{ backgroundColor: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}
-            >
-              <Plus className="w-3 h-3" />
-              {availableExtras.length} extra{availableExtras.length > 1 ? 's' : ''} available
-            </span>
-          </div>
-        )}
-
-        {/* Price row */}
-        <div className="flex items-center justify-between">
-          <span className="font-bold text-lg" style={{ color: '#111827' }}>
-            ₹{meal.price}
-          </span>
-          {showAddToCart ? (
-            <button
-              onClick={handleOrderNow}
-              className="px-4 py-1.5 rounded-lg text-sm font-medium transition-all hover:opacity-90"
-              style={{ backgroundColor: '#3B82F6', color: '#FFFFFF' }}
-            >
-              Order
-            </button>
-          ) : (
-            <div className="flex items-center gap-1">
-              <span className="text-sm" style={{ color: '#FBBF24' }}>★</span>
-              <span className="text-sm font-medium" style={{ color: '#374151' }}>
-                {meal.averageRating || 4.5}
-              </span>
-            </div>
-          )}
-        </div>
+        <div className="flex items-start justify-between gap-3"><h3 className="font-display text-xl leading-tight text-stone-900">{meal.name}</h3><div className="flex shrink-0 items-center gap-1 text-sm font-bold text-stone-700"><Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />{meal.averageRating || '4.5'}</div></div>
+        <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-stone-500">{meal.description || 'A comforting home-style dish prepared fresh in our kitchen.'}</p>
+        {availableExtras.length > 0 && <p className="mt-3 text-xs font-semibold text-orange-700"><Plus className="mr-1 inline h-3 w-3" />{availableExtras.length} optional extra{availableExtras.length > 1 ? 's' : ''}</p>}
+        <div className="mt-4 flex items-center justify-between border-t pt-4" style={{ borderColor: 'var(--border-light)' }}><span className="text-xl font-bold text-stone-900">₹{meal.price}</span>{showAddToCart && <button type="button" disabled={!available} onClick={handleOrderNow} className="rounded-xl bg-orange-600 px-3.5 py-2 text-sm font-bold text-white hover:bg-orange-700 disabled:cursor-not-allowed disabled:bg-stone-300">{available ? 'Order' : 'Sold out'}</button>}</div>
       </div>
-    </div>
+    </article>
   );
 });
 
 MealCard.displayName = 'MealCard';
-
-MealCard.propTypes = {
-  meal: PropTypes.shape({
-    _id: PropTypes.string,
-    name: PropTypes.string.isRequired,
-    image: PropTypes.string,
-    mealType: PropTypes.string,
-    category: PropTypes.string,
-    is_Veg: PropTypes.bool,
-    messId: PropTypes.oneOfType([PropTypes.string, PropTypes.shape({ name: PropTypes.string })]),
-    price: PropTypes.number,
-    averageRating: PropTypes.number,
-    extras: PropTypes.array,
-  }).isRequired,
-  showAddToCart: PropTypes.bool,
-  onCardClick: PropTypes.func
-};
+MealCard.propTypes = { meal: PropTypes.object.isRequired, showAddToCart: PropTypes.bool, onCardClick: PropTypes.func };
 
 export default MealCard;

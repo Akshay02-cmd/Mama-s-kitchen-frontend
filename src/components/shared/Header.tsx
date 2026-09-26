@@ -1,5 +1,5 @@
-import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, ShoppingBag, LogOut, Bell } from "lucide-react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Menu, X, ShoppingBag, LogOut, Bell, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
 import { useAuth, useNotification } from "../../hooks/shared";
 import logo from "../../assets/logo.png";
@@ -7,7 +7,7 @@ import defaultProfilePic from "../../assets/DefaulProfile.jpg";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const profileImage = localStorage.getItem('profileImage');
   const { showSuccess, showError, showWarning, showInfo } = useNotification();
   const navigate = useNavigate();
@@ -54,30 +54,36 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 w-full z-50 border-b transition-colors"
+    <header className="fixed top-0 z-50 w-full border-b bg-[#fffaf5]/95 backdrop-blur-md"
       style={{ 
-        backgroundColor: '#FFFFFF',
-        borderColor: '#E5E7EB'
+        borderColor: 'var(--border-light)'
       }}>
-      <div className="max-w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-18 items-center justify-between">
           {/* Logo */}
           <div className="flex min-w-0 items-center gap-3">
-            <img src={logo} alt="Mumma's Kitchen Logo" className="h-10 w-10 shrink-0 rounded-lg" />
-            <div className="hidden min-w-0 sm:block">
-              <h1 className="text-lg font-bold" style={{ color: '#111827' }}>
-                Mumma's Kitchen
-              </h1>
-            </div>
+            <img src={logo} alt="Mumma's Kitchen" className="h-10 w-10 shrink-0 rounded-xl object-cover" />
+            <h1 className="font-display hidden truncate text-xl font-bold text-stone-900 sm:block">Mumma's Kitchen</h1>
           </div>
 
-          {/* Search - Hidden on mobile, shown on desktop in center */}
-          <div className="hidden md:block flex-1 max-w-md mx-8">
-            {/* Search moved to page content */}
-          </div>
+          <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
+            <NavLink to="/meals" className={({ isActive }) => `text-sm font-semibold ${isActive ? 'text-orange-700' : 'text-stone-600 hover:text-orange-700'}`}>
+              Menu
+            </NavLink>
+            {isAuthenticated && (
+              <NavLink to="/orders" className={({ isActive }) => `text-sm font-semibold ${isActive ? 'text-orange-700' : 'text-stone-600 hover:text-orange-700'}`}>
+                Orders
+              </NavLink>
+            )}
+            {isAuthenticated && user?.role === 'OWNER' && (
+              <NavLink to="/mess/dashboard" className={({ isActive }) => `text-sm font-semibold ${isActive ? 'text-orange-700' : 'text-stone-600 hover:text-orange-700'}`}>
+                Kitchen
+              </NavLink>
+            )}
+          </nav>
 
           {/* Right side actions */}
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Notifications - Click to see demo */}
             {isAuthenticated && (
               <button 
@@ -95,9 +101,9 @@ const Header = () => {
 
             {/* Profile */}
             {isAuthenticated ? (
-              <Link to="/profile" className="flex items-center gap-2">
+              <Link to="/profile" className="hidden items-center gap-2 sm:flex" aria-label="Open profile">
                 <div className="w-9 h-9 rounded-full overflow-hidden border-2"
-                  style={{ borderColor: '#E5E7EB' }}>
+                  style={{ borderColor: 'var(--border-light)' }}>
                   <img
                     src={profileImage || defaultProfilePic}
                     alt="Profile"
@@ -108,10 +114,8 @@ const Header = () => {
             ) : (
               <Link
                 to="/login"
-                className="rounded-lg px-3 py-2 text-sm font-medium transition-all sm:px-4 sm:text-base"
+                className="rounded-xl bg-orange-600 px-3 py-2 text-sm font-bold text-white hover:bg-orange-700 sm:px-4 sm:text-base"
                 style={{
-                  backgroundColor: '#3B82F6',
-                  color: '#FFFFFF'
                 }}
               >
                 Login
@@ -121,7 +125,7 @@ const Header = () => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-lg transition"
+              className="rounded-xl p-2 text-stone-600 hover:bg-orange-50 md:hidden"
               style={{ 
                 color: '#6B7280'
               }}
@@ -143,6 +147,14 @@ const Header = () => {
           <nav className="px-4 py-4 space-y-2">
             {isAuthenticated ? (
               <>
+                <Link
+                  to="/meals"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 font-semibold text-stone-700 hover:bg-orange-50"
+                >
+                  <UtensilsCrossed className="h-5 w-5" />
+                  Menu
+                </Link>
                 <Link
                   to="/home"
                   onClick={() => setIsMenuOpen(false)}
@@ -188,6 +200,14 @@ const Header = () => {
               </>
             ) : (
               <>
+                <Link
+                  to="/meals"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 font-semibold text-stone-700 hover:bg-orange-50"
+                >
+                  <UtensilsCrossed className="h-5 w-5" />
+                  Menu
+                </Link>
                 <Link
                   to="/login"
                   onClick={() => setIsMenuOpen(false)}

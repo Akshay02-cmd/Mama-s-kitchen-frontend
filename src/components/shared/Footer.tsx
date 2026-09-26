@@ -1,107 +1,15 @@
-import { Link, useLocation } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { Link } from 'react-router-dom';
+import { Instagram, Mail, MapPin, Phone } from 'lucide-react';
 
-const Footer = () => {
-  const { pathname } = useLocation();
+const Footer = () => (
+  <footer className="border-t border-stone-800 bg-stone-950 text-stone-300">
+    <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.3fr_0.7fr_1fr] lg:px-8">
+      <div><p className="font-display text-2xl text-white">Mumma's Kitchen</p><p className="mt-3 max-w-sm text-sm leading-6 text-stone-400">Home-style food made with care, from our kitchen to your table.</p><a href="https://www.instagram.com/mummas.kitchen_nashik" aria-label="Mumma's Kitchen on Instagram" className="mt-5 inline-flex rounded-lg bg-stone-800 p-2 text-stone-300 hover:bg-orange-700 hover:text-white"><Instagram className="h-4 w-4" /></a></div>
+      <div><h2 className="text-sm font-bold uppercase tracking-wider text-white">Explore</h2><div className="mt-4 space-y-3 text-sm"><Link to="/" className="block hover:text-orange-400">Home</Link><Link to="/meals" className="block hover:text-orange-400">Menu</Link><Link to="/contact" className="block hover:text-orange-400">Contact</Link></div></div>
+      <div><h2 className="text-sm font-bold uppercase tracking-wider text-white">Talk to us</h2><div className="mt-4 space-y-3 text-sm text-stone-400"><a href="mailto:hello@mamaskitchen.com" className="flex items-center gap-3 hover:text-orange-400"><Mail className="h-4 w-4" />hello@mamaskitchen.com</a><a href="tel:+15551234567" className="flex items-center gap-3 hover:text-orange-400"><Phone className="h-4 w-4" />+1 (555) 123-4567</a><span className="flex items-center gap-3"><MapPin className="h-4 w-4 shrink-0" />Nashik, Maharashtra</span></div></div>
+    </div>
+    <div className="border-t border-stone-800 px-4 py-5 text-center text-xs text-stone-500">© 2026 Mumma's Kitchen. Made for everyday comfort.</div>
+  </footer>
+);
 
-  const usesDesktopSidebar =
-    pathname === "/home" ||
-    pathname === "/meals" ||
-    pathname === "/orders" ||
-    pathname === "/profile" ||
-    pathname === "/owner/dashboard" ||
-    pathname === "/mess/dashboard" ||
-    pathname === "/mess/orders" ||
-    pathname === "/mess/create-meal" ||
-    pathname === "/mess/profile" ||
-    /^\/mess\/[^/]+\/(dashboard|orders|create-meal|profile)$/.test(pathname) ||
-    /^\/mess\/[^/]+\/orders\/[^/]+$/.test(pathname);
-
-  return (
-    <footer
-      className={`mt-auto overflow-hidden border-t text-white ${usesDesktopSidebar ? 'w-full md:ml-64 md:w-auto' : 'w-full'}`}
-      style={{ 
-        background: 'linear-gradient(to bottom, #6D28D9, #5B21B6)',
-        borderColor: 'rgba(139, 92, 246, 0.2)'
-      }}>
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div>
-            <h3 className="text-lg font-bold mb-3"
-              style={{ color: '#FFFFFF' }}>Mumma's Kitchen</h3>
-            <p className="text-sm mb-3"
-              style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-              Home-style food made with love.
-            </p>
-            <div className="flex gap-2">
-              <a href="https://www.facebook.com/mummas.kitchen_nashik" className="w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}>
-                <Facebook className="w-4 h-4" style={{ color: '#FFFFFF' }} />
-              </a>
-              <a href="https://www.instagram.com/mummas.kitchen_nashik" className="w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}>
-                <Instagram className="w-4 h-4" style={{ color: '#FFFFFF' }} />
-              </a>
-              <a href="https://twitter.com/mummas_kitchen" className="w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}>
-                <Twitter className="w-4 h-4" style={{ color: '#FFFFFF' }} />
-              </a>
-            </div>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-4"
-              style={{ color: '#FFFFFF' }}>Quick Links</h3>
-            <div className="space-y-2">
-              <Link to="/home" className="block transition-colors hover:translate-x-1 transform duration-200"
-                style={{ color: 'rgba(255, 255, 255, 0.9)' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)'}>
-                Our Meals
-              </Link>
-              <Link to="/contact" className="block transition-colors hover:translate-x-1 transform duration-200"
-                style={{ color: 'rgba(255, 255, 255, 0.9)' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)'}>
-                Contact
-              </Link>
-            </div>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-4"
-              style={{ color: '#FFFFFF' }}>Contact</h3>
-            <div className="space-y-2"
-              style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-              <a href="mailto:hello@mamaskitchen.com" className="flex items-start gap-3 transition group break-all"
-                onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)'}>
-                <Mail className="h-5 w-5"
-                  style={{ color: '#FFFFFF' }} />
-                <span className="text-sm">hello@mamaskitchen.com</span>
-              </a>
-              <a href="tel:+15551234567" className="flex items-start gap-3 transition group"
-                onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)'}>
-                <Phone className="h-5 w-5"
-                  style={{ color: '#FFFFFF' }} />
-                <span className="text-sm">+1 (555) 123-4567</span>
-              </a>
-              <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 shrink-0"
-                  style={{ color: '#FFFFFF' }} />
-                <span className="text-sm">123 Kitchen Street, Nashik</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="border-t mt-6 pt-4 text-center"
-          style={{ borderColor: 'rgba(255, 255, 255, 0.2)' }}>
-          <p className="text-xs"
-            style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-            © 2026 Mumma's Kitchen. All rights reserved. Crafted with ❤️ for food lovers.
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
-};
 export default Footer;
