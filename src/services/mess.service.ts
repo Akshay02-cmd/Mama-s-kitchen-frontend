@@ -1,0 +1,52 @@
+import apiClient from './api/apiClient.ts';
+import { API_ENDPOINTS } from './api/constants.ts';
+
+/**
+ * Mess Service
+ * 
+ * Handles all mess/catering service-related API calls
+ */
+
+/**
+ * Get all messes
+ * @returns {Promise<Object>} List of all messes
+ */
+export const getAllMesses = async () => {
+  const response = await apiClient.get(API_ENDPOINTS.MESS.BASE);
+  return response.data;
+};
+
+/**
+ * Get a single mess by ID
+ * @param {string} messId - Mess ID
+ * @returns {Promise<Object>} Mess data
+ */
+export const getMessById = async (messId) => {
+  const response = await apiClient.get(API_ENDPOINTS.MESS.BY_ID(messId));
+  return response.data;
+};
+
+/**
+ * Update a mess (Owner only)
+ * @param {string} messId - Mess ID
+ * @param {Object} messData - Updated mess data
+ * @param {string} [messData.messName] - Name of the mess
+ * @param {string} [messData.area] - Area/location
+ * @param {string} [messData.phone] - Contact phone number
+ * @param {string} [messData.address] - Full address
+ * @param {string} [messData.description] - Description of the mess
+ * @param {boolean} [messData.is_Active] - Active status
+ * @returns {Promise<Object>} Updated mess data
+ */
+export const updateMess = async (messId, messData) => {
+  const response = await apiClient.put(API_ENDPOINTS.MESS.BY_ID(messId), messData);
+  return response.data;
+};
+
+const messService = {
+  getAllMesses,
+  getMessById,
+  updateMess,
+};
+
+export default messService;

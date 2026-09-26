@@ -18,7 +18,7 @@ This means the app currently uses both browser cookie support and explicit token
 File:
 
 ```text
-src/context/AuthContext.jsx
+src/context/AuthContext.tsx
 ```
 
 Responsibilities:
@@ -44,7 +44,7 @@ The app reads auth state through the shared auth hook rather than importing the 
 File:
 
 ```text
-src/components/shared/ProtectedRoute.jsx
+src/components/shared/ProtectedRoute.tsx
 ```
 
 Responsibilities:
@@ -82,7 +82,7 @@ The frontend keeps `withCredentials: true` enabled so requests can carry that co
 File:
 
 ```text
-src/services/api/apiClient.js
+src/services/api/apiClient.ts
 ```
 
 Current behavior:
@@ -178,10 +178,18 @@ That means when a page truly depends on completed profile data, you should inspe
 - can browse meals and messes after authentication
 - order and checkout flows may still call profile-completion checks
 
-### Owner
+### Mess operator
 
-- owner-only routes use `requireRole="OWNER"`
-- owner dashboard is the entry point for selecting a mess context
+- mess-management routes use `requireRole="OWNER"`
+- the server-derived `OWNER` account is redirected to `/mess/dashboard`
+- the dashboard operates on the configured singleton mess
+
+### Signup and login roles
+
+- signup sends only name, email, and password; the backend always creates `CUSTOMER`
+- login sends only email and password
+- the backend returns the persisted role and the frontend redirects from that response
+- the frontend does not provide a role selector
 
 ### Contact route
 
