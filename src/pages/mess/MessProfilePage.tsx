@@ -143,13 +143,7 @@ const MessProfilePage = () => {
           <div className="text-center p-8">
             <Store className="w-16 h-16 mx-auto mb-4" style={{ color: '#EF4444' }} />
             <h3 className="text-xl font-bold mb-2" style={{ color: '#111827' }}>{error || 'No mess found'}</h3>
-            <p className="mb-4" style={{ color: '#6B7280' }}>Please create a mess to continue</p>
-            <button
-              onClick={() => navigate('/owner/create-mess')}
-              className="px-6 py-3 rounded-lg font-medium"
-              style={{ backgroundColor: '#8B5CF6', color: '#FFFFFF' }}>
-              Create Mess
-            </button>
+            <p className="mb-4" style={{ color: '#6B7280' }}>Contact an administrator to provision the configured mess.</p>
           </div>
         </div>
       </div>

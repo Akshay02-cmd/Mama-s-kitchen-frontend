@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, UtensilsCrossed, ShoppingBag, User, LayoutDashboard, Store, Plus } from "lucide-react";
+import { Home, UtensilsCrossed, ShoppingBag, User, LayoutDashboard } from "lucide-react";
 import { useAuth } from "../../hooks/shared";
 
 const Sidebar = () => {
@@ -15,8 +15,7 @@ const Sidebar = () => {
   ];
 
   const ownerNavItems = [
-    { path: "/owner/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-    { path: "/owner/create-mess", icon: Plus, label: "Create Mess" },
+    { path: "/mess/dashboard", icon: LayoutDashboard, label: "Mess Dashboard" },
     { path: "/profile", icon: User, label: "Profile" },
   ];
 

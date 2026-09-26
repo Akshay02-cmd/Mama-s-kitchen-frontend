@@ -67,7 +67,11 @@ const CheckoutPage = () => {
       navigate('/orders', { state: { message: 'Order placed successfully!' } });
     } catch (err) {
       console.error('Error placing order:', err);
-      setError(err.response?.data?.message || 'Failed to place order. Please try again.');
+      setError(
+        err.message ||
+        err.response?.data?.message ||
+        'Failed to place order. Please try again.'
+      );
     } finally {
       setLoading(false);
     }

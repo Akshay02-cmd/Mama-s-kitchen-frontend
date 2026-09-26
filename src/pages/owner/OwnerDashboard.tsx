@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, TrendingUp, ShoppingBag, DollarSign, Store } from 'lucide-react';
+import { TrendingUp, ShoppingBag, DollarSign, Store } from 'lucide-react';
 import { useAuth } from '../../hooks/shared';
 import Sidebar from '../../components/shared/Sidebar';
 import ownerService from '../../services/owner.service';
@@ -146,13 +146,6 @@ const OwnerDashboard = () => {
               Welcome back, {user?.name}! Here's your business overview.
             </p>
           </div>
-          <button
-            onClick={() => navigate('/owner/create-mess')}
-            className="flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium transition-all hover:shadow-md sm:w-auto"
-            style={{ backgroundColor: '#8B5CF6', color: '#FFFFFF' }}>
-            <Plus className="w-5 h-5" />
-            Create New Mess
-          </button>
         </div>
 
         {/* Stats Grid */}
@@ -189,8 +182,8 @@ const OwnerDashboard = () => {
           <h2 className="text-2xl font-bold mb-4" style={{ color: '#111827' }}>
             Your Messes
           </h2>
-          <p className="mb-6" style={{ color: '#6B7280' }}>
-            Manage and track performance of all your messes
+            <p className="mb-6" style={{ color: '#6B7280' }}>
+              Manage and track performance of your configured mess
           </p>
         </div>
 
@@ -202,14 +195,8 @@ const OwnerDashboard = () => {
               No Messes Yet
             </h3>
             <p className="mb-6" style={{ color: '#6B7280' }}>
-              Create your first mess to start taking orders
+              The configured mess is not available yet. Contact an administrator to provision it.
             </p>
-            <button
-              onClick={() => navigate('/owner/create-mess')}
-              className="px-6 py-3 rounded-lg font-medium"
-              style={{ backgroundColor: '#8B5CF6', color: '#FFFFFF' }}>
-              Create Your First Mess
-            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

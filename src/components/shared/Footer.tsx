@@ -10,7 +10,6 @@ const Footer = () => {
     pathname === "/orders" ||
     pathname === "/profile" ||
     pathname === "/owner/dashboard" ||
-    pathname === "/owner/create-mess" ||
     pathname === "/mess/dashboard" ||
     pathname === "/mess/orders" ||
     pathname === "/mess/create-meal" ||

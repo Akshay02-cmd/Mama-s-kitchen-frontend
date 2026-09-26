@@ -109,11 +109,16 @@ const Login = () => {
             }
           }
         } catch (profileError) {
-          console.log('Profile check error:', profileError.response?.status, profileError.response?.data);
-          
-          // Check if it's a 404 (profile doesn't exist) or other error
-          if (profileError.response?.status === 404) {
-            // Profile doesn't exist - redirect to create it
+          const profileStatus = profileError.status ?? profileError.response?.status;
+          const profileMessage =
+            profileError.message ??
+            profileError.response?.data?.message ??
+            'Unable to verify your profile. Please try again.';
+
+          console.log('Profile check error:', profileStatus, profileMessage);
+
+          // A missing profile is the only profile-check error that means setup is required.
+          if (profileStatus === 404) {
             console.log('Profile not found, redirecting to create profile');
             if (response.user?.role === 'OWNER') {
               navigate('/owner/complete-profile', { replace: true });
@@ -121,22 +126,16 @@ const Login = () => {
               navigate('/profile/edit', { replace: true, state: { requiresCompletion: true } });
             }
           } else {
-            // Other errors (like 401) shouldn't happen after login, but redirect to dashboard anyway
-            console.log('Error checking profile, redirecting to dashboard');
-            if (response.user?.role === 'OWNER') {
-              navigate('/mess/dashboard', { replace: true });
-            } else {
-              const redirectPath = from === "/login" ? "/" : from;
-              navigate(redirectPath, { replace: true });
-            }
+            // Do not bypass profile completion when the profile check itself fails.
+            showError(profileMessage);
+            setErrors({ submit: profileMessage });
           }
         }
       }
     } catch (error) {
       console.error("Login error:", error);
       let errorMessage = "Login failed. Please check your credentials.";
-      
-      // More specific error messages
+
       if (error.status === 401) {
         errorMessage = error.message || "Invalid email or password. Please check and try again.";
       } else if (error.message) {
@@ -144,11 +143,9 @@ const Login = () => {
       } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       }
-      
+
       showError(errorMessage);
-      setErrors({
-        submit: errorMessage,
-      });
+      setErrors({ submit: errorMessage });
     } finally {
       setIsLoading(false);
     }
