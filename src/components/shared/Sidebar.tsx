@@ -26,7 +26,7 @@ const Sidebar = () => {
   return (
     <>
       <div
-        className="no-scrollbar fixed inset-x-0 top-20 z-40 overflow-x-auto border-b md:hidden"
+        className="no-scrollbar fixed inset-x-0 top-20 z-40 overflow-x-auto border-b lg:hidden"
         style={{
           backgroundColor: 'rgba(255, 255, 255, 0.96)',
           borderColor: '#E5E7EB',
@@ -58,7 +58,7 @@ const Sidebar = () => {
       </div>
 
       <aside
-        className="hidden md:block fixed left-0 top-20 h-[calc(100vh-5rem)] w-64 border-r transition-colors"
+        className="hidden lg:block fixed left-0 top-20 h-[calc(100vh-5rem)] w-64 border-r transition-colors"
         style={{
           backgroundColor: '#FFFFFF',
           borderColor: '#E5E7EB',

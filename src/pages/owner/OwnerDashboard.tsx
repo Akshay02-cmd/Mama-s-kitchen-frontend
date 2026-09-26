@@ -122,7 +122,7 @@ const OwnerDashboard = () => {
     return (
       <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
         <Sidebar />
-        <div className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
+        <div className="flex-1 p-4 pt-20 lg:ml-64 lg:p-8 lg:pt-8">
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#8B5CF6' }}></div>
           </div>
@@ -135,7 +135,7 @@ const OwnerDashboard = () => {
     <div className="flex min-h-screen" style={{ backgroundColor: '#F9FAFB' }}>
       <Sidebar />
       
-      <div className="flex-1 p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
+      <div className="flex-1 p-4 pt-20 lg:ml-64 lg:p-8 lg:pt-8">
         {/* Header */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
