@@ -66,20 +66,19 @@ const Header = () => {
             <h1 className="font-display hidden truncate text-xl font-bold text-stone-900 sm:block">Mumma's Kitchen</h1>
           </div>
 
-          <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
-            <NavLink to="/meals" className={({ isActive }) => `text-sm font-semibold ${isActive ? 'text-orange-700' : 'text-stone-600 hover:text-orange-700'}`}>
-              Menu
-            </NavLink>
-            {isAuthenticated && (
-              <NavLink to="/orders" className={({ isActive }) => `text-sm font-semibold ${isActive ? 'text-orange-700' : 'text-stone-600 hover:text-orange-700'}`}>
-                Orders
-              </NavLink>
-            )}
-            {isAuthenticated && user?.role === 'OWNER' && (
-              <NavLink to="/mess/dashboard" className={({ isActive }) => `text-sm font-semibold ${isActive ? 'text-orange-700' : 'text-stone-600 hover:text-orange-700'}`}>
-                Kitchen
-              </NavLink>
-            )}
+          <nav className="hidden items-center gap-2 md:flex" aria-label="Primary navigation">
+            {!isAuthenticated && <NavLink to="/meals" className={({ isActive }) => `rounded-xl px-3 py-2 text-sm font-semibold ${isActive ? 'bg-orange-50 text-orange-700' : 'text-stone-600 hover:bg-orange-50 hover:text-orange-700'}`}>Menu</NavLink>}
+            {isAuthenticated && user?.role === 'CUSTOMER' && <>
+              <NavLink to="/meals" className={({ isActive }) => `rounded-xl px-3 py-2 text-sm font-semibold ${isActive ? 'bg-orange-50 text-orange-700' : 'text-stone-600 hover:bg-orange-50 hover:text-orange-700'}`}>Menu</NavLink>
+              <NavLink to="/orders" className={({ isActive }) => `rounded-xl px-3 py-2 text-sm font-semibold ${isActive ? 'bg-orange-50 text-orange-700' : 'text-stone-600 hover:bg-orange-50 hover:text-orange-700'}`}>Orders</NavLink>
+              <NavLink to="/profile" className={({ isActive }) => `rounded-xl px-3 py-2 text-sm font-semibold ${isActive ? 'bg-orange-50 text-orange-700' : 'text-stone-600 hover:bg-orange-50 hover:text-orange-700'}`}>Profile</NavLink>
+            </>}
+            {isAuthenticated && user?.role === 'OWNER' && <>
+              <NavLink to="/mess/dashboard" className={({ isActive }) => `rounded-xl px-3 py-2 text-sm font-semibold ${isActive ? 'bg-orange-50 text-orange-700' : 'text-stone-600 hover:bg-orange-50 hover:text-orange-700'}`}>Kitchen</NavLink>
+              <NavLink to="/mess/orders" className={({ isActive }) => `rounded-xl px-3 py-2 text-sm font-semibold ${isActive ? 'bg-orange-50 text-orange-700' : 'text-stone-600 hover:bg-orange-50 hover:text-orange-700'}`}>Orders</NavLink>
+              <NavLink to="/mess/create-meal" className={({ isActive }) => `rounded-xl px-3 py-2 text-sm font-semibold ${isActive ? 'bg-orange-50 text-orange-700' : 'text-stone-600 hover:bg-orange-50 hover:text-orange-700'}`}>Create Meal</NavLink>
+              <NavLink to="/profile" className={({ isActive }) => `rounded-xl px-3 py-2 text-sm font-semibold ${isActive ? 'bg-orange-50 text-orange-700' : 'text-stone-600 hover:bg-orange-50 hover:text-orange-700'}`}>Profile</NavLink>
+            </>}
           </nav>
 
           {/* Right side actions */}
@@ -147,44 +146,11 @@ const Header = () => {
           <nav className="px-4 py-4 space-y-2">
             {isAuthenticated ? (
               <>
-                <Link
-                  to="/meals"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center gap-3 rounded-xl px-4 py-3 font-semibold text-stone-700 hover:bg-orange-50"
-                >
-                  <UtensilsCrossed className="h-5 w-5" />
-                  Menu
-                </Link>
-                <Link
-                  to="/home"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block px-4 py-3 rounded-lg transition font-medium"
-                  style={{ 
-                    color: '#111827'
-                  }}
-                >
-                  Home
-                </Link>
-                <Link
-                  to="/orders"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block px-4 py-3 rounded-lg transition font-medium"
-                  style={{ 
-                    color: '#111827'
-                  }}
-                >
-                  My Orders
-                </Link>
-                <Link
-                  to="/profile"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block px-4 py-3 rounded-lg transition font-medium"
-                  style={{ 
-                    color: '#111827'
-                  }}
-                >
-                  Profile
-                </Link>
+                {(user?.role === 'CUSTOMER' ? [
+                  ['/home', 'Home'], ['/meals', 'Menu'], ['/orders', 'Orders'], ['/profile', 'Profile'],
+                ] : [
+                  ['/mess/dashboard', 'Kitchen'], ['/mess/orders', 'Orders'], ['/mess/create-meal', 'Create Meal'], ['/profile', 'Profile'],
+                ]).map(([path, label]) => <Link key={path} to={path} onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-4 py-3 font-semibold text-stone-700 hover:bg-orange-50">{label}</Link>)}
                 <button
                   onClick={() => {
                     setIsMenuOpen(false);
