@@ -6,7 +6,6 @@ import ProtectedRoute from "../components/shared/ProtectedRoute.tsx";
 import Contact from "../pages/shared/Contact.jsx";
 import Login from "../pages/shared/Login.jsx";
 import Signup from "../pages/shared/Signup.jsx";
-import AdminAnalytics from "../pages/shared/AdminAnalytics.jsx";
 
 
 /**
@@ -30,9 +29,6 @@ const SharedRoutes = () => {
           </ProtectedRoute>
         } 
       />
-
-      {/* Static Admin Analytics - Frontend mock data only */}
-      <Route path="/admin/analytics" element={<AdminAnalytics />} />
     </>
   );
 };

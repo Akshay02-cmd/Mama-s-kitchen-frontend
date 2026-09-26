@@ -78,14 +78,6 @@ const Header = () => {
 
           {/* Right side actions */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link
-              to="/admin/analytics"
-              className="hidden rounded-lg border px-3 py-2 text-sm font-medium transition sm:block"
-              style={{ borderColor: '#E5E7EB', color: '#111827' }}
-            >
-              Admin Analytics
-            </Link>
-
             {/* Notifications - Click to see demo */}
             {isAuthenticated && (
               <button 
@@ -181,16 +173,6 @@ const Header = () => {
                 >
                   Profile
                 </Link>
-                <Link
-                  to="/admin/analytics"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block px-4 py-3 rounded-lg transition font-medium"
-                  style={{
-                    color: '#111827'
-                  }}
-                >
-                  Admin Analytics
-                </Link>
                 <button
                   onClick={() => {
                     setIsMenuOpen(false);
@@ -215,16 +197,6 @@ const Header = () => {
                   }}
                 >
                   Login / Sign Up
-                </Link>
-                <Link
-                  to="/admin/analytics"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block px-4 py-3 rounded-lg transition font-medium"
-                  style={{
-                    color: '#111827'
-                  }}
-                >
-                  Admin Analytics
                 </Link>
               </>
             )}
